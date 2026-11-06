@@ -1,0 +1,30 @@
+{
+ "name": "Fora de Campo",
+ "short_name": "Fora de Campo",
+ "description": "Carreira de futebol e vida pessoal: treinador ou jogador.",
+ "lang": "pt-PT",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#0f1a14",
+ "theme_color": "#164a2c",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-maskable.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
