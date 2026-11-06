@@ -364,6 +364,12 @@ html.bigtxt body{font-size:17px}html.bigtxt .btn{font-size:16px}
 .kid{padding:10px 0;border-bottom:1px solid var(--soft)}.kid small{display:block;color:var(--muted);font-size:13px;margin-top:2px}.kidb{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .rehab .rph{display:block;font-family:var(--display);text-transform:uppercase;font-size:22px;margin:4px 0}.rehab small{display:block;color:var(--muted);margin-top:6px}.phs{font-family:var(--cond);font-size:12.5px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}.phs.ok{background:var(--soft);color:var(--fg)}.phs.now{background:var(--relva);color:var(--relva-fg);border-color:var(--relva)}
 .pbtns{display:flex;flex-wrap:wrap;gap:8px}.pbtns .btn{flex:1 1 140px}
+/* mensagens */
+button.msg{display:flex;width:100%;text-align:left;background:none;border:0;padding:0;color:inherit;font:inherit;cursor:pointer}.card.phone .chatrow small{color:var(--relva)}
+.unr{display:inline-block;min-width:18px;padding:0 6px;border-radius:999px;background:#d94a37;color:#fff;font-size:12px;text-align:center;margin-left:4px}
+.sms .smsh{display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--soft);margin-bottom:10px}.sms .smsh .av{width:40px;height:40px;border-radius:50%;background:var(--relva);color:var(--relva-fg);display:flex;align-items:center;justify-content:center;font-weight:700}.sms .smsh small{display:block;color:var(--muted);font-size:12.5px}
+.sms .chat{max-height:46vh}.bub.typing{display:flex;gap:4px;padding:12px 14px}.bub.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:tdot 1s infinite}.bub.typing i:nth-child(2){animation-delay:.15s}.bub.typing i:nth-child(3){animation-delay:.3s}
+@keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-4px);opacity:1}}
 /* competições */
 .cmp{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}.cmp b{font-family:var(--display);text-transform:uppercase;font-size:18px}.cmp small{color:var(--muted);font-size:13px;text-align:right}
 .cres{display:grid;grid-template-columns:1fr;gap:1px;padding:6px 0;border-top:1px solid var(--soft);font-size:14px}.cres span{font-family:var(--cond);color:var(--muted);font-size:12.5px}.cres.nx b{color:var(--relva)}
@@ -2443,6 +2449,71 @@ function partnerLeaves(){const P=S.partner;if(!P)return;S.mem=S.mem||{};S.mem.ex
  Object.keys(SET).forEach(k=>{SET[k]=wrap(SET[k])})})();
 
 ACTS.push(...ACTS_INJ);{const fa=ACTS.find(a=>a.id==='filhos');if(fa){fa.n='Estar com os filhos';fa.h='Brincar, compras, escola';fa.choice=()=>kidsHub()}}
+/* ============ MENSAGENS: RESPONDER E CONVERSAR ============ */
+function ctType(from){const f=from||'';if(/^Mãe/.test(f))return 'mae';if(/^Pai/.test(f))return 'pai';if(/\(amigo\)/.test(f))return 'amigo';if(S.partner&&(f===S.partner.n||f===S.partner.n.split(' ')[0]||(typeof pn==='function'&&f===pn())))return 'par';
+ if(S.affair&&f===S.affair.n)return 'amante';if(S.mem&&S.mem.ex&&f===S.mem.ex)return 'ex';if((S.kids||[]).some(k=>k.n===f))return 'filho';if(S.fam&&S.fam.irmao&&(f===S.fam.irmao.n||/^Irm/.test(f)))return 'irmao';
+ if(/^Presidente/.test(f))return 'pres';if(/^Empres/.test(f))return 'emp';if(/[Cc]laque/.test(f))return 'claque';if((S.staff||[]).some(x=>x.n===f))return 'staff';if(/^Banco/.test(f))return null;return 'outro'}
+function msgMood(t){t=(t||'').toLowerCase();if(/parab|orgulh|brilh|que jogo|grande|incr|fantást|melhor|campe/.test(t))return 'cong';if(/estás bem|cuidado|comeste|cabeça erguida|preocup|descansa|como estás/.test(t))return 'worry';
+ if(/emprest|dinheiro|€|podes |ajuda|preciso|pedir/.test(t))return 'ask';if(/jantar|vem cá|vamos|almoço|domingo|aparece|convid|quando nos vemos/.test(t))return 'invite';if(/nunca|traidor|chatead|desilud|mentir|vergonha|não respondes|zangad|desculpa/.test(t))return 'angry';return 'info'}
+const RPL={cong:[['Obrigado! Significa muito para mim ❤️','w'],['Foi trabalho de equipa.','n'],['😎','c']],worry:[['Estou bem, não te preocupes 💪','w'],['Sim, está tudo bem.','n'],['Agora não posso falar.','c']],
+ ask:[['Claro, conta comigo.','w'],['Deixa-me pensar e depois digo-te.','n'],['Desta vez não dá.','c']],invite:[['Combinado! Lá estarei.','w'],['Esta semana está complicada. Outro dia?','n'],['Não me apetece, desculpa.','c']],
+ angry:[['Tens razão. Desculpa.','w'],['Vamos falar disto com calma, pessoalmente.','n'],['Não vou discutir por mensagem.','c']],info:[['Obrigado por avisares! 😊','w'],['Ok.','n'],['Depois falamos.','c']]};
+const CT={
+ mae:{w:['Ai filho, és o meu orgulho! Vens jantar no domingo? Faço o teu prato preferido.','Fico tão contente quando me respondes assim. Tens comido bem?'],n:['Está bem, filho. Liga-me quando puderes.','Ok. Beijinhos da mãe.'],c:['Pronto... só queria saber de ti.','Está bem. Não te incomodo mais.'],
+  f2:[['Vou sim, mãe! Guarda-me um prato ❤️','w'],['Tenho de ir, beijinhos!','n']],end:{w:['Combinado! Vou já tirar o bacalhau de molho 😄','Beijinhos, meu querido!'],n:['Beijinhos, filho. Cuida-te.']}},
+ pai:{w:['Assim é que é, rapaz! Um dia destes vamos ver um jogo juntos.','Bem dito. Estou orgulhoso de ti.'],n:['Ok. Um abraço.','Está bem.'],c:['Hum. Pronto.','Como quiseres.'],
+  f2:[['Vamos sim, pai! Escolhe tu o jogo.','w'],['Abraço, pai.','n']],end:{w:['Combinado. Eu levo as bifanas 😂','Ótimo. Até breve.'],n:['Abraço.']}},
+ par:{w:['Também te amo ❤️ Chegas a que horas?','És mesmo querido. Hoje há jantar especial 😘'],n:['Ok... estás bem? Pareces distante.','Está bem. Falamos à noite.'],c:['A sério? Só isso?','Ok. Já percebi que estás ocupado.'],
+  f2:[['Chego cedo, prometo ❤️','w'],['Está tudo bem, só tenho o dia cheio.','n']],end:{w:['Fico à tua espera 😘','Adoro-te.'],n:['Ok. Até logo.']}},
+ amigo:{w:['És grande, mano! Vamos combinar uma futebolada?','Sabia que podia contar contigo 🤝'],n:['Ok mano, depois diz qualquer coisa.','Tá bem.'],c:['Desde que ficaste famoso já não tens tempo para ninguém...','Ok, já percebi.'],
+  f2:[['Bora! Sábado de manhã?','w'],['Abraço, falamos!','n']],end:{w:['Sábado está fechado. Levo a bola ⚽','Fechado!'],n:['Abraço!']}},
+ filho:{w:['Obrigado, pai! És o melhor ❤️','Yesss! Logo jogamos?'],n:['Ok pai.','Tá.'],c:['Nunca tens tempo para mim.','Ok... 😔'],
+  f2:[['Logo jogamos, prometo!','w'],['Porta-te bem na escola!','n']],end:{w:['🥳🥳🥳','Combinado! Vou aquecer a consola.'],n:['Ok pai, beijinhos.']}},
+ irmao:{w:['Obrigado, irmão. Fazes-me falta por cá.','És o maior! Um destes dias jantamos?'],n:['Ok, falamos.','Tá bem.'],c:['Sempre o mesmo...','Ok, desculpa ter incomodado.'],
+  f2:[['Jantamos esta semana!','w'],['Abraço, falamos.','n']],end:{w:['Combinado, eu marco o sítio.','Boa!'],n:['Abraço.']}},
+ pres:{w:['É disso que precisamos, míster. Conto consigo.','Gosto dessa atitude.'],n:['Muito bem. Aguardo resultados.','Ok.'],c:['Espero que essa postura não se reflita no trabalho.','Tomei nota.'],
+  f2:[['Vamos dar-lhe alegrias, presidente.','w'],['Falamos na próxima reunião.','n']],end:{w:['Assim espero. Força!'],n:['Até lá.']}},
+ emp:{w:['Grande! Estou a tratar de tudo, confia em mim.','Assim gosto de trabalhar contigo.'],n:['Ok, eu vou dando notícias.','Combinado.'],c:['Olha que sem mim não chegavas onde chegaste...','Calma, estou do teu lado.'],
+  f2:[['Confio em ti. Força!','w'],['Dá notícias.','n']],end:{w:['Vais ver, a próxima época vai ser em grande 💰'],n:['Ok.']}},
+ amante:{w:['Também tenho saudades... quando nos vemos? 😏','Não paro de pensar em ti.'],n:['Ok... estás estranho.','Pronto.'],c:['Então é assim? Depois de tudo?','Vais arrepender-te de me tratar assim.'],
+  f2:[['Quinta-feira, no sítio do costume.','w'],['Tenho de apagar estas mensagens.','n']],end:{w:['Mal posso esperar 😘'],n:['Faz como quiseres.']}},
+ ex:{w:['Fico contente por falares comigo. Às vezes ainda penso em nós.','Estás bem? Tenho saudades das nossas conversas.'],n:['Ok, boa sorte.','Pronto.'],c:['Sempre o mesmo feitio.','Afinal não mudaste nada.'],
+  f2:[['Também penso, às vezes.','w'],['Fica bem.','n']],end:{w:['Um café um dia destes? Só como amigos.'],n:['Tu também.']}},
+ claque:{w:['Respeito. Mas não esquecemos.','Pelo menos tens coragem de responder.'],n:['Vemo-nos no estádio.','...'],c:['Vais ouvir-nos no próximo jogo, traidor.','Grande erro.'],
+  f2:[['Desejo o melhor ao clube, sempre.','w'],['Não vou continuar esta conversa.','n']],end:{w:['Isso diz-se. Veremos.'],n:['Foge, foge.']}},
+ staff:{w:['Obrigado, míster. Conte comigo para tudo.','É bom trabalhar consigo.'],n:['Ok, combinado.','Entendido.'],c:['Como queira.','Ok.'],
+  f2:[['Vamos juntos!','w'],['Até amanhã.','n']],end:{w:['Até amanhã!'],n:['Até amanhã.']}},
+ outro:{w:['Obrigado pela resposta! 😊','Que simpatia!'],n:['Ok.','Combinado.'],c:['Desculpa o incómodo.','Ok.'],f2:[['Sempre às ordens!','w'],['Até breve.','n']],end:{w:['Igualmente!'],n:['Até breve.']}}};
+function ctEffect(type,from,tone,round){const v=tone==='w'?(round?2:4):tone==='c'?-5:0;if(!v)return;
+ if(type==='mae'||type==='pai'){const P=S.fam&&S.fam[type];if(P){P.rel=cl((P.rel==null?S.familia:P.rel)+v)}S.familia=cl(S.familia+v/2)}
+ else if(type==='par'&&S.partner)S.partner.rel=cl(S.partner.rel+v);else if(type==='amigo'){const F=(S.friends||[]).find(f=>from.startsWith(f.n));if(F)F.rel=cl(F.rel+v)}
+ else if(type==='filho'){const k=(S.kids||[]).find(k=>k.n===from);if(k){kidFix(k);k.rel=cl(k.rel+v)}}else if(type==='irmao'&&S.fam&&S.fam.irmao){S.fam.irmao.rel=cl((S.fam.irmao.rel==null?S.familia:S.fam.irmao.rel)+v)}
+ else if(type==='pres'&&S.job)S.job.conf=cl(S.job.conf+v/2);else if(type==='staff'){const x=(S.staff||[]).find(s=>s.n===from);if(x)x.rel=cl(x.rel+v)}
+ else if(type==='amante'&&S.affair){S.affair.risk=cl(S.affair.risk+(tone==='w'?6:2));if(tone==='c'&&R()<0.3)S.queue.push({id:'cena',d:{s:'descoberta'}})}
+ else if(type==='ex'&&S.partner&&tone==='w'){if(R()<0.25){S.partner.rel=cl(S.partner.rel-8);news(`${S.partner.n} viu as mensagens com ${from} no teu telemóvel. Não gostou nada.`,'msg',S.partner.n)}}
+ else if(type==='claque'){const c=(from.match(/do (.+)$/)||[])[1];const e=c&&S.exits&&S.exits[c];if(e)e.heat=cl(e.heat+(tone==='w'?-4:tone==='c'?6:0))}
+ if(tone==='w')add('felicidade',1)}
+let CHAT=null;
+function chatLog(from){S.chats=S.chats||{};return S.chats[from]=S.chats[from]||[]}
+function openChat(from,msgId){const type=ctType(from);if(!type)return toast('Esta mensagem não aceita respostas.');const L=chatLog(from);
+ const inc=(S.news||[]).filter(n=>n.k==='msg'&&n.from===from).slice(0,8).reverse();inc.forEach(n=>{n.id=n.id||(S.uid++);if(!L.some(m=>m.id===n.id))L.push({w:'p',t:n.t,d:n.d,id:n.id})});L.sort((a,b)=>a.d-b.d);if(L.length>40)L.splice(0,L.length-40);
+ const pend=(S.news||[]).find(n=>n.k==='msg'&&n.from===from&&!n.ans);CHAT={from,type,stage:pend?1:0,pend,mood:pend?msgMood(pend.t):null,typing:0};renderChat()}
+function chatOpts(){const c=CHAT;if(c.typing)return[];if(c.stage===1)return RPL[c.mood].map(([t,tone])=>({t,tone}));if(c.stage===2)return(CT[c.type]||CT.outro).f2.map(([t,tone])=>({t,tone}));
+ if(c.stage===0&&['mae','pai','par','amigo','filho','irmao','amante','ex'].includes(c.type))return[{t:{mae:'Olá mãe, como estás? ❤️',pai:'Olá pai, tudo bem?',par:'Tenho saudades tuas ❤️',amigo:'Então mano, tudo bem? Bora combinar algo?',filho:'Olá campeão! Como correu a escola?',irmao:'Então, como vai isso?',amante:'Preciso de te ver.',ex:'Olá. Como estás?'}[c.type],tone:'w',fresh:1}];return[]}
+function renderChat(){modalOpen=true;const c=CHAT,L=chatLog(c.from),box=$('#modal'),O=chatOpts();
+ box.innerHTML=`<div class="sheet scene sms" role="dialog" aria-modal="true" aria-label="Mensagens com ${esc(c.from)}"><div class="smsh"><span class="av">${esc(ini(c.from.replace(/[()]/g,'')))}</span><div><b>${esc(c.from)}</b><small>${c.typing?'a escrever…':'online'}</small></div></div>
+ <div class="chat" id="bchat">${L.map(m=>`<div class="bub ${m.w}">${esc(m.t)}</div>`).join('')}${c.typing?'<div class="bub p typing"><i></i><i></i><i></i></div>':''}</div>
+ <div class="mbtns">${O.map((o,k)=>`<button class="btn ans" data-sms="${k}">${esc(o.t)}</button>`).join('')}${c.typing?'':`<button class="btn ghost" data-do="smsclose">${O.length?'Responder mais tarde':'Fechar'}</button>`}</div></div>`;
+ box.hidden=false;const ch=$('#bchat');if(ch)ch.scrollTop=ch.scrollHeight}
+function smsPick(k){const c=CHAT,o=chatOpts()[k];if(!o)return;const L=chatLog(c.from);L.push({w:'y',t:o.t,d:S.day});const round=c.stage===2?1:0;ctEffect(c.type,c.from,o.tone,round);
+ if(c.pend){(S.news||[]).forEach(n=>{if(n.k==='msg'&&n.from===c.from)n.ans=1});c.pend=null}const T=CT[c.type]||CT.outro;let reply;
+ if(c.stage===2){reply=pick(T.end[o.tone==='w'?'w':'n'])}else{reply=pick(T[o.fresh?'w':o.tone])}
+ c.typing=1;renderChat();setTimeout(()=>{if(CHAT!==c)return;c.typing=0;L.push({w:'p',t:reply,d:S.day});c.stage=c.stage===2?3:(o.tone==='c'?3:2);save();renderChat()},900+Math.min(1400,reply.length*18))}
+function chatsHTML(){const M=(S.news||[]).filter(n=>n.k==='msg'&&ctType(n.from));const by={};M.forEach(n=>{if(!by[n.from])by[n.from]={n,un:0};if(!n.ans&&S.day-n.d<=14)by[n.from].un++});const L=Object.values(by).slice(0,12);if(!L.length)return '';
+ return `<h2 class="sec">Conversas<span>toca para responder</span></h2><div class="card phone">${L.map(({n,un})=>`<button class="msg chatrow" data-chat="${esc(n.from)}"><span class="av">${esc((n.from||'?')[0])}</span><div><b>${esc(n.from)}${un?` <span class="unr">${un}</span>`:''}</b><small>${fshort(n.d)}</small><p>${esc(n.t)}</p></div></button>`).join('')}</div>`}
+function smsWeekly(){const M=(S.news||[]).filter(n=>n.k==='msg'&&!n.ans&&!n.nag&&S.day-n.d>=7&&S.day-n.d<=21);M.forEach(n=>{const t=ctType(n.from);if(!['mae','par','filho'].includes(t)||R()>0.35)return;n.nag=1;ctEffect(t,n.from,'c',0);
+  news(t==='mae'?'Já nem respondes às mensagens da tua mãe...':t==='par'?'Visualizaste e não respondeste. Está tudo bem connosco?':'Pai, porque é que não me respondes? 😢','msg',n.from)})}
+
 /* ============ DIA / NOITE ============ */
 function endDay(){if(matchPending()){toast('Tens jogo hoje! Vai para o estádio primeiro.');return false}
  S.fixtures.forEach(f=>{if(f.d<=S.day&&f.hg===null)simAI(f)});compsDaily();nightly();S.day++;S.slots=0;
@@ -2476,7 +2547,7 @@ function nightly(){const H=HOUSES.find(h=>h.id===S.house.id);let pen=0,sp=0;S.co
  if(R()<0.004)addCond('lombalgia');
  if(isPro()){const P=S.pl;if(P.inj>0){P.inj--;if(!P.inj){delete P.rehab;P.fit=Math.min(P.fit||100,70);log('Recuperaste da lesão. Ainda te falta ritmo de jogo.')}}else if(P.relapse&&S.day>=P.relapse){P.relapse=0;plInjure(20,'(recaída)')}}
  if(S.job){const rec={leve:11,normal:8,intenso:5}[S.intens];S.squad.forEach(p=>{if(p.inj>0){p.inj--;if(!p.inj)p.fit=Math.min(p.fit,72)}p.fit=cl(p.fit+rec);p.mor+=(60-p.mor)*0.03;if(S.intens==='intenso'&&!p.inj&&R()<0.003){injure(p,ri(3,14));log(p.n+' lesionou-se no treino ('+p.inj+' dias).','bad')}});S.prep=cl(S.prep-3)}}
-function weekly(){weeklyNews();weeklyHeat();sponsWeekly();staffWeekly();kidsWeekly();tempWeekly();affairWeekly();aiTransfers();if(S.staff)add('energia',stB('nut',3));if(S.mode!=='player'&&!(S.job&&S.job.nt)&&S.rep>=50&&R()<0.012){const lv=60+S.rep*0.25,c=S.ratings.NT.map((t,i)=>({t,i})).filter(o=>Math.abs(o.t.r-lv)<=5);if(c.length)S.queue.push({id:'convSel',d:{i:pick(c).i}})}if(S.job&&S.job.pres&&S.job.conf>=75&&S.job.end-S.day<330&&!S.job.offRen&&R()<0.3){S.job.offRen=true;news('Quero falar consigo sobre a renovação. Passe pelo meu gabinete.','msg','Presidente '+surname(S.job.pres.n))}if(S.job){const g={leve:0.15,normal:0.3,intenso:0.5}[S.intens]+Math.min(5,S.trainDays)*0.02+((S.job.fac||2)-2)*0.03;S.trainDays=0;
+function weekly(){weeklyNews();smsWeekly();weeklyHeat();sponsWeekly();staffWeekly();kidsWeekly();tempWeekly();affairWeekly();aiTransfers();if(S.staff)add('energia',stB('nut',3));if(S.mode!=='player'&&!(S.job&&S.job.nt)&&S.rep>=50&&R()<0.012){const lv=60+S.rep*0.25,c=S.ratings.NT.map((t,i)=>({t,i})).filter(o=>Math.abs(o.t.r-lv)<=5);if(c.length)S.queue.push({id:'convSel',d:{i:pick(c).i}})}if(S.job&&S.job.pres&&S.job.conf>=75&&S.job.end-S.day<330&&!S.job.offRen&&R()<0.3){S.job.offRen=true;news('Quero falar consigo sobre a renovação. Passe pelo meu gabinete.','msg','Presidente '+surname(S.job.pres.n))}if(S.job){const g={leve:0.15,normal:0.3,intenso:0.5}[S.intens]+Math.min(5,S.trainDays)*0.02+((S.job.fac||2)-2)*0.03;S.trainDays=0;
   S.squad.forEach(p=>{const T=TRAITS[p.tr]||TRAITS.cal;potWeek(p,g);if(p.ovr<p.pot&&R()<g*T.g*(p.age<=21?1:0.5)*(p.ws?1.3:0.8)*0.2*(1+stB(p.pos==='GR'?'gr':'fis',0.3)))p.ovr++;p.ws=0;p.mor=cl(p.mor+(60-p.mor)*0.1)});S.market=genMarket();
   const un=S.squad.filter(p=>p.mor<35&&!p.inj);if(un.length&&R()<0.4)S.queue.push({id:'insatisfeito',d:{id:pick(un).id}})}
  if(isPro())weeklyPl();if(S.yth)S.yth.forEach(p=>{if(p.ovr<p.pot&&R()<0.18)p.ovr++});
@@ -2626,7 +2697,7 @@ function vHoje(){const f=todayFix(),nf=f&&f.hg===null?f:nextFix(),pend=matchPend
  <div class="chips"><span class="chip">Fama ${Math.round(S.fama)}</span><span class="chip">Reputação ${Math.round(S.rep)}</span><span class="chip">Família ${Math.round(S.familia)}</span>${S.partner?`<span class="chip">${esc(pn())} ${Math.round(S.partner.rel)}</span>`:''}${S.vicio>=10?`<span class="chip ${S.vicio>50?'bad':'warn'}">Vício no jogo ${Math.round(S.vicio)}</span>`:''}${kn.map(c=>`<span class="chip bad">${CONDS[c.id].n}</span>`).join('')}</div>
  ${un.length?`<div class="sint">Sintomas: ${un.map(c=>CONDS[c.id].s).join(', ')}. Talvez seja boa ideia ir ao médico.</div>`:''}</div>`;
  const ms=(S.news||[]).filter(n=>n.k==='msg'||n.k==='ad').slice(0,3);
- if(ms.length)s+=`<h2 class="sec">Telemóvel<span>${ms[0].d===S.day?'nova mensagem':''}</span></h2><div class="card phone">${ms.map(n=>`<div class="msg ${n.k} ${n.d===S.day?'new':''}"><span class="av">${esc((n.from||'?')[0])}</span><div><b>${esc(n.from)}</b><small>${n.d===S.day?'hoje':fshort(n.d)}</small><p>${esc(n.t)}</p></div></div>`).join('')}</div>`;
+ if(ms.length)s+=`<h2 class="sec">Telemóvel<span>${ms[0].d===S.day?'nova mensagem':''}</span></h2><div class="card phone">${ms.map(n=>{const rp=n.k==='msg'&&ctType(n.from);return `<${rp?'button':'div'} class="msg ${n.k} ${n.d===S.day?'new':''} ${rp?'chatrow':''}" ${rp?`data-chat="${esc(n.from)}"`:''}><span class="av">${esc((n.from||'?')[0])}</span><div><b>${esc(n.from)}</b><small>${n.d===S.day?'hoje':fshort(n.d)}${rp?(n.ans?' · respondida':' · toca para responder'):''}</small><p>${esc(n.t)}</p></div></${rp?'button':'div'}>`}).join('')}</div>`;
  if(S.mode==='player'){s+=plPlacard()}
  else if(S.job){s+=`<h2 class="sec">${pend?'Dia de jogo':'Próximo jogo'}<span>${S.job.obj.t}</span></h2>`;
   if(nf){const home=isHomeF(nf),o={n:oppNameF(nf)};const days=nf.d-S.day;
@@ -2686,7 +2757,8 @@ function vVida(){const it=monthlyItems();let tot=0;it.forEach(([,v])=>tot+=v);co
  const st=S.stats;s+=`<h2 class="sec">Carreira</h2><div class="tblw"><table class="t"><tbody><tr><td>Idade</td><td class="r">${S.age} anos</td></tr><tr><td>Jogos</td><td class="r">${st.j}</td></tr><tr><td>Vitórias · empates · derrotas</td><td class="r">${st.v} · ${st.e} · ${st.d}</td></tr><tr><td>Títulos</td><td class="r">${st.tit}</td></tr><tr><td>Clubes</td><td class="r" style="white-space:normal">${[...new Set(st.clubes)].map(esc).join(', ')}</td></tr></tbody></table></div>`;
  s+=`<h2 class="sec">Gravação</h2><div class="card"><p style="margin:0 0 10px;color:var(--muted);font-size:14px">O jogo grava sozinho no espaço ${S.slot||1} deste navegador. Para mudar de aparelho, exporta o código.</p><div class="bs" style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm" data-do="export">Exportar</button><button class="btn sm" data-do="import">Importar</button><button class="btn sm ghost" data-do="menu">Menu principal</button></div></div>`;return s}
 
-function vDiario(){const nw=(S.news||[]).filter(n=>n.k!=='msg'&&n.k!=='ad').slice(0,15);return `${nw.length?`<h2 class="sec">Jornal</h2><div class="card news">${nw.map(n=>`<div><span>${fshort(n.d)}</span><b class="${n.k==='good'||n.k==='bad'?n.k:''}" style="font-weight:500">${esc(n.t)}</b></div>`).join('')}</div>`:''}<h2 class="sec">Diário</h2><div class="card log">${S.log.map(l=>`<div><span>${fshort(l.d)}</span><p style="margin:0" class="${l.k}">${esc(l.t)}</p></div>`).join('')}</div>`}
+function vDiario(){return chatsHTML()+vDiario0()}
+function vDiario0(){const nw=(S.news||[]).filter(n=>n.k!=='msg'&&n.k!=='ad').slice(0,15);return `${nw.length?`<h2 class="sec">Jornal</h2><div class="card news">${nw.map(n=>`<div><span>${fshort(n.d)}</span><b class="${n.k==='good'||n.k==='bad'?n.k:''}" style="font-weight:500">${esc(n.t)}</b></div>`).join('')}</div>`:''}<h2 class="sec">Diário</h2><div class="card log">${S.log.map(l=>`<div><span>${fshort(l.d)}</span><p style="margin:0" class="${l.k}">${esc(l.t)}</p></div>`).join('')}</div>`}
 
 function renderMenu(){const ls=lastSlot(),last=ls?slotSum(ls):null;let ok=true;try{localStorage.setItem(KEY+'-t','1');localStorage.removeItem(KEY+'-t')}catch(e){ok=false}
  return `<div class="hero"><h1>Fora<br><em>de</em> Campo</h1><p>Treina um clube, gere o plantel e vive a tua vida dia a dia.</p><div class="pitch" aria-hidden="true"></div></div>
@@ -2719,6 +2791,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('button,[data-clu
  if(d.cel!=null&&d.cel!==''&&M&&M.pk==='cel'&&M.paused)return celPick(+d.cel);
  if(d.offer){const[a,b,...n]=d.offer.split('|');closeModal();return offerModal(a,+b,n.join('|'))}
  if(d.osq){const[a,b]=d.osq.split('|');return squadModal(a,+b)}
+ if(d.chat!=null&&d.chat!==''){return openChat(d.chat)}if(d.sms!=null&&d.sms!==''&&CHAT)return smsPick(+d.sms);if(d.do==='smsclose'){CHAT=null;closeModal();render();return}
  if(d.stf){closeP();return staffTalk(+d.stf)}if(d.clin)return sendClinic(+d.clin);
  if(d.kid){const[i,k]=d.kid.split('|');closeP();return k==='play'?kidPlay(+i):k==='shop'?kidShop(+i):kidSchool(+i)}
  if(d.ppl){closeP();return personGo(d.ppl)}
