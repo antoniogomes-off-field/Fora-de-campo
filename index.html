@@ -340,6 +340,8 @@ textarea{min-height:110px;font-size:12px;font-family:ui-monospace,Menlo,monospac
 @media(max-width:620px){.nts{grid-template-columns:repeat(3,40px);font-size:12px}.nthead .nts i{font-size:9.5px}.nts i:nth-child(n+4){display:none}}
 .tag.gem{background:#f2c23a;color:#111}.tag.bad{background:#a3332a;color:#fff}tr.dim{opacity:.6}.acl small{opacity:.6;font-size:11px;margin-left:3px}.act .acb{white-space:nowrap}.acsum{padding:10px 12px;font-size:14px}
 .acmob{display:none}@media(max-width:620px){.acdesk{display:none}.acmob{display:grid;gap:8px}}.accard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:6px}.accard.dim{opacity:.6}.ach{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.acn{display:flex;gap:6px 12px;flex-wrap:wrap;font-size:13px;opacity:.85;font-variant-numeric:tabular-nums}.acbtn{display:flex;gap:6px;flex-wrap:wrap}
+.trgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}.trc{all:unset;box-sizing:border-box;cursor:pointer;border:1px solid var(--line);border-radius:10px;padding:12px;display:grid;gap:4px;background:var(--surface)}.trc:hover{border-color:currentColor}.trc span{font-size:13px;opacity:.8}.trc i{font-style:normal;font-size:12px;font-weight:700;display:block;position:relative;padding-bottom:6px}.trc i em{position:absolute;left:0;bottom:0;height:3px;background:#3fb760;border-radius:2px}.trcv{touch-action:none;border-radius:10px;display:block;max-width:100%;margin:0 auto;user-select:none}.trhud{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.trhud span{font-variant-numeric:tabular-nums;font-weight:700}
+.atw{display:grid;gap:12px}.athead{display:grid;grid-template-columns:minmax(0,230px) 1fr;gap:14px;align-items:center}@media(max-width:560px){.athead{grid-template-columns:1fr;justify-items:center}}.radar{width:100%;max-width:240px;display:block}.radar .rg{fill:none;stroke:currentColor;opacity:.18}.radar .rp{fill:rgba(63,183,96,.35);stroke:#3fb760;stroke-width:2}.radar .rl{font-size:10.5px;fill:currentColor;opacity:.85}.atsum{display:grid;gap:4px;font-size:14px}.atsum b{font-size:17px}.atgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 18px}.atg h4{margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;opacity:.7}.atr{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px solid rgba(127,127,127,.15);font-size:14px}.atr b{font-variant-numeric:tabular-nums;min-width:2.8em;text-align:right}.a1{color:#d9534f}.a2{color:#e08a2e}.a4{color:#3fb760}.a5{color:#12a37c}.atinfo{all:unset;cursor:pointer;margin-left:8px;font-size:11px;font-weight:700;padding:1px 8px;border:1px solid rgba(127,127,127,.45);border-radius:10px;opacity:.85}.atinfo:hover{opacity:1}
 .m3dov small{font-family:var(--cond);font-size:13px;text-transform:none;opacity:.85}
 /* mercado e observação */
 .clubgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin-top:8px}.cbtn{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 10px;color:var(--ink)}.cbtn b{display:block;font-size:14.5px}.cbtn small{color:var(--muted);font-size:12.5px}
@@ -1457,7 +1459,7 @@ function plOffer(){const P=S.pl,o=[];if(P.club!=null&&P.lastMove!=null&&S.day-P.
  S.queue.push({id:'propostaPl',d:{lg:c.lg,i:c.i,sal:Math.round(salaryPl(P.ovr)*(1+R()*0.3)*(P.agent?1.1:1)/100)*100,yrs:S.age>=32?1:ri(2,4)}});return true}
 function plMove(d){const P=S.pl,n=S.ratings[d.lg][d.i].n;{const fee=d.how==='emprestimo'?0:plFee(),bonus=fee===0&&d.how!=='emprestimo'?Math.round((d.sal||0)*2/100)*100:0;trfAdd({n:S.name,from:P.club!=null?clubName():'sem clube',to:n,fee,k:d.how==='emprestimo'?'emp':'eu-jog',extra:bonus?'prémio de assinatura '+money(bonus):''});if(bonus){S.money+=bonus;log('Recebeste '+money(bonus)+' de prémio de assinatura.','good')}if(fee)news(`O ${n} paga ${money(fee)} ao ${clubName()} por ${S.name}.`,'good')}if(P.club!=null)exitClub(clubName(),d.how||'venda',d.style);log(`Transferência: trocas o ${clubName()||'desemprego'} pelo ${n}.`,'big');news(`${S.name} é reforço do ${n}.`,'good');
  P.lg=d.lg;P.club=d.i;P.con={sal:d.sal,end:seasonEndDay(curSeasonYear()+d.yrs)};P.trust=45;P.selD=null;P.conPend=0;P.lastMove=S.day;S.stats.clubes.push(n);(P.clubs=P.clubs||[]).push(n);joinClub(n);if(S.leagueId!==d.lg||!S.fixtures.length){setupSeason(d.lg,curSeasonYear());simPast()}}
-function weeklyPl(){const P=S.pl,tr=Math.min(6,P.tr||0);P.tr=0;P.peak=Math.max(P.peak||0,P.ovr);plClubMove();
+function weeklyPl(){const P=S.pl,tr=Math.min(9,P.tr||0);P.tr=0;P.peak=Math.max(P.peak||0,P.ovr);plClubMove();
  if(S.age<=27&&P.ovr<P.pot&&R()<(0.03+tr*0.008+(P.sApps?0.012:0))*(S.age<=23?1.3:0.8))P.ovr++;if(S.age>=31&&R()<0.04*(S.age-30))P.ovr--;
  if(S.age<=24&&R()<0.05){const f=P.form||6.5,v=P.trust>60&&f>=7?1:P.trust<40||f<6.2?-1:0;if(v)P.pot=cl(P.pot+v,P.ovr,95)}if(S.age>=29&&P.pot>P.ovr)P.pot=P.ovr;
  P.fit=cl((P.fit||100)+12);P.trust=cl(P.trust+(50-P.trust)*0.02);
@@ -3955,6 +3957,160 @@ Object.assign(EV,{
  return h.replace('<div class="tblw"><table class="t act">','<div class="tblw acdesk"><table class="t act">')+cards}}
 /* --- qualidade automática --- */
 function autoQ(m,dt){if(PREF.gqAuto===0||!(PREF.gq>0))return;m.fq=m.fq||{t:0,n:0,done:0};const f=m.fq;if(f.done>=2)return;f.t+=dt;f.n++;if(f.t>=5){const fps=f.n/f.t;f.t=0;f.n=0;if(fps<24){PREF.gq--;f.done++;try{savePref()}catch(e){}try{gfxQ(G3._.rend(),m.sc)}catch(e){}toast(`O jogo estava lento (${Math.round(fps)} imagens/s). Baixei a qualidade gráfica para «${PREF.gq===1?'Alta':'Leve'}».`)}else f.done=fps>40?2:f.done}}
+
+/* ============ TREINOS JOGÁVEIS (v1.8) ============ */
+const PDRL={fin:{n:'Finalização',h:'Remates à baliza: escolhe o sítio e a força.'},pas:{n:'Passe',h:'Toca no colega assinalado antes de o círculo fechar.'},tec:{n:'Técnica e drible',h:'Toca quando a bola chega à zona verde de cada cone.'},
+ fis:{n:'Físico e velocidade',h:'Sprints: toca o mais depressa que conseguires.'},def:{n:'Defesa 1x1',h:'Lê o avançado e toca no lado para onde ele vai.'},gr:{n:'Defesas (guarda-redes)',h:'Toca no lado para onde vai o remate.'}};
+const PDPOS={GR:['gr','pas','fis'],DEF:['def','pas','fis','tec'],MED:['pas','tec','fin','fis','def'],AV:['fin','tec','fis','pas']};
+function plSk(){const P=S.pl;if(!P.sk){const o=P.ovr,b={GR:{gr:6,pas:-4,fis:0,tec:-8,fin:-15,def:-2},DEF:{def:5,fis:2,pas:-1,tec:-4,fin:-8,gr:-30},MED:{pas:5,tec:3,fin:-2,fis:0,def:-2,gr:-30},AV:{fin:6,tec:3,fis:1,pas:-2,def:-10,gr:-30}}[P.pos]||{};
+ P.sk={};for(const k in PDRL)P.sk[k]=cl(Math.round(o+(b[k]||0)+randn()*2),20,97);P.skp={}}return P.sk}
+const interactive=()=>typeof window!=='undefined'&&window.document&&typeof requestAnimationFrame==='function'&&document.body&&document.body.appendChild;
+function ptrAuto(kind,dr){const P=S.pl,sk=plSk(),k=dr||pick(PDPOS[P.pos]||['fis']);const s=cl(0.42+(sk[k]-60)/90+randn()*0.12,0.05,0.98);return ptrResult(kind,k,s,true)}
+function ptrResult(kind,k,s,auto){const P=S.pl,sk=plSk(),ex=kind==='extra';
+ const tr=ex?1.0+1.5*s:0.6+0.8*s,tg=ex?Math.round(1+3.2*s):Math.round(0.4+2.2*s),pr=(ex?2.5:1.6)+(ex?4:3)*s;
+ P.tr=(P.tr||0)+tr;P.trust=cl(P.trust+tg);P.skp=P.skp||{};P.skp[k]=(P.skp[k]||0)+pr;let up=0;while(P.skp[k]>=10){P.skp[k]-=10;if(sk[k]<Math.min(97,P.pot+6)){sk[k]++;up++}}
+ P.form=cl((P.form||6.5)+(s-0.5)*0.15,4,9.5);let inj='';if(ex&&R()<0.03+(s<0.25?0.02:0)){P.inj=ri(5,20);inj=` Sentiste uma pontada no fim… Lesão de ${P.inj} dias.`}
+ P.trLog=(P.trLog||[]).concat([{d:S.day,k,s:Math.round(s*100),ex}]).slice(-20);
+ const q=s>=0.8?'Treino excelente':s>=0.6?'Bom treino':s>=0.4?'Treino razoável':'Treino fraco';
+ return `${q} de ${PDRL[k].n.toLowerCase()} (${Math.round(s*100)}%)${auto?' (simulado)':''}. Confiança do míster ${tg>0?'+'+tg:'sem mexer'}${up?`, ${PDRL[k].n} sobe para ${sk[k]}`:''}.${inj}`}
+/* --- escolha do exercício --- */
+let TRN=null;
+function ptrOpen(kind){const a=ACTS.find(x=>x.id===(kind==='extra'?'pextra':'ptreino'));if(!interactive())return choiceSlot(a,()=>ptrAuto(kind));
+ const P=S.pl,sk=plSk(),L=PDPOS[P.pos]||['fis','pas'];TRN={kind,a};
+ modal(kind==='extra'?'Treino extra':'Treino',`<p class="hint" style="margin-top:0">${kind==='extra'?'Ficas depois do treino a trabalhar sozinho. Conta mais para a evolução e para o míster, mas cansa mais e há algum risco de lesão.':'Escolhe o exercício. Quanto melhor correr, mais evoluis e mais confiança ganhas do treinador.'}</p>
+ <div class="trgrid">${L.map(k=>`<button class="trc" data-trd="${k}"><b>${PDRL[k].n}</b><span>${PDRL[k].h}</span><i>Nível ${sk[k]}<em style="width:${Math.min(100,(P.skp&&P.skp[k]||0)*10)}%"></em></i></button>`).join('')}</div>`,
+  [{l:'Simular treino (rápido)',ghost:1,f(){choiceSlot(a,()=>ptrAuto(kind))}}],'wide trsheet')}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-trd]');if(!b||!TRN)return;e.stopPropagation();ptrPlay(b.dataset.trd)},true);
+/* --- minijogos --- */
+function ptrPlay(k){const box=document.querySelector('.trsheet .trgrid');if(!box)return;const wrap=box.parentElement;
+ wrap.innerHTML=`<div class="trhud"><b>${PDRL[k].n}</b><span id="trsc"></span></div><p class="hint" style="margin:4px 0 8px">${PDRL[k].h}</p><canvas id="trcv" class="trcv"></canvas><p class="hint" id="trmsg" style="margin:6px 0 0;min-height:1.4em"></p>`;
+ document.querySelectorAll('.trsheet .mbtns button').forEach(x=>x.hidden=true);
+ const cv=document.getElementById('trcv'),W=Math.min(640,wrap.clientWidth||600),H=Math.round(W*0.6),dpr=Math.min(2,window.devicePixelRatio||1);cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+'px';cv.style.height=H+'px';const c=cv.getContext('2d');c.scale(dpr,dpr);
+ const G=MINI[k](c,W,H,(s)=>ptrEnd(k,s));let last=performance.now(),run=true;const loop=t=>{if(!run||!document.body.contains(cv))return;const dt=Math.min(0.05,(t-last)/1000);last=t;G.step(dt);G.draw();requestAnimationFrame(loop)};requestAnimationFrame(loop);
+ const hit=ev=>{ev.preventDefault();const r=cv.getBoundingClientRect(),p=ev.touches?ev.touches[0]:ev;G.tap((p.clientX-r.left)/r.width*W,(p.clientY-r.top)/r.height*H)};cv.addEventListener('pointerdown',hit);
+ const key=ev=>{if(!document.body.contains(cv)){document.removeEventListener('keydown',key);return}if(ev.code==='Space'||ev.code==='Enter'){ev.preventDefault();G.tap(W/2,H/2,'key')}else if(ev.code==='ArrowLeft')G.tap(W*0.15,H/2,'key');else if(ev.code==='ArrowRight')G.tap(W*0.85,H/2,'key');else if(ev.code==='ArrowUp'||ev.code==='ArrowDown')G.tap(W/2,H/2,'key')};document.addEventListener('keydown',key);
+ TRN.stop=()=>{run=false;document.removeEventListener('keydown',key)}}
+function ptrEnd(k,s){const T=TRN;if(!T||T.done)return;T.done=1;setTimeout(()=>{T.stop&&T.stop();choiceSlot(T.a,()=>ptrResult(T.kind,k,cl(s,0,1),false));TRN=null},900)}
+const setSc=t=>{const e=document.getElementById('trsc');if(e)e.textContent=t};const setMsg=t=>{const e=document.getElementById('trmsg');if(e)e.textContent=t};
+function pitchBG(c,W,H){c.fillStyle='#2a7a45';c.fillRect(0,0,W,H);for(let i=0;i<8;i++){if(i%2){c.fillStyle='rgba(255,255,255,.04)';c.fillRect(i*W/8,0,W/8,H)}}}
+function man(c,x,y,col,sc,lean){sc=sc||1;c.save();c.translate(x,y);c.rotate(lean||0);c.fillStyle='rgba(0,0,0,.25)';c.beginPath();c.ellipse(0,14*sc,9*sc,3*sc,0,0,7);c.fill();c.fillStyle=col;c.fillRect(-6*sc,-6*sc,12*sc,14*sc);c.fillStyle='#e0b48f';c.beginPath();c.arc(0,-11*sc,5*sc,0,7);c.fill();c.restore()}
+function ballD(c,x,y,r){c.fillStyle='#fff';c.beginPath();c.arc(x,y,r,0,7);c.fill();c.strokeStyle='#222';c.lineWidth=1;c.stroke()}
+const TXT=(c,t,x,y,s,col)=>{c.fillStyle=col||'#fff';c.font=`700 ${s}px "Barlow Condensed",Arial,sans-serif`;c.textAlign='center';c.textBaseline='middle';c.fillText(t,x,y)};
+const MINI={
+ fin(c,W,H,done){const gx=W*0.2,gw=W*0.6,gy=H*0.18,gh=H*0.3,N=6;let shot=0,goals=0,ph='aim',t=0,ax=0,pw=0,kx=0.5,kv=0.25,anim=null,res='';setSc('Golos 0/'+N);setMsg('Toca para escolher o sítio.');
+  return{step(dt){t+=dt;kx+=kv*dt;if(kx>0.75||kx<0.25)kv*=-1;if(ph==='aim')ax=0.5+Math.sin(t*(2.2+shot*0.35))*0.62;if(ph==='pow')pw=Math.abs(Math.sin(t*2.6));if(anim){anim.u+=dt*2.2;if(anim.u>=1&&!anim.end){anim.end=1;
+    const inG=anim.x>0&&anim.x<1,over=anim.p>0.92,weak=anim.p<0.35,reach=0.16+(weak?0.12:0),save=Math.abs(anim.kx-anim.x)<reach;let g=inG&&!over&&!save;res=!inG?'Ao lado!':over?'Por cima!':save?'Defesa do guarda-redes!':'GOLO!';if(g)goals++;shot++;setSc('Golos '+goals+'/'+N);setMsg(res);
+    setTimeout(()=>{anim=null;res='';if(shot>=N){done(goals/N+(goals===N?0:0));}else{ph='aim';setMsg('Toca para escolher o sítio.')}},700)}}},
+   draw(){pitchBG(c,W,H);c.fillStyle='rgba(255,255,255,.12)';c.fillRect(gx,gy,gw,gh);c.strokeStyle='#fff';c.lineWidth=4;c.strokeRect(gx,gy,gw,gh);
+    c.strokeStyle='rgba(255,255,255,.25)';c.lineWidth=1;for(let i=1;i<10;i++){c.beginPath();c.moveTo(gx+i*gw/10,gy);c.lineTo(gx+i*gw/10,gy+gh);c.stroke()}
+    const kpx=anim?gx+gw*(anim.kx0+(anim.kx-anim.kx0)*Math.min(1,anim.u*1.4)):gx+gw*kx;man(c,kpx,gy+gh*0.72,'#e9f53b',1.6,anim?(anim.kx-anim.kx0)*Math.min(1,anim.u*1.4)*2.5:0);
+    if(ph==='aim'||ph==='pow'){const mx=gx+gw*ax;c.strokeStyle='#ffde59';c.lineWidth=3;c.beginPath();c.arc(mx,gy+gh*0.5,10,0,7);c.stroke();c.beginPath();c.moveTo(mx-15,gy+gh*0.5);c.lineTo(mx+15,gy+gh*0.5);c.moveTo(mx,gy+gh*0.5-15);c.lineTo(mx,gy+gh*0.5+15);c.stroke()}
+    if(ph==='pow'){const bx=W*0.88,by=H*0.35,bh=H*0.5;c.fillStyle='rgba(0,0,0,.35)';c.fillRect(bx,by,18,bh);c.fillStyle='rgba(60,200,90,.6)';c.fillRect(bx,by+bh*(1-0.85),18,bh*0.5);c.fillStyle='#fff';c.fillRect(bx-4,by+bh*(1-pw)-2,26,4);TXT(c,'Força',bx+9,by-12,14)}
+    const sx=W/2,sy=H*0.88;if(anim){const u=Math.min(1,anim.u),bx2=sx+((gx+gw*anim.x)-sx)*u,by2=sy+((gy+gh*(anim.p>0.92?-0.25:0.55-anim.p*0.4))-sy)*u;ballD(c,bx2,by2,9-4*u)}else ballD(c,sx,sy,9);man(c,sx-14,sy+4,COL.us||'#d94a37',1.4);
+    if(res)TXT(c,res,W/2,H*0.08,26,res==='GOLO!'?'#ffde59':'#fff')},
+   tap(){if(anim)return;if(ph==='aim'){ph='pow';setMsg('Agora a força: toca na zona verde.');return}if(ph==='pow'){ph='shot';anim={x:ax,p:pw,u:0,kx0:kx,kx:cl(kx+(Math.random()<0.55?(ax-kx):(Math.random()-0.5)*0.5)*0.9,0.05,0.95)}}}}},
+ pas(c,W,H,done){const pts=[[0.18,0.3],[0.5,0.2],[0.82,0.3],[0.25,0.68],[0.75,0.68],[0.5,0.48]].map(([x,y])=>({x:x*W,y:y*H}));const N=10;let n=0,sc=0,cur=-1,tl=0,tw=1.5,wait=0.6,fb='';setSc('Passes 0/'+N);setMsg('Prepara-te…');
+  const nxt=()=>{let k;do k=Math.floor(Math.random()*pts.length);while(k===cur);cur=k;tw=Math.max(0.6,1.5-n*0.09);tl=tw};
+  return{step(dt){if(wait>0){wait-=dt;if(wait<=0){if(n>=N){done(sc/N);wait=1e9;return}nxt();setMsg('Toca no colega assinalado!')}return}tl-=dt;if(tl<=0){fb='Passe intercetado!';n++;setSc('Passes '+Math.round(sc)+'/'+N);cur=-1;wait=0.5}},
+   draw(){pitchBG(c,W,H);c.strokeStyle='rgba(255,255,255,.5)';c.lineWidth=2;c.strokeRect(6,6,W-12,H-12);man(c,W/2,H*0.9,'#ffde59',1.3);ballD(c,W/2+10,H*0.9+8,6);
+    pts.forEach((p,i)=>{man(c,p.x,p.y,COL.us||'#d94a37',1.2);if(i===cur){const f=tl/tw;c.strokeStyle='#ffde59';c.lineWidth=3;c.beginPath();c.arc(p.x,p.y,14+26*f,0,7);c.stroke()}});
+    [[0.35,0.35],[0.62,0.6],[0.4,0.58]].forEach(([x,y])=>man(c,x*W,y*H,'#1b1b1b',1.1));if(fb)TXT(c,fb,W/2,H*0.08,22)},
+   tap(x,y,kb){if(cur<0||wait>0)return;const p=pts[cur],d=Math.hypot(x-p.x,y-p.y);if(d<Math.max(40,W*0.07)||kb){const q=0.55+0.45*(tl/tw);sc+=q;fb=q>0.85?'Passe perfeito!':'Bom passe';}else fb='Passe errado!';n++;setSc('Passes '+Math.round(sc)+'/'+N);cur=-1;wait=0.35}}},
+ tec(c,W,H,done){const N=8,sp0=W*0.32;let bx=0,cone=0,sc=0,sp=sp0,fb='',hitC=false,fin=false;const cx=i=>W*0.18+i*W*0.1,zone=W*0.05;setSc('Cones 0/'+N);setMsg('Toca quando a bola estiver na zona verde.');
+  return{step(dt){if(fin)return;bx+=sp*dt;if(cone<N&&bx>cx(cone)+6){if(!hitC){fb='Bateste no cone!'}cone++;hitC=false;sp=sp0*(1+cone*0.12);setSc('Cones '+sc+'/'+N)}if(cone>=N&&bx>W){fin=true;done(sc/N)}},
+   draw(){pitchBG(c,W,H);const y=H*0.55;c.strokeStyle='rgba(255,255,255,.3)';c.setLineDash([6,6]);c.beginPath();c.moveTo(0,y);c.lineTo(W,y);c.stroke();c.setLineDash([]);
+    for(let i=0;i<N;i++){const x=cx(i);if(i>=cone){c.fillStyle='rgba(80,220,110,.35)';c.fillRect(x-zone-14,y-26,zone,52)}c.fillStyle=i<cone?'#7a5':'#ff7a1a';c.beginPath();c.moveTo(x,y-16);c.lineTo(x-8,y+10);c.lineTo(x+8,y+10);c.fill()}
+    const wob=hitC?Math.sin(bx/14)*14:0;man(c,bx-16,y-6+wob,COL.us||'#d94a37',1.2);ballD(c,bx,y+10+wob,6);if(fb)TXT(c,fb,W/2,H*0.12,22)},
+   tap(){if(fin||cone>=N||hitC)return;const x=cx(cone),z0=x-zone-14,z1=x-14;if(bx>=z0&&bx<=z1){sc++;hitC=true;fb=bx>z0+zone*0.3?'Boa finta!':'Finta à justa';setSc('Cones '+sc+'/'+N)}else fb=bx<z0?'Cedo demais!':'Tarde demais!'}}},
+ fis(c,W,H,done){let rep=0,t=0,taps=0,tot=0,ph='ready',wait=1.2,pos=0;const D=5;setSc('Sprint 1/2');setMsg('Prepara-te…');
+  return{step(dt){if(ph==='ready'){wait-=dt;if(wait<=0){ph='go';t=0;taps=0;pos=0;setMsg('TOCA! TOCA! TOCA!')}return}if(ph==='go'){t+=dt;pos=Math.min(1,pos+(taps/Math.max(t,0.3))*dt*0.028);if(t>=D){tot+=taps/D;rep++;if(rep>=2){ph='end';done(cl((tot/2)/7,0,1));setMsg(`Média: ${(tot/2).toFixed(1)} toques por segundo.`)}else{ph='ready';wait=1.5;setSc('Sprint 2/2');setMsg('Recupera… segundo sprint!')}}}},
+   draw(){pitchBG(c,W,H);const y=H*0.5;c.strokeStyle='#fff';c.lineWidth=3;c.beginPath();c.moveTo(W*0.08,y+24);c.lineTo(W*0.92,y+24);c.stroke();c.fillStyle='#fff';c.fillRect(W*0.92,y-30,4,56);man(c,W*0.08+pos*W*0.84,y,COL.us||'#d94a37',1.4,Math.sin(t*20)*0.08);
+    if(ph==='go'){TXT(c,(D-t).toFixed(1)+' s',W/2,H*0.15,30);TXT(c,(taps/Math.max(t,0.2)).toFixed(1)+' toques/s',W/2,H*0.85,20)}else if(ph==='ready')TXT(c,'Preparar…',W/2,H*0.15,28)},
+   tap(){if(ph==='go')taps++}}},
+ def(c,W,H,done){const N=8;let n=0,sc=0,ph='wait',t=0,lean=0,dir=0,fake=false,win=0,fb='';const nx=()=>{ph='wait';t=0.6+Math.random()*0.9;dir=Math.random()<0.5?-1:1;fake=Math.random()<0.35;lean=0};setSc('Duelos 0/'+N);setMsg('Toca do lado para onde o avançado vai.');nx();
+  return{step(dt){if(ph==='done')return;if(ph==='wait'){t-=dt;if(fake&&t<0.35&&t>0)lean=-dir*0.35;if(t<=0){ph='go';win=Math.max(0.45,0.85-n*0.05);lean=dir*0.5}}else if(ph==='go'){win-=dt;if(win<=0){fb='Passou por ti!';n++;setSc('Duelos '+sc+'/'+N);ph='res';t=0.6}}else if(ph==='res'){t-=dt;if(t<=0){if(n>=N){ph='done';done(sc/N)}else nx()}}},
+   draw(){pitchBG(c,W,H);const ax=W/2+(ph==='res'?dir*W*0.15:0)+lean*30,ay=H*0.35;man(c,ax,ay,'#1b1b1b',1.6,lean);ballD(c,ax+lean*18,ay+30,7);man(c,W/2,H*0.75,COL.us||'#d94a37',1.6);
+    c.fillStyle='rgba(255,255,255,.08)';c.fillRect(0,0,W/2,H);TXT(c,'◀',W*0.1,H*0.5,40,'rgba(255,255,255,.4)');TXT(c,'▶',W*0.9,H*0.5,40,'rgba(255,255,255,.4)');if(fb)TXT(c,fb,W/2,H*0.08,22)},
+   tap(x){if(ph==='wait'){fb='Mordeste a finta!';n++;setSc('Duelos '+sc+'/'+N);ph='res';t=0.6;return}if(ph!=='go')return;const side=x<W/2?-1:1;if(side===dir){sc++;fb=win>0.4?'Desarme perfeito!':'Bem fechado!'}else fb='Foste para o lado errado!';n++;setSc('Duelos '+sc+'/'+N);ph='res';t=0.6}}},
+ gr(c,W,H,done){const N=8;let n=0,sc=0,ph='wait',t=0,dir=0,u=0,fb='',dive=0;const nx=()=>{ph='wait';t=0.7+Math.random()*0.8;dir=[-1,0,1][Math.floor(Math.random()*3)];u=0;dive=null};setSc('Defesas 0/'+N);setMsg('Toca à esquerda, ao centro ou à direita.');nx();
+  return{step(dt){if(ph==='done')return;if(ph==='wait'){t-=dt;if(t<=0)ph='shot'}else if(ph==='shot'){u+=dt*(1.2+n*0.12);if(u>=1){const ok=dive===dir&&dive!==null;if(ok){sc++;fb='Defesa!'}else fb='Golo…';n++;setSc('Defesas '+sc+'/'+N);ph='res';t=0.7}}else if(ph==='res'){t-=dt;if(t<=0){if(n>=N){ph='done';done(sc/N)}else nx()}}},
+   draw(){pitchBG(c,W,H);const gx=W*0.15,gw=W*0.7,gy=H*0.62,gh=H*0.3;c.strokeStyle='#fff';c.lineWidth=4;c.strokeRect(gx,gy,gw,gh);man(c,W/2,H*0.18,'#1b1b1b',1.3,ph==='wait'&&t<0.3?dir*0.15:0);
+    const kx=W/2+(dive||0)*gw*0.33*(ph==='wait'?0:Math.min(1,u*2));man(c,kx,gy+gh*0.55,COL.usGK||'#2fd36b',1.6,(dive||0)*0.6);const tx=W/2+dir*gw*0.38,ty=gy+gh*0.4;if(ph!=='wait'){const uu=Math.min(1,u);ballD(c,W/2+(tx-W/2)*uu,H*0.24+(ty-H*0.24)*uu,6+4*uu)}else ballD(c,W/2,H*0.24,6);if(fb)TXT(c,fb,W/2,H*0.08,22)},
+   tap(x){if(ph!=='shot'&&ph!=='wait')return;if(dive!==null)return;dive=x<W*0.38?-1:x>W*0.62?1:0}}}
+};
+/* --- ligar às ações --- */
+(function(){const a=ACTS.find(x=>x.id==='ptreino'),b=ACTS.find(x=>x.id==='pextra');if(a){a.h='Escolhe o exercício e treina. Evolução e confiança do míster';a.choice=()=>ptrOpen('normal')}
+ if(b){b.n='Treino extra';b.h='Ficas a treinar mais. Evolução e confiança maiores, risco de lesão';b.req=()=>S.pl.inj?'Estás lesionado.':(S.flags&&S.flags.pex===S.day?'Já fizeste treino extra hoje.':null);b.choice=()=>{S.flags=S.flags||{};S.flags.pex=S.day;ptrOpen('extra')}}
+ if(a){const r0=a.req;a.req=()=>r0&&r0();const c0=a.choice;a.choice=()=>{S.flags=S.flags||{};S.flags.ptr=S.day;c0()}}})();
+{const _WP=weeklyPl;weeklyPl=function(){const P=S.pl;if(P)plSk();const r=_WP.apply(this,arguments);try{if(P&&P.sk){const top=Object.values(P.sk).sort((a,b)=>b-a).slice(0,3),avg=top.reduce((s,v)=>s+v,0)/3;if(avg>P.ovr+3&&P.ovr<P.pot&&R()<0.12)P.ovr++}}catch(e){}return r}}
+
+/* ============ ATRIBUTOS DOS JOGADORES (v1.9) ============ */
+const ATG=[['Técnicos',[['fin','Finalização'],['fnt','Finta'],['tec','Técnica'],['pas','Passe'],['cru','Cruzamento'],['cab','Cabeceamento'],['lng','Remate de longe'],['liv','Livres'],['pen','Penáltis'],['des','Desarme'],['mar','Marcação']]],
+ ['Mentais',[['vis','Visão de jogo'],['dec','Decisões'],['pos','Posicionamento'],['cmp','Compostura'],['lid','Liderança'],['agr','Agressividade'],['teq','Trabalho de equipa']]],
+ ['Físicos',[['vel','Velocidade'],['ace','Aceleração'],['res','Resistência'],['for','Força'],['agi','Agilidade'],['imp','Impulsão']]],
+ ['Guarda-redes',[['ref','Reflexos'],['mao','Mãos'],['sai','Saídas'],['jpe','Jogo de pés'],['ucu','Um contra um']]]];
+const ATK=ATG.flatMap(g=>g[1].map(a=>a[0])),ATN=Object.fromEntries(ATG.flatMap(g=>g[1]));
+const GRK=['ref','mao','sai','jpe','ucu'];
+const APROF={AV:{fin:3,fnt:2,tec:1,pas:-1,cru:-1,cab:1,lng:1,liv:-1,pen:1,des:-6,mar:-7,pos:1,cmp:1,lid:-1,teq:-1,vel:2,ace:2,for:1,agi:1,imp:1},
+ MED:{fin:-1,fnt:1,tec:2,pas:3,cru:1,cab:-1,lng:1,liv:1,des:0,mar:-1,vis:3,dec:2,pos:1,cmp:1,teq:2,ace:1,res:2,agi:1,imp:-1},
+ DEF:{fin:-5,fnt:-3,tec:-2,cru:-1,cab:2,lng:-3,liv:-2,pen:-2,des:3,mar:3,vis:-1,dec:1,pos:3,cmp:1,lid:1,agr:2,teq:1,res:1,for:2,agi:-1,imp:2},
+ GR:{fin:-9,fnt:-7,tec:-5,pas:-3,cru:-7,cab:-6,lng:-8,liv:-7,pen:-6,des:-7,mar:-8,vis:-2,dec:1,pos:2,cmp:1,agr:-1,vel:-3,ace:-2,agi:2,imp:1,ref:3,mao:2,sai:1,jpe:0,ucu:2}};
+const ARCH={AV:[['Ponta de lança',{cab:2,for:2,vel:-1,fin:1}],['Avançado rápido',{vel:3,ace:3,fnt:1,cab:-2}],['Finalizador',{fin:2,cmp:2,pos:1}],['Segundo avançado',{pas:2,vis:2,tec:1,cab:-1}]],
+ MED:[['Construtor',{pas:2,vis:2,dec:1,vel:-1}],['Médio box-to-box',{res:3,des:2,agr:1,vis:-1}],['Médio criativo',{fnt:2,tec:2,lng:1,des:-2}],['Extremo',{vel:2,cru:3,fnt:2,des:-2,vis:-1}],['Trinco',{des:3,mar:2,pos:2,fnt:-2,fin:-2}]],
+ DEF:[['Central',{cab:2,for:2,vel:-1,cru:-2}],['Lateral ofensivo',{vel:2,cru:3,res:2,cab:-2,for:-1}],['Central com saída de bola',{pas:2,cmp:2,vis:1,agr:-1}],['Lateral defensivo',{mar:2,des:1,res:1,cru:-1}]],
+ GR:[['Guarda-redes de reflexos',{ref:2,agi:1,sai:-1}],['Guarda-redes moderno',{jpe:3,pas:2,sai:1}],['Guarda-redes de área',{sai:2,mao:2,imp:1}]]};
+function seedR(str){let h=hashS(str)||1;return()=>{h^=h<<13;h>>>=0;h^=h>>17;h^=h<<5;h>>>=0;return(h%100000)/100000}}
+function attrs(p){if(!p)return null;const pos=p.pos||'MED',rnd=seedR((p.n||'x')+pos),arch=ARCH[pos]?ARCH[pos][Math.floor(rnd()*ARCH[pos].length)]:null,b=((p.ovr||60)-28)/3.5,age=p.age||25,A={};
+ ATK.forEach(k=>{let v=b+((APROF[pos]||{})[k]||0)+((arch&&arch[1][k])||0)+(rnd()-0.5)*3.6;
+  if(['vel','ace','agi','res'].includes(k))v-=Math.max(0,age-29)*0.45;if(['dec','cmp','pos','lid','vis'].includes(k))v+=Math.min(2,Math.max(0,age-23)*0.15)-Math.max(0,20-age)*0.35;
+  if(pos!=='GR'&&GRK.includes(k))v=Math.min(v,3+rnd()*2);if(k==='lid'&&p.tr==='lider')v+=3;if(k==='agr'&&p.tr==='temp')v+=3;if(k==='teq'&&p.tr==='prof')v+=2;
+  v+=(p.atB&&p.atB[k])||0;A[k]=cl(Math.round(v),1,20)});A._arch=arch?arch[0]:'';return A}
+const myP=()=>S.pl?{n:S.name,pos:S.pl.pos,ovr:S.pl.ovr,age:S.age,atB:S.pl.atB,tr:S.pl.trait}:null;
+function scoutW(){let q=45;try{q=sq('olh')}catch(e){}return q>=80?1:q>=60?2:3}
+function knownP(p){if(!S)return true;if((S.squad||[]).includes(p)||(S.yth||[]).includes(p))return true;const o=S.obs&&S.obs[p.n];return o!=null&&o<=S.day}
+/* --- efeitos nos jogos --- */
+function wPickX(list,f){let t=0;const w=list.map(x=>{const v=Math.max(0.05,f(x));t+=v;return v});let r=R()*t;for(let i=0;i<list.length;i++){r-=w[i];if(r<=0)return list[i]}return list[list.length-1]}
+function scorer(xi){xi=xi.filter(x=>!M||!M.off.has(x.p.id));if(!xi.length)return null;const w={AV:6,MED:2.4,DEF:0.8,GR:0.03};return wPickX(xi,x=>w[x.p.pos]*(0.25+Math.pow(attrs(x.p).fin/20,1.6)*1.5)).p}
+function bestBy(k){const xi=M.xi.filter(x=>!M.off.has(x.p.id)&&x.p.pos!=='GR');if(!xi.length)return null;return xi.slice().sort((a,b)=>attrs(b.p)[k]-attrs(a.p)[k])[0].p}
+{const _GM=genMinute;genMinute=function(){const out=_GM.apply(this,arguments);try{out.forEach(e=>{if(!e.us||!M.xi)return;
+  if(e.t==='g'&&e.sp){const c=M.xi.filter(x=>!M.off.has(x.p.id)&&(x.p.pos==='DEF'||x.p.pos==='AV'));if(c.length)e.s=wPickX(c,x=>attrs(x.p).cab**1.5).p}
+  else if(e.t==='g'&&e.how==='cross'){const c=M.xi.filter(x=>!M.off.has(x.p.id)&&x.p.pos!=='GR');if(c.length)e.s=wPickX(c,x=>({AV:4,MED:1.5,DEF:1}[x.p.pos]||1)*attrs(x.p).cab**1.4).p}
+  else if(e.t==='g'&&e.how==='long'){const c=M.xi.filter(x=>!M.off.has(x.p.id)&&x.p.pos!=='GR');if(c.length)e.s=wPickX(c,x=>attrs(x.p).lng**1.6).p}
+  else if(e.t==='g'&&e.how==='pen'){const b=bestBy('pen');if(b)e.s=b}else if(e.t==='g'&&e.how==='fk'){const b=bestBy('liv');if(b)e.s=b}
+  else if(e.t==='c'&&e.k===6){const b=bestBy('pen');if(b){e.s=b;const pa=attrs(b).pen;if(pa>=15&&R()<0.35){e.t='g';e.how='pen';delete e.k;delete e.pk}}}
+  if(M.pm&&e.s&&e.s.me===undefined&&e.s===M.me){}})}catch(err){}return out}}
+{const _RD2=resolveDec;resolveDec=function(k,auto){try{if(M&&M.dec&&S.pl){const o=M.dec.o[k],A=attrs(myP()),MAP={shot:['fin','cmp'],drib:['fnt','agi'],pass:['pas','vis'],through:['pas','vis'],head:['cab','imp'],volley:['tec','lng'],fk:['liv','tec'],tackle:['des','agr'],jockey:['pos','mar'],foul:['agr','dec'],clear:['cab','for'],hold:['for','mar'],safe:['dec','cmp'],save:['ref','agi'],catch:['mao','pos'],out:['sai','imp'],pass2:['jpe','pas']},ks=MAP[o[1]];
+  if(ks){const v=(A[ks[0]]+A[ks[1]])/2;o[2]=(o[2]||0)+cl((v-12)/40,-0.18,0.18)}}}catch(e){}return _RD2.apply(this,arguments)}}
+/* --- treino do jogador sobe atributos --- */
+const SK2AT={fin:['fin','cmp','lng'],pas:['pas','vis','cru'],tec:['tec','fnt','agi'],fis:['vel','ace','res','for'],def:['des','mar','pos'],gr:['ref','mao','ucu','sai']};
+{const _PR=ptrResult;ptrResult=function(kind,k,s,auto){const P=S.pl;P.atB=P.atB||{};const g=(kind==='extra'?0.18:0.1)*(0.4+s);(SK2AT[k]||[]).forEach(a=>{P.atB[a]=Math.min(6,(P.atB[a]||0)+g*(0.6+R()*0.8))});return _PR.apply(this,arguments)}}
+/* --- interface --- */
+function atCol(v){return v>=16?'a5':v>=13?'a4':v>=10?'a3':v>=6?'a2':'a1'}
+function radarSVG(A,pos){const ax=pos==='GR'?[['Reflexos',(A.ref+A.agi)/2],['Mãos',A.mao],['Saídas',(A.sai+A.imp)/2],['Um contra um',A.ucu],['Jogo de pés',(A.jpe+A.pas)/2],['Mental',(A.pos+A.cmp+A.dec)/3]]
+  :[['Ataque',(A.fin*2+A.lng+A.cmp)/4],['Técnica',(A.tec+A.fnt+A.pas)/3],['Criatividade',(A.vis+A.pas+A.dec)/3],['Defesa',(A.des+A.mar+A.pos)/3],['Físico',(A.vel+A.ace+A.res+A.for)/4],['Jogo aéreo',(A.cab+A.imp)/2]];
+ const R0=66,cx=110,cy=100,pt=(i,v)=>{const a=-Math.PI/2+i*Math.PI*2/ax.length;return[cx+Math.cos(a)*R0*v/20,cy+Math.sin(a)*R0*v/20]};
+ const grid=[5,10,15,20].map(l=>`<polygon points="${ax.map((_,i)=>pt(i,l).join(',')).join(' ')}" class="rg"/>`).join(''),lines=ax.map((_,i)=>`<line x1="${cx}" y1="${cy}" x2="${pt(i,20)[0]}" y2="${pt(i,20)[1]}" class="rg"/>`).join('');
+ const poly=`<polygon points="${ax.map((a,i)=>pt(i,a[1]).join(',')).join(' ')}" class="rp"/>`,lab=ax.map((a,i)=>{const[x,y]=pt(i,25.5);return`<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" class="rl">${a[0]}</text>`}).join('');
+ return`<svg viewBox="0 0 220 200" class="radar" role="img" aria-label="Perfil do jogador">${grid}${lines}${poly}${lab}</svg>`}
+function attrHTML(p,known){const A=attrs(p),w=known?0:scoutW(),pos=p.pos;const groups=ATG.filter(g=>pos==='GR'?true:g[0]!=='Guarda-redes');
+ const val=v=>w?`${cl(v-w,1,20)}–${cl(v+w,1,20)}`:v;const show=g=>pos==='GR'&&g[0]==='Técnicos'?g[1].filter(a=>['pas','tec','cab','pen'].includes(a[0])):g[1];
+ const top=ATK.filter(k=>pos==='GR'?(GRK.includes(k)||['vis','dec','pos','cmp','lid','vel','ace','agi','imp','for','pas','tec'].includes(k)):!GRK.includes(k)).sort((a,b)=>A[b]-A[a]),best=top.slice(0,3).map(k=>ATN[k]).join(', '),worst=top.filter(k=>!(pos!=='GR'&&GRK.includes(k))).slice(-3).reverse().map(k=>ATN[k]).join(', ');
+ return`<div class="atw"><div class="athead"><div>${radarSVG(A,pos)}</div><div class="atsum"><b>${esc(A._arch||pos)}</b><span>Pontos fortes: ${best}</span><span>Pontos fracos: ${worst}</span>${w?`<span class="hint">Valores estimados pelos olheiros (±${w}). Manda observar para saberes ao certo.</span>`:''}</div></div>
+ <div class="atgrid">${groups.map(g=>`<div class="atg"><h4>${g[0]}</h4>${show(g).map(([k,n])=>`<div class="atr"><span>${n}</span><b class="${atCol(A[k])}">${val(A[k])}</b></div>`).join('')}</div>`).join('')}</div></div>`}
+function attrModal(p,back,opts){opts=opts||{};const known=opts.known!=null?opts.known:knownP(p);const btns=[];
+ if(!known&&S&&!(S.obs&&S.obs[p.n]))btns.push({l:'Mandar observar',f(){S.obs=S.obs||{};S.obs[p.n]=S.day+ri(2,5);toast('Os olheiros vão ver '+p.n+' jogar. O relatório chega dentro de poucos dias.');save();if(back)setTimeout(back,50)}});
+ else if(!known&&S.obs&&S.obs[p.n]>S.day)btns.push({l:'Relatório a caminho…',dis:true});
+ btns.push({l:back?'Voltar':'Fechar',ghost:true,f(){if(back)setTimeout(back,30)}});
+ modal(p.n,`<p class="hint" style="margin-top:0">${p.pos} · ${p.age} anos · geral ${p.ovr}${opts.club?' · '+esc(opts.club):''}</p>${attrHTML(p,known)}`,btns,'wide atsheet')}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-attv],[data-atty],[data-attme]');if(!b||!S)return;e.stopPropagation();e.preventDefault();const d=b.dataset;
+ if(d.attv){const[lg,i,n]=d.attv.split('|');const p=oSquad(lg,+i).find(x=>x.n===n);if(p)attrModal(p,()=>squadModal(lg,+i),{club:S.ratings[lg][+i].n,known:(isPro()&&S.pl.lg===lg&&S.pl.club===+i)?true:undefined})}
+ else if(d.atty){const p=(S.yth||[]).find(x=>x.id===+d.atty);if(p)attrModal(p,null,{known:true})}
+ else if(d.attme){attrModal(myP(),null,{known:true})}},true);
+{const _PM2=playerModal;playerModal=function(id){_PM2(id);try{const p=S.squad.find(x=>x.id===id);const body=document.querySelector('#modal .mbody');if(p&&body){const d=document.createElement('div');d.innerHTML=attrHTML(p,true);body.appendChild(d)}const sh=document.querySelector('#modal .sheet');if(sh)sh.classList.add('wide')}catch(e){}}}
+{const _SQM=squadModal;squadModal=function(lg,i){_SQM(lg,i);try{const own=S.job&&!S.job.nt&&S.job.lg===lg&&S.job.club===i;const rows=document.querySelectorAll('#modal tbody tr'),L=own?[...S.squad].sort((a,b)=>PORD[a.pos]-PORD[b.pos]||b.ovr-a.ovr):oSquad(lg,i);
+  rows.forEach((tr,k)=>{const p=L[k];if(!p)return;const td=tr.children[1];if(!td)return;const bt=document.createElement('button');bt.className='atinfo';bt.textContent='Atributos';if(own){bt.dataset.p=p.id}else bt.dataset.attv=lg+'|'+i+'|'+p.n;td.appendChild(bt)})}catch(e){}}}
+{const _AH2=academyHTML;academyHTML=function(){let h=_AH2();return h.replace(/<button class="btn sm ghost" data-disp="(\d+)">Dispensar<\/button>/g,'<button class="btn sm alt" data-atty="$1">Atributos</button> <button class="btn sm ghost" data-disp="$1">Dispensar</button>')}}
+{const _VC=vCarreira;vCarreira=function(){let h=_VC();try{if(isPro()||(S.pl&&S.pl.stage)){const A=attrs(myP());h+=`<h2 class="sec">Os teus atributos<span>${esc(A._arch)}</span></h2><div class="card atcard">${attrHTML(myP(),true)}<p class="hint">Os treinos sobem os atributos ligados a cada exercício. Com a idade, a velocidade e a aceleração começam a descer, e as decisões e a compostura sobem.</p></div>`}}catch(e){}return h}}
 
 /* ============ ARRANQUE ============ */
 function start(data){migrateOld();S=(data&&data.S)||null;if(S)migrate();SCREEN='menu';render()}
