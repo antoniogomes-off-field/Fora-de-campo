@@ -696,7 +696,7 @@ function value(p){const af=p.age<23?1.4:p.age<28?1.1:p.age<31?0.8:0.45;return 10
 const priceOf=p=>Math.max(5000,Math.round(value(p)*1.15/1000)*1000);
 function genMarket(){if(S.job&&S.job.nt)return [];const b=S.job?S.ratings[S.job.lg][S.job.club].r:62;if(S.real&&S.job){const own=new Set(S.squad.map(p=>p.n)),tk=new Set(S.taken||[]),pool=[];for(const k of TOP)S.ratings[k].forEach(t=>{if(t.n===clubName())return;(REALDB[t.n]||[]).forEach(e=>{if(!own.has(e.n)&&!tk.has(e.n)&&e.ovr>=b-6&&e.ovr<=b+5&&e.age<35)pool.push([e,t.n])})});if(pool.length>=8){const dy=Math.max(0,curSeasonYear()-2026);return shuffle(pool).slice(0,16).map(([e,c])=>{const p=realPlayer(e,dy);if(!p)return null;p.price=priceOf(p);p.from=c;return p}).filter(Boolean).sort((a,b)=>b.ovr-a.ovr)}}const L=TOP,out=[];for(let i=0;i<16;i++){const p=genPlayer(pick(['GR','DEF','DEF','MED','MED','AV','AV']),b+ri(-6,6),pick(L));p.price=priceOf(p);out.push(p)}return out.sort((a,b)=>b.ovr-a.ovr)}
 const salaryFor=r=>Math.round(3000*Math.pow(1.18,r-60)/100)*100;
-const budgetFor=r=>Math.round(200000*Math.pow(1.25,r-60)/1000)*1000;
+const budgetFor=r=>budgetNew(r);
 function windowOpen(){const m=dt(S.day).getUTCMonth();return m===6||m===7||m===0}
 
 function slotsOf(form){const[d,m,a]=FORMS[form];return['GR',...Array(d).fill('DEF'),...Array(m).fill('MED'),...Array(a).fill('AV')]}
@@ -2045,7 +2045,7 @@ function namePool(lg,club){if(lg==='sa')return BRA.has(club)?NAMES.pt:NAMES.es;i
 /* ============ OBSERVAR PLANTÉIS · PROPOSTAS · EMPRÉSTIMOS ============ */
 function hstr(s){let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0}
 function srng(seed){let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
-const wageOf=o=>Math.max(800,Math.round(1500*Math.pow(1.16,o.ovr-55)/100)*100);
+const wageOf=o=>wageNew(o);
 function agedOvr(e,dy){let ovr=e.ovr;for(let i=0;i<dy;i++){const a=e.age+i;ovr+=a<=21?3:a<=24?1:a>=33?-3:a>=30?-1:0}return cl(ovr,40,94)}
 const OSQ={};let EXPL=null;const PORD={GR:0,DEF:1,MED:2,AV:3};
 function oSquad(lg,i){const t=S.ratings[lg][i],y=curSeasonYear(),key=t.n+'|'+y;const tk=S.taken||[];if(OSQ[key])return oFin(t.n,OSQ[key]);
@@ -2232,7 +2232,7 @@ function slotsModal(kind){const L=[1,2,3,4,5].map(i=>({i,s:slotSum(i)}));
   L.map(({i,s})=>({l:`Espaço ${i}${S&&S.slot===i?' (atual)':''} · ${s?s.t+' — '+s.d:'vazio'}`,dis:kind==='load'&&!s,f(){if(kind==='save'){if(M){toast('Acaba o jogo antes de gravar.');resumeM();return}S.slot=i;save();toast('Jogo gravado no espaço '+i+'.');resumeM()}else{if(M){cancelAnimationFrame(RAF);M=null;closeModal()}loadSlot(i)}}})).concat([{l:'Voltar',ghost:true,f(){pauseMenu()}}]))}
 function optionsModal(){if(M&&!M.done)M.paused=true;const o=(n,v,l)=>`<button data-opt="${n}|${v}" class="${String(PREF[n])===String(v)?'on':''}">${l}</button>`;
  pmodal('Opções',`<div class="stack"><span class="lab2">Gráficos dos jogos e das cenas</span><div class="chipset2">${G3.ok()?`<button data-opt="g3|1" class="${G3.pref()?'on':''}">3D</button><button data-opt="g3|0" class="${G3.pref()?'':'on'}">2D</button>`:'<span class="hint">O 3D não está disponível neste aparelho.</span>'}</div>
- <p class="hint" style="margin:0 0 6px">Fora de Campo · versão 2.2</p>
+ <p class="hint" style="margin:0 0 6px">Fora de Campo · versão 2.3</p>
  <span class="lab2">Música</span><div class="chipset2">${o('vmus',0,'Desligada')}${o('vmus',0.35,'Baixa')}${o('vmus',0.6,'Média')}${o('vmus',0.85,'Alta')}</div>
  <span class="lab2">Efeitos sonoros</span><div class="chipset2">${o('vsfx',0,'Desligados')}${o('vsfx',0.45,'Baixos')}${o('vsfx',0.85,'Normais')}${o('vsfx',1,'Altos')}</div>
  <span class="lab2">Ambiente do estádio</span><div class="chipset2">${o('vamb',0,'Desligado')}${o('vamb',0.4,'Baixo')}${o('vamb',0.7,'Normal')}${o('vamb',1,'Alto')}</div>
@@ -4273,7 +4273,7 @@ RIV.push(['Al Hilal','Al Nassr','Al Shabab'],['Al Ahli','Al Ittihad'],['Al Ettif
 {const _RPL=realPlayer;realPlayer=function(e){const p=_RPL.apply(this,arguments);if(p&&e.nat)p.nat=e.nat;return p}}
 {const _FSQ=fillSquad;fillSquad=function(out,r,lg){const o=_FSQ.apply(this,arguments);if(lg==='ksa'||lg==='ksa2')o.forEach(p=>{if(!p.nat)p.nat='SA'});return o}}
 function natOf(p){if(p.nat)return p.nat;const f=String(p.n||'').split(' ')[0];return NAMES.ar.f.includes(f)||/^(Al|Abdul)/.test(String(p.n).split(' ')[1]||'')?'SA':'X'}
-const FXMAX=10,DPLIM=45000,DPMAX=3;
+const FXMAX=10,DPLIM=60000,DPMAX=3;
 const inKsa=()=>S.job&&!S.job.nt&&S.job.lg==='ksa',inMls=()=>S.job&&!S.job.nt&&S.job.lg==='mls';
 const fxCount=()=>S.squad.filter(p=>natOf(p)!=='SA').length;
 const isDP=p=>(p.wage||wageOf(p))>DPLIM,dpCount=()=>S.squad.filter(isDP).length;
@@ -4381,7 +4381,7 @@ function playerTalk(D){if(!D.promise)return modal('Conversa com '+D.p.n,`<p>${es
  S.negBan=S.negBan||{};S.negBan[D.p.n]=S.day+60;news(`${D.p.n} recusa mudar-se para o ${clubName()}.`,'jornal');
  modal(D.p.n+' recusa',`<p>Mesmo com o acordo entre clubes, ${esc(D.p.n)} não quer vir.</p>`+list(neg,'Porquê:'),[{l:'OK'}])}
 /* 3) o empresário do jogador */
-function agentNeg(D){const A=D.A||(D.A=(()=>{const a=agOf(D.p),my=S.ratings[S.job.lg][S.job.club],sc=srcOf(D),fromR=sc?S.ratings[sc.lg][sc.i].r:my.r;let w=wageOf(D.p)*(D.loan?1:1.12+Math.max(0,fromR-my.r)*0.03)*a.g*(D.wBoost?1.2:1)*(S.job.lg==='ksa'?1.35:1);w=Math.round(w/100)*100;
+function agentNeg(D){const A=D.A||(D.A=(()=>{const a=agOf(D.p),my=S.ratings[S.job.lg][S.job.club],sc=srcOf(D),fromR=sc?S.ratings[sc.lg][sc.i].r:my.r;let w=wageOf(D.p)*(D.loan?1:1.12+Math.max(0,fromR-my.r)*0.03)*a.g*(D.wBoost?1.2:1);w=Math.round(w/100)*100;
   const yrs=D.loan?0:D.p.age>=32?1:D.p.age>=30?2:ri(3,5);return{...a,w,yrs,luv:D.loan?0:Math.round(w*ri(2,5)/1000)*1000,com:D.loan?Math.round(w*0.5/100)*100:Math.max(Math.round(w*2/1000)*1000,Math.round((D.fee||0)*0.06/1000)*1000),pat:a.pat+1,myw:w,myl:0,cl:'normal'}})());
  const cost=(D.up||0)+A.myl+A.com,cl={baixa:'baixa (facilita uma saída)',normal:'normal',alta:'alta (protege o clube)'}[A.cl];
  modal('Empresário: '+A.n,`<p>${esc(A.n)}, empresário de ${esc(D.p.n)}, é ${A.t}.</p><dl class="kv"><dt>Pede</dt><dd>${money(A.w)}/mês${A.yrs?' · '+A.yrs+' época'+(A.yrs>1?'s':''):' até ao fim do empréstimo'}${A.luv?' · prémio de assinatura '+money(A.luv):''}</dd><dt>Comissão dele</dt><dd>${money(A.com)}</dd><dt>A tua proposta</dt><dd><b>${money(A.myw)}/mês</b>${A.yrs?` · prémio ${money(A.myl)}`:''}</dd>${A.yrs?`<dt>Cláusula de rescisão</dt><dd>${cl}</dd>`:''}<dt>Custo agora</dt><dd>${money(cost)} · orçamento ${money(S.budget)}</dd><dt>Paciência</dt><dd>${dots(A.pat,5)}</dd></dl>${A.last?`<p>${A.last}</p>`:''}`,
@@ -4422,6 +4422,28 @@ function retireIdle(){const P=S.pl;P.stage='retired';P.con=null;S.mode='coach';S
  const banned=()=>S.corr&&S.corr.ban>S.day;
  const _RF=retireFlow;retireFlow=function(force){if(!banned())return _RF.apply(this,arguments);modal('Pendurar as chuteiras',`<p>Estás castigado até ${fdate(S.corr.ban)}. Nenhum clube te pode contratar como treinador até lá.</p>`,[{l:'Terminar a carreira e cumprir o castigo',f(){retireIdle()}},...(force?[]:[{l:'Continuar a jogar',ghost:true}])])};
  if(EV&&EV.reforma){const ch=EV.reforma.ch;EV.reforma.ch=function(){return banned()?[{l:'Terminar a carreira e cumprir o castigo',f(){retireIdle()}}]:ch.apply(this,arguments)}}}
+
+/* ============ VALORES DE MERCADO, SALÁRIOS E ORÇAMENTOS REALISTAS (v2.3) ============ */
+/* calibrado com valores de mercado públicos de 2026: nível 91 no auge ≈ 180 M€, 85 ≈ 55 M€, 80 ≈ 20 M€, 75 ≈ 7 M€, 70 ≈ 2,5 M€ */
+const LGB={en:1.6,es:1.15,it:1.1,de:1.1,fr:1,pt:0.9,nl:0.85,ksa:1.8,mls:0.8,en2:0.9,pt2:0.4,es2:0.5,it2:0.5,de2:0.5,fr2:0.45,nl2:0.35,ksa2:0.4};
+const LGW={en:1.5,es:1.1,it:1,de:1.1,fr:0.9,pt:0.75,nl:0.65,ksa:1.7,mls:0.75,en2:0.8,pt2:0.3,es2:0.45,it2:0.45,de2:0.5,fr2:0.4,nl2:0.3,ksa2:0.4};
+const LGS={en:1.15,ksa:1.1,es:1,it:1,de:1,fr:0.95,pt:0.9,nl:0.85,mls:0.8};
+const myLgE=()=>S&&S.job&&!S.job.nt?S.job.lg:(S&&S.pl&&S.pl.lg)||null;
+function value(p){const o=p.ovr||50,a=p.age||25,pot=Math.max(o,p.pot||o),k=a<=17?0.5:a<=20?0.35:a<=23?0.2:0,eff=o+(pot-o)*k;
+ let v=2.5e6*Math.pow(1.226,eff-70);const af=a<=27?1:([0.9,0.8,0.68,0.55,0.45,0.36,0.28,0.2][a-28]||0.13);v*=af;v*=({GR:0.7,DEF:0.9,MED:1,AV:1.05})[p.pos]||1;return Math.max(10000,v)}
+function wageNew(o){return Math.max(800,Math.round(45000*Math.pow(1.2,(o.ovr||50)-70)*(LGW[myLgE()]||0.8)/100)*100)}
+function budgetNew(r){return Math.round(2.5e6*Math.pow(1.24,r-70)*(LGB[myLgE()]||0.8)/1000)*1000}
+const wageOld=o=>Math.max(800,Math.round(1500*Math.pow(1.16,o.ovr-55)/100)*100),budgetOld=r=>Math.round(200000*Math.pow(1.25,r-60)/1000)*1000;
+/* o clube vendedor pede mais conforme a liga onde está */
+{const _AO=askOf;askOf=function(p,lg){const a=_AO.apply(this,arguments);return Math.max(10000,Math.round(a*(LGS[lg]||(LEAGUES[lg]&&LEAGUES[lg].tier===2?0.8:0.9))/1000)*1000)}}
+/* jogos novos já nascem na escala nova */
+{const _NG=newGame;newGame=function(){const r=_NG.apply(this,arguments);if(S)S.econV23=1;return r}}
+/* gravações antigas: passar salários, teto salarial, orçamento e mercado para a nova escala */
+{const _MG4=migrate;migrate=function(){_MG4.apply(this,arguments);try{if(!S||S.econV23)return;S.econV23=1;if(!S.job||S.job.nt||!S.squad||!S.squad.length)return;
+ let oldB=0,newB=0;S.squad.forEach(p=>{if(p.wage){oldB+=p.wage;const nw=Math.round(p.wage*wageNew(p)/wageOld(p)/100)*100;newB+=nw;p.wage=nw}else{oldB+=wageOld(p);newB+=wageNew(p)}});
+ if(S.job.wcap)S.job.wcap=Math.round((S.job.wcap+newB-oldB)/1000)*1000;delete S.job.dp0;
+ const r=S.ratings[S.job.lg][S.job.club].r;S.budget=Math.round(S.budget*budgetNew(r)/budgetOld(r)/1000)*1000;(S.market||[]).forEach(m=>{m.price=Math.max(5000,Math.round(value(m)*1.15/1000)*1000);if(m.wage)m.wage=wageNew(m)});
+ log('Valores de mercado, salários e orçamentos atualizados para a escala real (versão 2.3).')}catch(e){}}}
 
 /* ============ ARRANQUE ============ */
 function start(data){migrateOld();S=(data&&data.S)||null;if(S)migrate();SCREEN='menu';render()}
