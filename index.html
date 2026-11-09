@@ -389,6 +389,7 @@ button.msg{display:flex;width:100%;text-align:left;background:none;border:0;padd
 .mini-t{margin-top:6px;border-top:1px solid var(--soft);padding-top:6px;font-size:13.5px}.mini-t div{display:flex;justify-content:space-between;padding:2px 0}.mini-t .me{font-weight:700}
 .chipset2{display:flex;flex-wrap:wrap;gap:6px;max-height:150px;overflow:auto;padding:2px}.chipset2 button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 10px;font-family:var(--cond);font-weight:600;font-size:14px}.chipset2 button.on{background:var(--relva);color:var(--relva-fg);border-color:var(--relva)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.ticker .run{padding-left:0;white-space:normal}.ticker .run span{display:block;margin:2px 0}}
+.sqt td:nth-child(2){white-space:normal;min-width:150px}.sqt td:nth-child(2) .neg{display:block;font-size:11.5px}.acdt td,.acdt th{padding-left:5px;padding-right:5px}.acdt td:nth-child(2){white-space:normal;min-width:130px}
 </style>
 
 <div id="app"></div>
@@ -2207,7 +2208,7 @@ const isStandalone=()=>!!(window.matchMedia&&matchMedia('(display-mode: standalo
 const isIOS=()=>/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 function deskify(){const m=document.querySelector('#app > main');if(!m)return;if(!isDesk()){m.classList.remove('cols');return}m.classList.add('cols');
  const kids=[...m.children];let cur=null;const blks=[];kids.forEach(el=>{if(el.matches('h2.sec')){cur=document.createElement('div');cur.className='blk';blks.push(cur)}else if(!cur){cur=document.createElement('div');cur.className='blk lead';blks.push(cur)}cur.appendChild(el)});
- const nc=window.innerWidth>=1560?3:2;let run=null,cols=[];blks.forEach(b=>{const span=b.classList.contains('lead')||!!b.querySelector('.lpitch,.placard,.slots,.clubgrid');if(span){run=null;m.appendChild(b);return}
+ const nc=window.innerWidth>=1560?3:2;let run=null,cols=[];blks.forEach(b=>{const span=b.classList.contains('lead')||!!b.querySelector('.lpitch,.placard,.slots,.clubgrid,.sqt,.acdt,.mkt');if(span){run=null;m.appendChild(b);return}
   if(!run){run=document.createElement('div');run.className='dcols';run.style.gridTemplateColumns=`repeat(${nc},minmax(0,1fr))`;cols=[];for(let i=0;i<nc;i++){const c=document.createElement('div');c.className='dcol';run.appendChild(c);cols.push(c)}m.appendChild(run)}
   let t=cols[0];cols.forEach(c=>{if(c.offsetHeight<t.offsetHeight)t=c});t.appendChild(b)})}
 let lastDesk=null;window.addEventListener('resize',()=>{const d=isDesk();if(d!==lastDesk){lastDesk=d;if(S&&!M)render()}});
@@ -2232,7 +2233,7 @@ function slotsModal(kind){const L=[1,2,3,4,5].map(i=>({i,s:slotSum(i)}));
   L.map(({i,s})=>({l:`Espaço ${i}${S&&S.slot===i?' (atual)':''} · ${s?s.t+' — '+s.d:'vazio'}`,dis:kind==='load'&&!s,f(){if(kind==='save'){if(M){toast('Acaba o jogo antes de gravar.');resumeM();return}S.slot=i;save();toast('Jogo gravado no espaço '+i+'.');resumeM()}else{if(M){cancelAnimationFrame(RAF);M=null;closeModal()}loadSlot(i)}}})).concat([{l:'Voltar',ghost:true,f(){pauseMenu()}}]))}
 function optionsModal(){if(M&&!M.done)M.paused=true;const o=(n,v,l)=>`<button data-opt="${n}|${v}" class="${String(PREF[n])===String(v)?'on':''}">${l}</button>`;
  pmodal('Opções',`<div class="stack"><span class="lab2">Gráficos dos jogos e das cenas</span><div class="chipset2">${G3.ok()?`<button data-opt="g3|1" class="${G3.pref()?'on':''}">3D</button><button data-opt="g3|0" class="${G3.pref()?'':'on'}">2D</button>`:'<span class="hint">O 3D não está disponível neste aparelho.</span>'}</div>
- <p class="hint" style="margin:0 0 6px">Fora de Campo · versão 2.3</p>
+ <p class="hint" style="margin:0 0 6px">Fora de Campo · versão 2.3.1</p>
  <span class="lab2">Música</span><div class="chipset2">${o('vmus',0,'Desligada')}${o('vmus',0.35,'Baixa')}${o('vmus',0.6,'Média')}${o('vmus',0.85,'Alta')}</div>
  <span class="lab2">Efeitos sonoros</span><div class="chipset2">${o('vsfx',0,'Desligados')}${o('vsfx',0.45,'Baixos')}${o('vsfx',0.85,'Normais')}${o('vsfx',1,'Altos')}</div>
  <span class="lab2">Ambiente do estádio</span><div class="chipset2">${o('vamb',0,'Desligado')}${o('vamb',0.4,'Baixo')}${o('vamb',0.7,'Normal')}${o('vamb',1,'Alto')}</div>
@@ -3309,13 +3310,13 @@ function vEquipa(){if(S.mode==='player')return vCarreira();if(!S.job)return `<h2
  s+=`<h2 class="sec">Onze inicial<span>toca num jogador para trocar</span></h2><div class="seg" role="group" aria-label="Escolha do onze"><button data-xim="auto" class="${S.xiManual?'':'on'}">Automático</button><button data-xim="man" class="${S.xiManual?'on':''}">Escolho eu</button></div>
  <div class="lpitch">${sl.map((r,i)=>{const k=seen[r]=(seen[r]||0)+1,x=SL[i],p=x&&x.p,warn=x&&(x.pen||p.fit<70);return `<button class="lslot ${warn?'warn':''}" data-xs="${i}" style="left:${k/(cnt[r]+1)*100}%;top:${rowY[r]}%"><span class="sh ${r}">${p?p.ovr:'?'}</span><b>${p?esc(surname(p.n)):'—'}</b><small>${r}${x&&x.pen?' · fora de posição':p&&p.fit<70?' · cansado':''}</small></button>`}).join('')}</div>
  <p class="hint" style="text-align:center">${S.xiManual?'Se um titular se lesionar, o lugar é preenchido pelo melhor disponível.':'O míster adjunto escolhe o melhor onze antes de cada jogo.'}</p>`}
- s+=`<h2 class="sec">Plantel<span>${S.squad.length} jogadores · ▲▼ potencial esta semana</span></h2><div class="tblw"><table class="t"><thead><tr><th>Pos</th><th>Nome</th><th class="r">Id</th><th class="r">Ger</th><th class="r">Pot</th><th>Forma</th><th>Moral</th></tr></thead><tbody>
- ${sq.map(p=>`<tr class="click" data-p="${p.id}"><td><span class="pos ${p.pos}">${p.pos}</span></td><td>${xi.has(p.id)?'<i class="xi" title="Titular"></i>':''}${esc(p.n)}${p.inj?` <span class="neg">· ${p.injN?esc(p.injN.toLowerCase())+', ':'lesionado '}${p.inj}d</span>`:''}${p.out?' <span style="color:var(--muted)">· fora</span>':''}</td><td class="r">${p.age}</td><td class="r"><b>${p.ovr}</b></td>${potCell(p)}<td>${mini(p.fit)}</td><td>${mini(p.mor)}</td></tr>`).join('')}</tbody></table></div>`;
+ s+=`<h2 class="sec">Plantel<span>${S.squad.length} jogadores · ▲▼ potencial esta semana</span></h2><div class="tblw"><table class="t sqt"><thead><tr><th>Pos</th><th>Nome</th><th class="r">Id</th><th class="r">Ger</th><th class="r">Pot</th><th>Forma</th><th>Moral</th><th class="r" title="Jogos esta época">J</th><th class="r" title="Golos">G</th><th class="r" title="Assistências">Ast</th><th class="r" title="Nota média">Nota</th></tr></thead><tbody>
+ ${sq.map(p=>`<tr class="click" data-p="${p.id}"><td><span class="pos ${p.pos}">${p.pos}</span></td><td>${xi.has(p.id)?'<i class="xi" title="Titular"></i>':''}${esc(p.n)}${p.inj?` <span class="neg">· ${p.injN?esc(p.injN.toLowerCase())+', ':'lesionado '}${p.inj}d</span>`:''}${p.out?' <span style="color:var(--muted)">· fora</span>':''}</td><td class="r">${p.age}</td><td class="r"><b>${p.ovr}</b></td>${potCell(p)}<td>${mini(p.fit)}</td><td>${mini(p.mor)}</td><td class="r">${p.sj||0}</td><td class="r">${p.sg||0}</td><td class="r">${p.sa||0}</td><td class="r"><b>${ntAvg(p)}</b></td></tr>`).join('')}</tbody></table></div>`;
  if(S.job.nt)return s+'<p class="hint">Como selecionador não há mercado nem formação. Antes de cada data FIFA e de cada fase final escolhes os 26 convocados.</p><button class="btn" data-ntc="open|1">Ver e alterar a convocatória</button>';
  s+=academyHTML();
  s+=exploreHTML();s+=`<h2 class="sec">Jogadores à venda<span>${windowOpen()?'aberto':'fechado'}</span></h2>`;
  if(!windowOpen())s+=`<div class="card">O mercado abre em julho–agosto e em janeiro. A lista de jogadores muda todas as segundas-feiras.</div>`;
- s+=`<div class="tblw"><table class="t"><thead><tr><th>Pos</th><th>Nome</th><th class="r">Id</th><th class="r">Ger</th><th class="r">Pot</th><th class="r">Preço</th><th></th></tr></thead><tbody>${S.market.map(p=>`<tr><td><span class="pos ${p.pos}">${p.pos}</span></td><td>${esc(p.n)}</td><td class="r">${p.age}</td><td class="r"><b>${p.ovr}</b></td>${potCell(p)}<td class="r">${money(p.price)}</td><td><button class="btn sm" data-buy="${p.id}" ${windowOpen()&&S.budget>=p.price?'':'disabled'}>Comprar</button></td></tr>`).join('')}</tbody></table></div>`;return s}
+ s+=`<div class="tblw"><table class="t mkt"><thead><tr><th>Pos</th><th>Nome</th><th class="r">Id</th><th class="r">Ger</th><th class="r">Pot</th><th class="r">Preço</th><th></th><th></th></tr></thead><tbody>${S.market.map(p=>`<tr><td><span class="pos ${p.pos}">${p.pos}</span></td><td class="click" data-mkat="${p.id}" style="text-decoration:underline dotted;cursor:pointer">${esc(p.n)}</td><td class="r">${p.age}</td><td class="r"><b>${p.ovr}</b></td>${potCell(p)}<td class="r">${money(p.price)}</td><td><button class="btn sm" data-buy="${p.id}" ${windowOpen()&&S.budget>=p.price?'':'disabled'}>Comprar</button></td><td><button class="btn sm ghost" data-mkat="${p.id}">Atributos</button></td></tr>`).join('')}</tbody></table></div>`;return s}
 
 function vLiga(){return compsView()+vLiga0()+trfHTML()}
 function vLiga0(){const T=table(),me=myLg()===S.leagueId&&myClub()!=null?myClub():-1,N=T.length;const fm={};S.fixtures.forEach(f=>{if(f.hg===null)return;[[f.h,f.hg-f.ag],[f.a,f.ag-f.hg]].forEach(([i,d])=>(fm[i]=fm[i]||[]).push(d>0?'V':d<0?'D':'E'))});
@@ -3694,7 +3695,7 @@ function academyHTML(){if(!S.job||S.job.nt)return'';if(!S.acL)acLeagues();const 
  return `<h2 class="sec">Formação<span>${S.yth.length} jogadores em 4 escalões</span></h2><div class="chipset2 acl">${LAYS.map(x=>chip(x[0],x[1])).join('')}</div>
  <div class="card acsum"><b>${L[1]}</b> · ${P.length} jogadores${tbl?' · '+tbl:''}${top&&top.yg?` · Melhor marcador: ${esc(top.n)} (${top.yg})`:''}${gems?` · ${gems} com potencial de 80 ou mais`:''}</div>
  <div class="chipset2" style="margin:6px 0">${sc('pot','Potencial')}${sc('ovr','Geral')}${sc('pos','Posição')}${sc('des','Desempenho')}</div>
- <div class="tblw"><table class="t act"><thead><tr><th>Pos</th><th>Nome</th><th class="r">Id</th><th class="r">Ger</th><th class="r">Pot.</th><th class="r">J</th><th class="r">G</th><th class="r">Nota</th><th></th></tr></thead><tbody>
+ <div class="tblw"><table class="t acdt"><thead><tr><th>Pos</th><th>Nome</th><th class="r">Id</th><th class="r">Ger</th><th class="r">Pot.</th><th class="r">J</th><th class="r">G</th><th class="r">Nota</th><th></th></tr></thead><tbody>
  ${P.map(p=>`<tr${p.inj?' class="dim"':''}><td><span class="pos ${p.pos}">${p.pos}</span></td><td>${esc(p.n)}${p.son?' <span class="tag">teu filho</span>':''}${star(p)}${p.inj?' <span class="tag bad">lesionado</span>':''}${p.up?' <span class="tag">a jogar acima</span>':''}</td><td class="r">${p.age}</td><td class="r"><b>${p.ovr}</b></td><td class="r">${potRange(p)}</td><td class="r">${p.yj||0}</td><td class="r">${p.yg||0}</td><td class="r">${p.yj?(p.yr||0).toFixed(1):'–'}</td>
  <td class="acb">${nxt(p)?`<button class="btn sm alt" data-acup="${p.id}" title="Subir para os ${nxt(p)[1]}">↑ ${nxt(p)[1]}</button> `:''}${p.age>=16?`<button class="btn sm" data-promo="${p.id}">Equipa A</button> `:''}<button class="btn sm ghost" data-disp="${p.id}">Dispensar</button></td></tr>`).join('')}</tbody></table></div>`}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-acl],[data-acs],[data-acup]');if(!b||!S)return;e.stopPropagation();const d=b.dataset;
@@ -3955,7 +3956,7 @@ Object.assign(EV,{
  const cards=`<div class="acmob">${P.map(p=>`<div class="accard${p.inj?' dim':''}"><div class="ach"><span class="pos ${p.pos}">${p.pos}</span><b>${esc(p.n)}</b>${p.pot>=r+8?'<span class="tag gem">joia</span>':p.pot>=r+2?'<span class="tag">promessa</span>':''}${p.son?'<span class="tag">teu filho</span>':''}</div>
   <div class="acn"><span>${p.age} anos</span><span>Geral <b>${p.ovr}</b></span><span>Pot. <b>${potRange(p)}</b></span><span>${p.yj||0} J · ${p.yg||0} G${p.yj?' · '+(p.yr||0).toFixed(1):''}</span>${p.inj?'<span class="tag bad">lesionado</span>':''}</div>
   <div class="acbtn">${nxt(p)?`<button class="btn sm alt" data-acup="${p.id}">↑ ${nxt(p)[1]}</button>`:''}${p.age>=16?`<button class="btn sm" data-promo="${p.id}">Equipa A</button>`:''}<button class="btn sm ghost" data-disp="${p.id}">Dispensar</button></div></div>`).join('')}</div>`;
- return h.replace('<div class="tblw"><table class="t act">','<div class="tblw acdesk"><table class="t act">')+cards}}
+ return h.replace('<div class="tblw"><table class="t acdt">','<div class="tblw acdesk"><table class="t acdt">')+cards}}
 /* --- qualidade automática --- */
 function autoQ(m,dt){if(PREF.gqAuto===0||!(PREF.gq>0))return;m.fq=m.fq||{t:0,n:0,done:0};const f=m.fq;if(f.done>=2)return;f.t+=dt;f.n++;if(f.t>=5){const fps=f.n/f.t;f.t=0;f.n=0;if(fps<24){PREF.gq--;f.done++;try{savePref()}catch(e){}try{gfxQ(G3._.rend(),m.sc)}catch(e){}toast(`O jogo estava lento (${Math.round(fps)} imagens/s). Baixei a qualidade gráfica para «${PREF.gq===1?'Alta':'Leve'}».`)}else f.done=fps>40?2:f.done}}
 
@@ -4444,6 +4445,20 @@ const wageOld=o=>Math.max(800,Math.round(1500*Math.pow(1.16,o.ovr-55)/100)*100),
  if(S.job.wcap)S.job.wcap=Math.round((S.job.wcap+newB-oldB)/1000)*1000;delete S.job.dp0;
  const r=S.ratings[S.job.lg][S.job.club].r;S.budget=Math.round(S.budget*budgetNew(r)/budgetOld(r)/1000)*1000;(S.market||[]).forEach(m=>{m.price=Math.max(5000,Math.round(value(m)*1.15/1000)*1000);if(m.wage)m.wage=wageNew(m)});
  log('Valores de mercado, salários e orçamentos atualizados para a escala real (versão 2.3).')}catch(e){}}}
+
+/* ============ ESTATÍSTICAS DO PLANTEL, ATRIBUTOS NO MERCADO (v2.3.1) ============ */
+/* nota de cada jogo, assistências e números da época para cada jogador do plantel */
+function rateMatch(){try{if(!M||!M.xi||!M.f||(S.job&&S.job.nt))return;const f=M.f,home=M.home,gf=home?f.hg:f.ag,ga=home?f.ag:f.hg,res=gf>ga?0.4:gf<ga?-0.4:0;
+ const xi=M.xi.filter(x=>x&&x.p),our=M.ev.filter(e=>e.us),mine=p=>our.filter(e=>e.s===p);
+ our.filter(e=>e.t==='g'&&e.s).forEach(e=>{if(e.pen||R()>0.78)return;const c=xi.filter(x=>x.p!==e.s&&x.pos!=='GR');if(!c.length)return;const w=c.map(x=>({x,w:x.pos==='MED'?3:x.pos==='AV'?2.4:1}));let r=R()*w.reduce((a,b)=>a+b.w,0);const pk=w.find(o=>(r-=o.w)<=0)||w[0];pk.x.p.sa=(pk.x.p.sa||0)+1;pk.x.p.ast=(pk.x.p.ast||0)+1;pk.x.p._ma=(pk.x.p._ma||0)+1});
+ xi.forEach(x=>{const p=x.p,ev=mine(p),g=ev.filter(e=>e.t==='g').length,ch=ev.filter(e=>e.t==='c').length,y=M.ev.filter(e=>e.s===p&&e.t==='y').length,rd=M.ev.filter(e=>e.s===p&&e.t==='r').length,a=p._ma||0;
+  let n=6.4+res+g*1.0+a*0.6+ch*0.15-y*0.3-rd*1.6+(ga===0&&(x.pos==='GR'||x.pos==='DEF')?0.6:0)-(x.pos==='GR'?Math.max(0,ga-1)*0.35:0)+((p.ovr||60)-(M.oppR||60))/40+(R()-0.5)*0.9;n=Math.max(3.5,Math.min(10,Math.round(n*10)/10));
+  p._ma=0;p.sj=(p.sj||0)+1;p.sg=(p.sg||0)+g;p.snt=(p.snt||0)+n;p.lastNt=n;p.snn=(p.snn||0)+1});}catch(e){}}
+{const _FMR=finishMatch;finishMatch=function(){const go=M&&!M.done&&!M.pm;const r=_FMR.apply(this,arguments);if(go)rateMatch();return r}}
+{const _NSR=newSeason;newSeason=function(){(S.squad||[]).forEach(p=>{p.sj=0;p.sg=0;p.sa=0;p.snt=0;p.snn=0});return _NSR.apply(this,arguments)}}
+const ntAvg=p=>p.snn?(p.snt/p.snn).toFixed(1):'–';
+/* atributos dos jogadores à venda */
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-mkat]');if(!t)return;e.stopPropagation();const p=(S.market||[]).find(x=>String(x.id)===t.dataset.mkat);if(p)attrModal(p)},true);
 
 /* ============ ARRANQUE ============ */
 function start(data){migrateOld();S=(data&&data.S)||null;if(S)migrate();SCREEN='menu';render()}
