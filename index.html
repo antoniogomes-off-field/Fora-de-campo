@@ -1394,28 +1394,28 @@ function playerMatch(cfg){const P=S.pl,lg=P.lg,me={id:'me',n:S.name,pos:P.pos,ov
  M.kick2=1-M.pos;buildDots();kickoff(M.pos);showMatch()}
 function subIn(){const P=S.pl;let k=M.xi.findIndex(x=>x.pos===P.pos&&!M.off.has(x.p.id));if(k<0)k=M.xi.findIndex(x=>x.pos!=='GR'&&!M.off.has(x.p.id));if(k<0)return;
  const old=M.xi[k].p;M.xi[k]={p:M.me,pos:M.xi[k].pos,pen:0};const d=M.dots.find(d=>d.team===0&&d.p===old);if(d){d.p=M.me;d.name='Tu'}M.meOn=true;M.ov={t:'Entras em campo',sub:'Sai '+old.n,until:M.gt+1.6,small:true};note('Entras em campo! Sai '+old.n+'.')}
-function pmEv(e){if(e.s===M.me&&e.t==='g'&&e.us&&R()<0.45){const c=M.xi.filter(x=>x.p!==M.me&&x.pos!=='GR'&&!M.off.has(x.p.id));if(c.length)e.s=pick(c).p}if(e.s!==M.me)return;if(e.t==='g')M.rt+=0.9;else if(e.t==='c')M.rt+=0.05;
+function pmEv(e){if(e.s===M.me&&e.t==='g'&&e.us&&e.how!=='pen'&&R()<cl(0.3-((attrs(M.me)||{fin:10}).fin-10)*0.025,0.05,0.4)){const c=M.xi.filter(x=>x.p!==M.me&&x.pos!=='GR'&&!M.off.has(x.p.id));if(c.length)e.s=pick(c).p}if(e.s!==M.me)return;if(e.t==='g')M.rt+=0.9;else if(e.t==='c')M.rt+=0.05;
  else if(e.t==='y'){if(M.yc){e.t='r';M.off.add('me');M.my-=3}else M.rt-=0.2;M.yc++}
  if(e.t==='r'){M.meOn=false;M.rt-=1;const d=M.dots.find(d=>d.p===M.me);if(d){if(M.hold===di(d))M.hold=null;d.off=true}}
  if(e.t==='i'){M.meInj=e.d;M.meOn=false;const d=M.dots.find(d=>d.p===M.me),sub={id:'s'+M.min,n:genName(S.pl.lg),pos:S.pl.pos,ovr:Math.round(M.cfg.usL),fit:95,mor:60,tr:'cal'};if(d){d.p=sub;d.name=sub.n}const x=M.xi.find(x=>x.p===M.me);if(x)x.p=sub}}
 function pmMinute(fast){if(M.subMin&&M.min===M.subMin&&!M.meOn&&!M.off.has('me')&&!M.meInj)subIn();if(M.meOn)M.minOn++;
  const lim=M.half===1?45+M.st1:90+M.st2;if(M.meOn&&!M.seq&&!M.dec&&M.min<lim-1&&R()<M.inv){M.dec=pick(DEC[S.pl.pos]);if(fast)resolveDec(ri(0,M.dec.o.length-1),true);else{M.paused=true;M.ov={t:'Lance decisivo',sub:'',until:M.gt+999,small:true};panel('dec')}}}
-function resolveDec(k,auto){const o=M.dec.o[k],act=o[1],sk=cl((M.me.ovr-M.op)/30,-0.3,0.3)+o[2];M.dec=null;M.ov=null;
- const oppS=()=>pick(M.opPl.filter(p=>p.pos!=='GR')).n,mate=()=>{const c=M.xi.filter(x=>x.p!==M.me&&x.pos!=='GR'&&!M.off.has(x.p.id)),av=c.filter(x=>x.pos==='AV');return(av.length?pick(av):pick(c)).p},Pr=v=>R()<cl(v,0.03,0.95);
+function resolveDec(k,auto){const o=M.dec.o[k],act=o[1],sk=cl((M.me.ovr-M.op)/40,-0.2,0.2)+o[2],AA=attrs(M.me)||{},a=x=>(AA[x]||10)-10,fq=cl((M.me.ovr-M.op)/80,-0.07,0.07)+o[2];M.dec=null;M.ov=null;
+ const oppS=()=>pick(M.opPl.filter(p=>p.pos!=='GR')).n,mate=()=>{const c=M.xi.filter(x=>x.p!==M.me&&x.pos!=='GR'&&!M.off.has(x.p.id)),av=c.filter(x=>x.pos==='AV');return(av.length?pick(av):pick(c)).p},Pr=v=>M.force!=null?M.force:R()<cl(v,0.03,0.95);
  let ev=null,txt='',dr=0;
  switch(act){
-  case 'shot':if(Pr(0.15+sk*0.45)){ev={t:'g',us:1,s:M.me};dr=1}else{ev={t:'c',us:1,s:M.me,k:pick([0,1,5])};dr=-0.05}break;
-  case 'volley':if(Pr(0.16+sk*0.5)){ev={t:'g',us:1,s:M.me};dr=1.1}else{ev={t:'c',us:1,s:M.me,k:5};dr=-0.05}break;
-  case 'head':if(Pr(0.22+sk*0.4)){ev={t:'g',us:1,s:M.me};dr=1}else{ev={t:'c',us:1,s:M.me,k:2};dr=-0.05}break;
-  case 'fk':if(Pr(0.13+sk*0.3)){ev={t:'g',us:1,s:M.me};dr=1.1;txt='Livre direto perfeito!'}else{ev={t:'c',us:1,s:M.me,k:4}}break;
-  case 'drib':if(Pr(0.45+sk)){if(Pr(0.38+sk*0.4)){ev={t:'g',us:1,s:M.me};dr=1.2;txt='Fintas o defesa e…'}else{ev={t:'c',us:1,s:M.me,k:1};dr=0.15;txt='Grande drible!'}}else{dr=-0.25;txt='Perdes a bola no drible.';if(R()<0.4)ev={t:'c',us:0,s:oppS(),k:4}}break;
-  case 'pass':if(Pr(0.27+sk*0.4)){ev={t:'g',us:1,s:mate(),ast:1};dr=0.7;txt='Passe para golo!'}else{dr=0.05;txt='Passe certo. A equipa mantém a bola.'}break;
-  case 'through':if(Pr(0.23+sk*0.4)){ev={t:'g',us:1,s:mate(),ast:1};dr=0.8;txt='Passe a rasgar!'}else if(R()<0.5){dr=-0.2;txt='O passe é intercetado.';if(R()<0.35)ev={t:'c',us:0,s:oppS(),k:4}}else txt='O passe sai comprido demais.';break;
+  case 'shot':if(Pr(0.14+a('fin')*0.018+a('cmp')*0.007+fq)){ev={t:'g',us:1,s:M.me};dr=1}else{ev={t:'c',us:1,s:M.me,k:pick([0,1,5])};dr=-0.05}break;
+  case 'volley':if(Pr(0.12+a('fin')*0.015+a('tec')*0.008+fq)){ev={t:'g',us:1,s:M.me};dr=1.1}else{ev={t:'c',us:1,s:M.me,k:5};dr=-0.05}break;
+  case 'head':if(Pr(0.15+a('cab')*0.02+a('imp')*0.008+fq)){ev={t:'g',us:1,s:M.me};dr=1}else{ev={t:'c',us:1,s:M.me,k:2};dr=-0.05}break;
+  case 'fk':if(Pr(0.07+a('liv')*0.012+fq)){ev={t:'g',us:1,s:M.me};dr=1.1;txt='Livre direto perfeito!'}else{ev={t:'c',us:1,s:M.me,k:4}}break;
+  case 'drib':if(Pr(0.45+a('fnt')*0.02+a('agi')*0.008+fq)){if(Pr(0.28+a('fin')*0.016+fq)){ev={t:'g',us:1,s:M.me};dr=1.2;txt='Fintas o defesa e…'}else{ev={t:'c',us:1,s:M.me,k:1};dr=0.15;txt='Grande drible!'}}else{dr=-0.25;txt='Perdes a bola no drible.';if(R()<0.4)ev={t:'c',us:0,s:oppS(),k:4}}break;
+  case 'pass':if(Pr(0.22+a('pas')*0.012+a('vis')*0.01+fq)){ev={t:'g',us:1,s:mate(),ast:1};dr=0.7;txt='Passe para golo!'}else{dr=0.05;txt='Passe certo. A equipa mantém a bola.'}break;
+  case 'through':if(Pr(0.18+a('pas')*0.01+a('vis')*0.014+fq)){ev={t:'g',us:1,s:mate(),ast:1};dr=0.8;txt='Passe a rasgar!'}else if(R()<0.5){dr=-0.2;txt='O passe é intercetado.';if(R()<0.35)ev={t:'c',us:0,s:oppS(),k:4}}else txt='O passe sai comprido demais.';break;
   case 'safe':dr=0.05;txt='Jogas simples. O treinador aprova.';break;
-  case 'tackle':if(Pr(0.55+sk)){dr=0.45;txt='Carrinho perfeito, bola recuperada!'}else if(R()<0.5){ev={t:'y',s:M.me};dr=-0.25;txt='Chegas atrasado. Cartão amarelo.'}else{dr=-0.5;txt='Falhas o corte e o avançado segue…';ev=R()<0.4?{t:'g',us:0,s:oppS()}:{t:'c',us:0,s:oppS(),k:1}}break;
-  case 'jockey':if(Pr(0.42+sk*0.6)){dr=0.35;txt='Temporizas bem e roubas a bola.'}else{dr=-0.3;txt='O avançado consegue rematar.';ev=R()<0.3?{t:'g',us:0,s:oppS()}:{t:'c',us:0,s:oppS(),k:0}}break;
+  case 'tackle':if(Pr(0.55+a('des')*0.02+fq)){dr=0.45;txt='Carrinho perfeito, bola recuperada!'}else if(R()<0.5){ev={t:'y',s:M.me};dr=-0.25;txt='Chegas atrasado. Cartão amarelo.'}else{dr=-0.5;txt='Falhas o corte e o avançado segue…';ev=R()<0.4?{t:'g',us:0,s:oppS()}:{t:'c',us:0,s:oppS(),k:1}}break;
+  case 'jockey':if(Pr(0.42+a('mar')*0.012+a('pos')*0.01+fq)){dr=0.35;txt='Temporizas bem e roubas a bola.'}else{dr=-0.3;txt='O avançado consegue rematar.';ev=R()<0.3?{t:'g',us:0,s:oppS()}:{t:'c',us:0,s:oppS(),k:0}}break;
   case 'foul':ev={t:'y',s:M.me};dr=-0.1;txt='Falta tática. Cartão amarelo, mas o perigo passou.';break;
-  case 'clear':if(Pr(0.6+sk)){dr=0.3;txt='Cortas de cabeça. Perigo afastado.'}else{dr=-0.4;txt='O ponta-de-lança antecipa-se…';ev=R()<0.35?{t:'g',us:0,s:oppS()}:{t:'c',us:0,s:oppS(),k:5}}break;
+  case 'clear':if(Pr(0.6+a('cab')*0.012+a('pos')*0.01+fq)){dr=0.3;txt='Cortas de cabeça. Perigo afastado.'}else{dr=-0.4;txt='O ponta-de-lança antecipa-se…';ev=R()<0.35?{t:'g',us:0,s:oppS()}:{t:'c',us:0,s:oppS(),k:5}}break;
   case 'hold':if(R()<0.15){dr=-0.7;txt='O árbitro apita: penálti!';ev=R()<0.75?{t:'g',us:0,s:oppS()}:{t:'c',us:0,s:oppS(),k:1}}else{dr=0.15;txt='Marcação apertada. Ele nem toca na bola.'}break;
   case 'rush':if(Pr(0.45+sk)){dr=0.6;txt='Sais aos pés e ficas com a bola!'}else{dr=-0.6;txt='Ele contorna-te…';ev=R()<0.65?{t:'g',us:0,s:oppS()}:{t:'c',us:0,s:oppS(),k:0}}break;
   case 'wait':if(Pr(0.38+sk)){dr=0.6;txt='Defesa enorme!';ev={t:'c',us:0,s:oppS(),k:1}}else{dr=-0.4;ev={t:'g',us:0,s:oppS()}}break;
@@ -2233,7 +2233,7 @@ function slotsModal(kind){const L=[1,2,3,4,5].map(i=>({i,s:slotSum(i)}));
   L.map(({i,s})=>({l:`Espaço ${i}${S&&S.slot===i?' (atual)':''} · ${s?s.t+' — '+s.d:'vazio'}`,dis:kind==='load'&&!s,f(){if(kind==='save'){if(M){toast('Acaba o jogo antes de gravar.');resumeM();return}S.slot=i;save();toast('Jogo gravado no espaço '+i+'.');resumeM()}else{if(M){cancelAnimationFrame(RAF);M=null;closeModal()}loadSlot(i)}}})).concat([{l:'Voltar',ghost:true,f(){pauseMenu()}}]))}
 function optionsModal(){if(M&&!M.done)M.paused=true;const o=(n,v,l)=>`<button data-opt="${n}|${v}" class="${String(PREF[n])===String(v)?'on':''}">${l}</button>`;
  pmodal('Opções',`<div class="stack"><span class="lab2">Gráficos dos jogos e das cenas</span><div class="chipset2">${G3.ok()?`<button data-opt="g3|1" class="${G3.pref()?'on':''}">3D</button><button data-opt="g3|0" class="${G3.pref()?'':'on'}">2D</button>`:'<span class="hint">O 3D não está disponível neste aparelho.</span>'}</div>
- <p class="hint" style="margin:0 0 6px">Fora de Campo · versão 2.5.1</p>
+ <p class="hint" style="margin:0 0 6px">Fora de Campo · versão 2.6</p>
  <span class="lab2">Música</span><div class="chipset2">${o('vmus',0,'Desligada')}${o('vmus',0.35,'Baixa')}${o('vmus',0.6,'Média')}${o('vmus',0.85,'Alta')}</div>
  <span class="lab2">Efeitos sonoros</span><div class="chipset2">${o('vsfx',0,'Desligados')}${o('vsfx',0.45,'Baixos')}${o('vsfx',0.85,'Normais')}${o('vsfx',1,'Altos')}</div>
  <span class="lab2">Ambiente do estádio</span><div class="chipset2">${o('vamb',0,'Desligado')}${o('vamb',0.4,'Baixo')}${o('vamb',0.7,'Normal')}${o('vamb',1,'Alto')}</div>
@@ -4530,7 +4530,7 @@ function step(b,dt){if(b.h>0||b.vh>0)b.vh-=9.8*dt;const sp=Math.hypot(b.vx,b.vd)
 /* ---------- estado do treino ---------- */
 let mode='rem',G=null,slow=1,camT={x:0,y:1.8,z:20},camL={x:0,y:1,z:0},pts=0;const sk=()=>OPT.sk||70;
 function hud(info){$('info').textContent=info;$('pts').textContent=pts}
-let bigT=0;function big(t,white){const e=$('big');e.textContent=t;e.className='cq-big on'+(white?' w':'');clearTimeout(bigT);bigT=setTimeout(()=>e.className='cq-big'+(white?' w':''),1100)}
+let bigT=0;function big(t,white){try{if(G){G.last=t;G.lastW=!!white}}catch(_){}const e=$('big');e.textContent=t;e.className='cq-big on'+(white?' w':'');clearTimeout(bigT);bigT=setTimeout(()=>e.className='cq-big'+(white?' w':''),1100)}
 function hint(t,hand){$('hint').textContent=t||'';$('hand').className='cq-hand'+(hand?' '+hand:'')}
 function setCam(px,py,pz,lx,ly,lz,snap){camT={x:px,y:py,z:pz};camL={x:lx,y:ly,z:lz};if(snap){cam.position.set(px,py,pz);cam.userData.l=new THREE.Vector3(lx,ly,lz)}}
 /* remate genérico com guarda-redes */
@@ -4565,7 +4565,7 @@ function newTargets(){const t=[{x:-2.9,h:1.95},{x:2.9,h:1.95},{x:-2.9,h:0.5},{x:
 const tgtM=[0,1].map(()=>{const m=new THREE.Mesh(new THREE.RingGeometry(0.34,0.5,32),new THREE.MeshBasicMaterial({color:0xffc83d,transparent:true,opacity:0.95,side:THREE.DoubleSide}));m.position.z=0.05;sc.add(m);m.visible=false;return m});
 function start(m){mode=m;pts=0;$('res').hidden=true;G={i:0,N:OPT.n||DR[m].N,ph:'',t:0,goals:0};defs.forEach(d=>d.visible=false);mate.visible=false;round()}
 function round(){const g=G;g.t=0;g.s=null;g.done=0;g.hit=0;g.dv=0;g.dive=0;g.feint=0;g.kt=null;hint('');ringAt(0,0,0,null);hero.visible=true;hero.rotation.set(0,0,0);hero.position.y=0;keeper.visible=true;keeper.rotation.set(0,0,0);keeper.position.y=0;defs.forEach(d=>{d.visible=false;poseIdle(d)});mate.visible=false;mate2.visible=false;slow=1;tgtM.forEach(t=>t.visible=false);poseIdle(hero);poseIdle(keeper);keeper.rotation.set(0,0,0);
- if(g.i>=g.N){if(OPT.single){G.ph='end';const r={s:G.goals?1:0,goals:G.goals,last:G.last,pts};setTimeout(()=>OPT.done&&OPT.done(r),250);return}return results()}hud(`${DR[mode].n} ${g.i+1}/${g.N}`);if(MODES[mode]){MODES[mode].setup(g);return}
+ if(g.i>=g.N){if(OPT.single){G.ph='end';const r={s:G.goals?1:0,goals:G.goals,last:G.last,lastW:G.lastW,pts};setTimeout(()=>OPT.done&&OPT.done(r),250);return}return results()}hud(`${DR[mode].n} ${g.i+1}/${g.N}`);if(MODES[mode]){MODES[mode].setup(g);return}
  if(mode==='rem'||mode==='liv'||mode==='pen'){const sp=mode==='pen'?[0,11]:SPOTS[mode][g.i%SPOTS[mode].length];const wall=[];
   if(mode==='liv'){const L=Math.hypot(sp[0],sp[1]),ux=-sp[0]/L,ud=-sp[1]/L,cx=sp[0]+ux*9.15,cd=sp[1]+ud*9.15;[-1.5,-0.5,0.5,1.5].forEach((o,j)=>{const w={x:cx-ud*o*0.6+(sp[0]>0?-0.4:0.4),d:cd,jump:0};wall.push(w);defs[j].visible=true;place(defs[j],w.x,w.d,Math.PI)})}
   const tg=mode==='pen'?[]:newTargets();g.s=Shot({x:sp[0],d:sp[1],wall,targets:tg,pen:mode==='pen'});g.ph='aim';tg.forEach((t,j)=>{tgtM[j].visible=true;tgtM[j].position.set(t.x,t.h,0.05)});
@@ -4756,6 +4756,12 @@ function foulSeq(e){const F=e.t==='f'?e.by:(e.op?1:0),V=1-F,vdir=V?-1:1;let fo=n
  if(!vi){const c=M.dots.filter(d=>d.team===V&&!d.off&&d.role!=='GR');vi=fx!=null?c.sort((a,b)=>Math.hypot(a.x-fx,a.y-fy)-Math.hypot(b.x-fx,b.y-fy))[0]:(fo?c.sort((a,b)=>Math.hypot(a.x-fo.x,a.y-fo.y)-Math.hypot(b.x-fo.x,b.y-fo.y))[0]:pick(c));
   if(!vi){if(!e.fed)feed(e);throw new Error('sem vítima')}M.q.push({k:'pass',to:di(vi),dur:0.45,setPos:V})}
  const spot=fx!=null?[fx,fy]:[cl(vi.x+vdir*0.035,0.04,0.96),vi.y];
+ {const fr=V===0?spot[0]:1-spot[0];if(fr>0.8){spot[0]=AXT(V,0.78-R()*0.04);if(Math.abs(spot[1]-0.5)<0.3&&R()<0.5)spot[1]=cl(spot[1],0.2,0.8)}}
+ {const gx=goalX(V);if(fx==null&&Math.abs(spot[0]-gx)<0.16&&Math.abs(spot[1]-0.5)<0.3){
+  if(e.t==='f'&&R()<0.45){let tk=null;if(V===0){tk=bestBy('pen')}else{const o=(M.opPl||[]).filter(p=>p.pos!=='GR');tk=o.filter(p=>p.pos==='AV')[0]||o[0]}
+   if(tk){const pa=V===0&&attrs(tk)?attrs(tk).pen:12,sc=R()<cl(0.6+pa*0.012,0.6,0.88);e.us=V===0?1:0;e.s=tk;e.how='pen';e.vic=vi.name||(vi.p&&vi.p.n)||'';
+    if(sc){e.t='g'}else{e.t='c';e.k=6;e.pk=pick(['save','save','over','post'])}M.q=[];note('Falta dentro da área: penálti!');return attackSeq(e)}}
+  spot[0]=gx-vdir*0.175;if(Math.abs(spot[1]-0.5)<0.3&&R()<0.5)spot[1]=spot[1]<0.5?0.18:0.82}}
  if(!fo){const c=liveT(F).filter(d=>d.role!=='GR');fo=c.sort((a,b)=>Math.hypot(a.x-spot[0],a.y-spot[1])-Math.hypot(b.x-spot[0],b.y-spot[1]))[0];if(!fo){if(!e.fed)feed(e);throw new Error('sem jogador')}}
  /* o adversário fecha o espaço enquanto a vítima conduz a bola até ao sítio da falta */
  M.q.push(FN(()=>{M.runs[di(fo)]=[spot[0]+vdir*0.012,spot[1]+(fo.y<spot[1]?-0.006:0.006)];fo.fast=1}),{k:'carry',who:di(vi),tx:spot[0],ty:spot[1],dur:fx!=null?0.7:0.45},{k:'until',who:di(fo),dur:0.9});
@@ -4918,6 +4924,22 @@ function tkHTML(){if(!S.job||S.job.nt&&!S.squad)return '';const tk=S.job.tk||{},
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.tk||!S||!S.job)return;S.job.tk=S.job.tk||{};if(t.value)S.job.tk[t.dataset.tk]=t.value;else delete S.job.tk[t.dataset.tk];save();
  const p=t.value&&S.squad.find(x=>String(x.id)===t.value);toast(p?`${p.n} passa a marcar ${({pen:'os penáltis',liv:'os livres',cru:'os cantos'})[t.dataset.tk]}.`:'Escolha automática.')});
 {const _BB2=bestBy;bestBy=function(k){try{if(S&&S.mode!=='player'&&S.job&&S.job.tk&&S.job.tk[k]&&M&&M.xi){const x=M.xi.find(x=>String(x.p.id)===String(S.job.tk[k])&&!M.off.has(x.p.id));if(x)return x.p}}catch(e){}return _BB2.apply(this,arguments)}}
+
+/* ============ v2.6: ATRIBUTOS REAIS DO TEU JOGADOR NOS JOGOS, FINALIZAÇÃO E LANCES JOGÁVEIS ============ */
+/* nos jogos usavam-se atributos sem os ganhos dos treinos nem a tua idade: agora são os mesmos do ecrã da carreira */
+{const _AT=attrs;attrs=function(p){if(p&&p.id==='me'&&typeof S!=='undefined'&&S&&S.pl){const q=myP();q.ovr=p.ovr||q.ovr;return _AT.call(this,q)}return _AT.apply(this,arguments)}}
+/* finalização: um bom finalizador transforma mais oportunidades em golo */
+{const _GM6=genMinute;genMinute=function(){const out=_GM6.apply(this,arguments);try{if(M&&M.pm&&M.me&&M.meOn){const A=attrs(M.me),f=A.fin,c=A.cmp;
+ out.forEach(e=>{if(e.us&&e.t==='c'&&e.s===M.me&&e.how!=='fk'&&e.how!=='corner'&&e.k!==6&&R()<cl((f-12)*0.016+(c-12)*0.005,0,0.15)){e.t='g';delete e.k}});
+ if(M.me.pos!=='GR'&&M.me.pos!=='DEF'&&!out.some(e=>e.us&&(e.t==='g'||e.t==='c'))&&R()<cl((f-10)*0.0012,0,0.011)*(M.me.pos==='AV'?1:0.5)){out.push(R()<0.3+f*0.012?{t:'g',us:1,s:M.me}:{t:'c',us:1,s:M.me,k:pick([0,1,5])})}}}catch(err){}return out}}
+/* lances decisivos jogados em 3D, como nos treinos */
+const DEC3D={shot:['rem','fin'],volley:['rem','tec'],drib:['dri','fnt'],pass:['tab','pas'],through:['tab','vis'],head:['cab','cab'],clear:['cab','cab'],tackle:['des','des'],jockey:['des','mar'],rush:['gr',null],wait:['gr',null],dive:['gr',null],stay:['gr',null],catch:['gr',null],punch:['gr',null]};
+{const _RD6=resolveDec;resolveDec=function(k,auto){try{if(!auto&&M&&M.dec&&typeof CRQ!=='undefined'&&CRQ.ok()&&PREF.play3d!==false){const o=M.dec.o[k],act=o&&o[1],m=DEC3D[act];
+ if(m){const A=attrs(M.me),at=m[1]?A[m[1]]:Math.round((M.me.ovr-28)/3.5),lv=cl(Math.round(40+at*2.6),40,95);panel(null);M.ov=null;
+  const ov=document.createElement('div');ov.className='cq-over';document.body.appendChild(ov);const wrap=document.createElement('div');wrap.className='cq-wrap';ov.appendChild(wrap);
+  const fin=r=>{let ok=false;if(r){ok=['rem','dri','tab'].includes(m[0])||act==='head'?r.goals>0:!r.lastW&&!/GOLO SOFRIDO|PASSOU|FALHASTE|CORTADO|DESARMADO|FORA DE TEMPO|NÃO SALTASTE|CEDO|DEMORASTE|PERDESTE|FALTA/.test(r.last||'')}
+   M.force=r?ok:null;try{_RD6.call(this,k,false)}finally{M.force=null}};
+  const okk=CRQ.open(wrap,m[0],{sk:lv,n:1,single:true,done:r=>{CRQ.close();ov.remove();fin(r)}});if(!okk){ov.remove();fin(null)}return}}}catch(e){M.force=null}return _RD6.apply(this,arguments)}}
 
 /* ============ ARRANQUE ============ */
 function start(data){migrateOld();S=(data&&data.S)||null;if(S)migrate();SCREEN='menu';render()}
