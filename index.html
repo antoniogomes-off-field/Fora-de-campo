@@ -1338,7 +1338,7 @@ const YMOM=[
 function yMoment(){const P=S.pl,Y=S.ys;const pool=YMOM.filter(m=>S.age>=m.a[0]&&S.age<=m.a[1]&&!Y.used.includes(m.id)&&(!m.c||m.c()));const m=pick(pool.length?pool:YMOM.filter(m=>S.age>=m.a[0]&&S.age<=m.a[1]));Y.used.push(m.id);const txt=m.x();
  modal(m.t,'<p>'+esc(txt)+'</p>',m.o.map(o=>({l:o[0],f(){ye(o[1]);if(o[3])o[3]();toast(o[2])}})))}
 function ySeasonEnd(){const P=S.pl,Y=S.ys,L=S.ratings[P.lg],cr=L[P.club].r,avg=Y.rts.length?Y.rts.reduce((a,b)=>a+b,0)/Y.rts.length:0,old=P.ovr,op=P.pot;
- const tgt=P.pot*(0.3+0.045*(S.age+1-8)),g=(tgt-P.ovr)*0.7+Y.dev*0.4+(cr-70)*0.03+(avg?(avg-6.5)*0.6:0)+randn();P.ovr=Math.min(P.pot,Math.max(P.ovr+1,Math.round(P.ovr+g)));
+ const tgt=P.pot*(0.3+0.045*(S.age+1-8)),g=(tgt-P.ovr)*0.7+Y.dev*0.4+(cr-70)*0.03+(avg?(avg-6.5)*0.6:0)+randn();P.ovr=Math.min(P.pot,Math.max(P.ovr+1,Math.round(P.ovr+g)),Math.max(P.ovr+1,Math.round(tgt)+3));
  if(Y.dev>3)P.pot=Math.min(95,P.pot+ri(1,3));else if(Y.dev<-1.5)P.pot=Math.max(P.ovr,P.pot-ri(1,3));
  const row={y:Y.y,t:ageTeam(S.age),club:L[P.club].n,apps:Y.apps,g:Y.goals,a:Y.ast,rt:avg?Math.round(avg*10)/10:null};P.seasons.push(row);P.apps+=Y.apps;P.goals+=Y.goals;P.ast+=Y.ast;
  if(P.school<35)S.familia=cl(S.familia-6);
@@ -1461,7 +1461,7 @@ function plOffer(){const P=S.pl,o=[];if(P.club!=null&&P.lastMove!=null&&S.day-P.
 function plMove(d){const P=S.pl,n=S.ratings[d.lg][d.i].n;{const fee=d.how==='emprestimo'?0:plFee(),bonus=fee===0&&d.how!=='emprestimo'?Math.round((d.sal||0)*2/100)*100:0;trfAdd({n:S.name,from:P.club!=null?clubName():'sem clube',to:n,fee,k:d.how==='emprestimo'?'emp':'eu-jog',extra:bonus?'prémio de assinatura '+money(bonus):''});if(bonus){S.money+=bonus;log('Recebeste '+money(bonus)+' de prémio de assinatura.','good')}if(fee)news(`O ${n} paga ${money(fee)} ao ${clubName()} por ${S.name}.`,'good')}if(P.club!=null)exitClub(clubName(),d.how||'venda',d.style);log(`Transferência: trocas o ${clubName()||'desemprego'} pelo ${n}.`,'big');news(`${S.name} é reforço do ${n}.`,'good');
  P.lg=d.lg;P.club=d.i;P.con={sal:d.sal,end:seasonEndDay(curSeasonYear()+d.yrs)};P.trust=45;P.selD=null;P.conPend=0;P.lastMove=S.day;S.stats.clubes.push(n);(P.clubs=P.clubs||[]).push(n);joinClub(n);if(S.leagueId!==d.lg||!S.fixtures.length){setupSeason(d.lg,curSeasonYear());simPast()}}
 function weeklyPl(){const P=S.pl,tr=Math.min(9,P.tr||0);P.tr=0;P.peak=Math.max(P.peak||0,P.ovr);plClubMove();
- if(S.age<=27&&P.ovr<P.pot&&R()<(0.03+tr*0.008+(P.sApps?0.012:0))*(S.age<=23?1.3:0.8))P.ovr++;if(S.age>=31&&R()<0.04*(S.age-30))P.ovr--;
+ if(S.age<=27&&P.ovr<P.pot&&R()<(0.012+tr*0.0035+(P.sApps?0.008:0))*(S.age<=20?1.25:S.age<=23?1:0.6)*cl((P.pot-P.ovr)/8,0.35,1)*(P.ovr>=85?0.6:P.ovr>=80?0.8:1))P.ovr++;if(S.age>=31&&R()<0.04*(S.age-30))P.ovr--;
  if(S.age<=24&&R()<0.05){const f=P.form||6.5,v=P.trust>60&&f>=7?1:P.trust<40||f<6.2?-1:0;if(v)P.pot=cl(P.pot+v,P.ovr,95)}if(S.age>=29&&P.pot>P.ovr)P.pot=P.ovr;
  P.fit=cl((P.fit||100)+12);P.trust=cl(P.trust+(50-P.trust)*0.02);
  if(P.club!=null&&windowOpen()&&!(P.lastMove!=null&&S.day-P.lastMove<300)&&R()<0.03+S.fama/1500+((P.form||6.5)>7.2?0.04:0)+(P.agent?0.02:0))plOffer();if(P.club==null&&R()<0.5)plOffer();
@@ -1962,7 +1962,7 @@ const G3=(()=>{
   try{cur.update&&cur.update(t,dt);(cur.A||[]).forEach(p=>p.userData&&p.userData.legs&&pose(p,t,dt));if(cur.extra)cur.extra.forEach(p=>pose(p,t,dt));if(!document.querySelector('.cq-over'))RD.render(cur.sc,cur.cam)}catch(e){console.warn(e);cur=null;return}raf=requestAnimationFrame(loop)}
  function mount(el,S3){const r=rend();if(!r)return false;try{if(typeof gfxQ==='function')gfxQ(r,S3.sc)}catch(e){}el.appendChild(r.domElement);cur=S3;cur.w=0;T0=performance.now();lastT=0;if(!raf)raf=requestAnimationFrame(loop);return true}
  function sceneView(el,set,cfg){if(!on())return false;try{const B=(SET[set]||SET.casa)({...(cfg||{}),_set:set});const cam=new THREE.PerspectiveCamera(42,1.8,0.1,120);cam.position.set(...B.cam);const L=new THREE.Vector3(...B.look);cam.lookAt(L);const c0=cam.position.clone();
-   return mount(el,{sc:B.sc,cam,A:B.A,h:el.clientHeight||190,update:(t,dt)=>{cam.position.x=c0.x+Math.sin(t*0.25)*0.35;cam.position.y=c0.y+Math.sin(t*0.31)*0.06;cam.lookAt(L);B.tick&&B.tick(t,dt)},set})}catch(e){console.warn(e);return false}}
+   return mount(el,{sc:B.sc,cam,A:B.A,h:el.clientHeight||190,update:(t,dt)=>{if(B.camFn)B.camFn(t,cam,dt);else{cam.position.x=c0.x+Math.sin(t*0.25)*0.35;cam.position.y=c0.y+Math.sin(t*0.31)*0.06;cam.lookAt(L)}B.tick&&B.tick(t,dt)},set})}catch(e){console.warn(e);return false}}
  function react(mood,who){if(!cur||!cur.A)return;const t=(performance.now()-T0)/1000;const P=who==='me'?[cur.A[0]]:cur.A.slice(1,cur.set==='imprensa'?3:4);P.forEach(p=>{if(!p.userData||!p.userData.legs)return;const sit=p.userData.pose.startsWith('sit');p.userData.react={p:mood>0?(sit?'sittalk':'happy'):mood<0?(sit?'sit':'angry'):'talk',until:t+2.6}});if(mood<0&&cur.A[1]&&cur.set!=='bar'){const p=cur.A[1];if(!p.userData.pose.startsWith('sit'))p.userData.react={p:'angry',until:t+2.6}}}
  /* ---------- estádio ---------- */
  let MS=null;
@@ -2208,7 +2208,7 @@ const isStandalone=()=>!!(window.matchMedia&&matchMedia('(display-mode: standalo
 const isIOS=()=>/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 function deskify(){const m=document.querySelector('#app > main');if(!m)return;if(!isDesk()){m.classList.remove('cols');return}m.classList.add('cols');
  const kids=[...m.children];let cur=null;const blks=[];kids.forEach(el=>{if(el.matches('h2.sec')){cur=document.createElement('div');cur.className='blk';blks.push(cur)}else if(!cur){cur=document.createElement('div');cur.className='blk lead';blks.push(cur)}cur.appendChild(el)});
- const nc=window.innerWidth>=1560?3:2;let run=null,cols=[];blks.forEach(b=>{const span=b.classList.contains('lead')||!!b.querySelector('.lpitch,.placard,.slots,.clubgrid,.sqt,.acdt,.mkt,.banca,.tband');if(span){run=null;m.appendChild(b);return}
+ const nc=window.innerWidth>=1560?3:2;let run=null,cols=[];blks.forEach(b=>{const span=b.classList.contains('lead')||!!b.querySelector('.lpitch,.placard,.slots,.clubgrid,.sqt,.acdt,.mkt,.banca,.tband,.tlm,.trof');if(span){run=null;m.appendChild(b);return}
   if(!run){run=document.createElement('div');run.className='dcols';run.style.gridTemplateColumns=`repeat(${nc},minmax(0,1fr))`;cols=[];for(let i=0;i<nc;i++){const c=document.createElement('div');c.className='dcol';run.appendChild(c);cols.push(c)}m.appendChild(run)}
   let t=cols[0];cols.forEach(c=>{if(c.offsetHeight<t.offsetHeight)t=c});t.appendChild(b)})}
 let lastDesk=null;window.addEventListener('resize',()=>{const d=isDesk();if(d!==lastDesk){lastDesk=d;if(S&&!M)render()}});
@@ -2233,7 +2233,7 @@ function slotsModal(kind){const L=[1,2,3,4,5].map(i=>({i,s:slotSum(i)}));
   L.map(({i,s})=>({l:`Espaço ${i}${S&&S.slot===i?' (atual)':''} · ${s?s.t+' — '+s.d:'vazio'}`,dis:kind==='load'&&!s,f(){if(kind==='save'){if(M){toast('Acaba o jogo antes de gravar.');resumeM();return}S.slot=i;save();toast('Jogo gravado no espaço '+i+'.');resumeM()}else{if(M){cancelAnimationFrame(RAF);M=null;closeModal()}loadSlot(i)}}})).concat([{l:'Voltar',ghost:true,f(){pauseMenu()}}]))}
 function optionsModal(){if(M&&!M.done)M.paused=true;const o=(n,v,l)=>`<button data-opt="${n}|${v}" class="${String(PREF[n])===String(v)?'on':''}">${l}</button>`;
  pmodal('Opções',`<div class="stack"><span class="lab2">Gráficos dos jogos e das cenas</span><div class="chipset2">${G3.ok()?`<button data-opt="g3|1" class="${G3.pref()?'on':''}">3D</button><button data-opt="g3|0" class="${G3.pref()?'':'on'}">2D</button>`:'<span class="hint">O 3D não está disponível neste aparelho.</span>'}</div>
- <p class="hint" style="margin:0 0 6px">Fora de Campo · versão 2.6</p>
+ <p class="hint" style="margin:0 0 6px">Fora de Campo · versão 2.7</p>
  <span class="lab2">Música</span><div class="chipset2">${o('vmus',0,'Desligada')}${o('vmus',0.35,'Baixa')}${o('vmus',0.6,'Média')}${o('vmus',0.85,'Alta')}</div>
  <span class="lab2">Efeitos sonoros</span><div class="chipset2">${o('vsfx',0,'Desligados')}${o('vsfx',0.45,'Baixos')}${o('vsfx',0.85,'Normais')}${o('vsfx',1,'Altos')}</div>
  <span class="lab2">Ambiente do estádio</span><div class="chipset2">${o('vamb',0,'Desligado')}${o('vamb',0.4,'Baixo')}${o('vamb',0.7,'Normal')}${o('vamb',1,'Alto')}</div>
@@ -2330,7 +2330,7 @@ function staffTalk(id){const x=(S.staff||[]).find(s=>s.id===id);if(!x)return;con
   o.push(['Despedir · indemnização '+money(x.sal*6),fx(0,()=>{if(S.budget<x.sal*6)return 'Não há orçamento para a indemnização.';S.budget-=x.sal*6;staffLeave(x);(S.staff||[]).forEach(s=>s.rel=cl(s.rel-3));return 'Saiu sem dizer uma palavra. O resto do staff ficou desconfiado.'}),'',null]);
  }else{
   if(x.r==='tp')o.push(['Perguntar porque não jogas mais',fx(0,()=>{const P=S.pl;if(x.rel>=55&&R()<0.6){P.trust=cl(P.trust+5);return '«Continua assim nos treinos e vais ter a tua oportunidade.»'}P.trust=cl(P.trust-2);return '«Aqui quem decide sou eu. Mostra no treino.»'}),'',null]);
-  if(x.r==='fis')o.push(['Pedir treino extra',fx(4,()=>{const P=S.pl;add('energia',-15);if(P.ovr<P.pot&&R()<0.25){P.ovr++;return 'Uma hora a mais no ginásio. Sentes-te mais forte. (+1 geral)'}P.fit=cl((P.fit||100)+5);return 'Treino duro. A condição física agradece.'}),'',null]);
+  if(x.r==='fis')o.push(['Pedir treino extra',fx(4,()=>{const P=S.pl;add('energia',-15);if(P.ovr<P.pot&&R()<0.08){P.ovr++;return 'Uma hora a mais no ginásio. Sentes-te mais forte. (+1 geral)'}P.fit=cl((P.fit||100)+5);return 'Treino duro. A condição física agradece.'}),'',null]);
   if(x.r==='med'||x.r==='fis')o.push(['Pedir um plano de prevenção de lesões',fx(3,()=>{S.pl.prev=S.day+60;return 'Durante 2 meses tens menos risco de lesão.'}),'',null]);
   if(x.r==='psi')o.push(['Fazer uma sessão',fx(4,()=>{add('stress',-12);add('felicidade',4);return 'Falas do que te pesa. Sais mais leve.'}),'',null]);
   if(x.r==='nut')o.push(['Pedir um plano alimentar',fx(4,()=>{add('energia',8);add('saude',4);return 'Plano novo: menos açúcar, mais energia.'}),'',null]);
@@ -2876,16 +2876,24 @@ function stepAct(dt){
   if(a.k==='replay'){startReplay();return}
   if(a.k==='carry'){const cd=M.dots[a.who];if(cd)a.dur=Math.max(a.dur,Math.hypot((a.tx-cd.x)*105,(a.ty-cd.y)*68)/(a.nohold?8:13));if(!a.nohold)M.hold=a.who;M.runs[a.who]=[a.tx,a.ty];M.dots[a.who].fast=1}
   if(a.k==='pass'||a.k==='shot'){const kd=M.hold!=null?M.dots[M.hold]:a.from!=null?M.dots[a.from]:null;if(kd){anim(kd,a.head?'head':a.k==='shot'?'shoot':'kick',0.38);SND.kick(a.k==='shot'?1:0.32)}else if(a.steal&&M.dots[a.to]&&R()<0.35)anim(M.dots[a.to],'slide',0.45);
-   if(a.k==='pass'&&a.to>=0&&M.dots[a.to]){const d=M.dots[a.to],dist=Math.hypot((d.x-a.fx)*105,(d.y-a.fy)*68);if(!a.fixed&&!a.cross)a.dur=Math.max(a.dur*0.7,0.22+dist/42);if(dist>32&&!a.lob&&!a.steal){a.lob=1;a.h=0.06}}}
+   if(a.k==='pass'&&a.to>=0&&M.dots[a.to]){const d=M.dots[a.to],dist=Math.hypot((d.x-a.fx)*105,(d.y-a.fy)*68);if(dist>30&&!a.lob&&!a.steal){a.lob=1;a.h=0.06}if(!a.fixed&&!a.cross)a.dur=Math.max(a.dur*0.8,0.3+dist/(a.lob?19:23))}
+   if(a.k==='pass'&&!a.lob&&a.to>=0&&M.dots[a.to]&&laneBlock(a.fx,a.fy,M.dots[a.to].x,M.dots[a.to].y,M.dots[a.to].team)){a.lob=1;a.h=0.045}
+   if(a.k==='shot'&&!a.lob&&!a.head&&a.tx!=null){const kd2=M.hold!=null?M.dots[M.hold]:a.from!=null?M.dots[a.from]:null;if(kd2&&laneBlock(a.fx,a.fy,a.tx,a.ty,kd2.team)){a.lob=1;a.h=0.03}}
+   if(a.k==='move'&&a.tx!=null&&!a.fixed){const md=Math.hypot((a.tx-a.fx)*105,(a.ty-a.fy)*68);a.dur=Math.max(a.dur,0.15+md/26)}
+   if(a.k==='shot'&&a.tx!=null&&!a.fixed){const sd=Math.hypot((a.tx-a.fx)*105,(a.ty-a.fy)*68);a.dur=Math.max(a.dur,0.12+sd/(a.lob?22:32))}}
   if(a.k==='pass'||a.k==='shot'||a.k==='move')M.hold=null}
  const a=M.act;if(a.k==='replay')return;a.t+=dt/a.dur;if(a.k==='until'){const d=M.dots[a.who],r=M.runs[a.who];if(!d||!r||Math.hypot((r[0]-d.x)*105,(r[1]-d.y)*68)<3)a.t=1}const u=Math.min(1,a.t);
- if(a.k==='pass'){const d=M.dots[a.to];if(d){const uu=a.lob?u:1-Math.pow(1-u,1.6);M.ball.x=lerp(a.fx,d.x,uu);M.ball.y=lerp(a.fy,d.y,uu);M.ball.h=a.lob?Math.sin(u*Math.PI)*(a.h||0.1):0}}
+ if(a.k==='pass'){const d=M.dots[a.to];if(d){const uu=a.lob?u:1-Math.pow(1-u,1.3);M.ball.x=lerp(a.fx,d.x,uu);M.ball.y=lerp(a.fy,d.y,uu);M.ball.h=a.lob?Math.sin(u*Math.PI)*(a.h||0.1):0}}
  else if(a.k==='shot'||a.k==='move'){const uu=a.k==='shot'?u:1-Math.pow(1-u,1.5);M.ball.x=lerp(a.fx,a.tx,uu);M.ball.y=lerp(a.fy,a.ty,uu)+(a.curve?Math.sin(u*Math.PI)*a.curve:0);
   M.ball.h=a.head?lerp(0.025,0.008,u):a.lob?Math.sin(u*Math.PI)*(a.big?0.09:(a.h||0.04)):0}
- else if(a.k==='carry'){const h=M.dots[a.who];if(h&&!a.nohold){const dir=h.team===0?1:-1;M.ball.x=h.x+dir*0.009;M.ball.y=h.y+0.003;M.ball.h=0}}
- else if(M.hold!=null){const h=M.dots[M.hold];if(h){const dir=h.team===0?1:-1;M.ball.x=h.x+dir*0.009;M.ball.y=h.y+0.003;M.ball.h=0}}
+ else if(a.k==='carry'){const h=M.dots[a.who];if(h&&!a.nohold)ballTo(h,dt)}
+ else if(M.hold!=null){const h=M.dots[M.hold];if(h)ballTo(h,dt)}
  if(u>=1){M.act=null;if(a.k==='carry'){delete M.runs[a.who];if(M.dots[a.who])M.dots[a.who].fast=0}
   if(a.k==='pass'){M.hold=a.to;if(a.flip)M.pos=1-M.pos;if(a.setPos!=null)M.pos=a.setPos;if(a.cross)M.ball.h=0.02}if(a.fn)a.fn()}}
+/* há um adversário no caminho da bola? então ela tem de passar por cima, não através dele */
+function laneBlock(fx,fy,tx,ty,team){const vx=(tx-fx)*105,vy=(ty-fy)*68,L2=vx*vx+vy*vy;if(L2<9)return false;return M.dots.some(d=>{if(d.off||d.team===team||d.role==='GR')return false;const t=((d.x-fx)*105*vx+(d.y-fy)*68*vy)/L2;if(t<0.08||t>0.92)return false;return Math.hypot((d.x-fx)*105-vx*t,(d.y-fy)*68-vy*t)<0.9})}
+/* a bola nunca salta para os pés de ninguém: rola até lá */
+function ballTo(h,dt){const dir=h.team===0?1:-1,tx=h.x+dir*0.009,ty=h.y+0.003,dx=(tx-M.ball.x)*105,dy=(ty-M.ball.y)*68,d=Math.hypot(dx,dy),mx=24*dt;if(d<=Math.max(mx,0.4)){M.ball.x=tx;M.ball.y=ty;M.ball.h=0;return}M.ball.x+=dx/d*mx/105;M.ball.y+=dy/d*mx/68;M.ball.h=Math.max(0,(M.ball.h||0)*0.9)}
 /* --- movimento tático --- */
 function tgtOf(d,i,b,h){const T=d.team,dir=T?-1:1,own=T===M.pos,bp=T?1-b.x:b.x;
  if(M.sp&&M.sp.pos&&M.sp.pos[i])return M.sp.pos[i];
@@ -3053,8 +3061,14 @@ const MX3=(()=>{let MS=null;const W=(x,y)=>[(x-0.5)*105,(y-0.5)*68],SCL=1.22;
   if(ap){u.pose=ap;u.kp=a.kp!=null?a.kp:cl(1-(a.until-M.gt)/a.dur,0,1);u.cv=a.cv||0;if(ap==='dive'){const ls=Math.sign(-(a.dd||1)*Math.sin(p.rotation.y))||1;u.dd=Math.abs(Math.sin(p.rotation.y))>0.2?ls:(a.dd||1)}}
   else{u.pose=sp>0.9?'run':'stand';u.amp=Math.min(0.95,sp/10);u.cyc+=dt*(4.5+sp*0.9)*(sp>0.9?1:0.2)}return sp}
  function camFor(m,bx,bz,dt){let mode=PREF.cam||'auto';const tm=M.pos===0?1:-1;if(M.replay)mode='rep';else if(M.half===1&&M.min===0&&M.gt<3.6)mode='intro';else if(mode==='auto'){if(M.sp&&M.sp.k==='pen'&&M.sp.cam)mode='pen';else if(M.sp&&(M.sp.k==='corner'||M.sp.k==='fk'))mode='sp';else if(M.celT&&M.gt<M.celT.until)mode='cel';else mode='tv'}
-  m.cx+=(cl(bx,-40,40)-m.cx)*Math.min(1,dt*1.8);m.cz+=(bz-m.cz)*Math.min(1,dt*1.6);let P,L,f;
-  if(mode==='tv'){const ph=window.innerWidth<620;P=[m.cx*0.9,ph?12.5:13.5,(ph?28:33)+m.cz*0.3];L=[m.cx,0.4,m.cz*0.72];f=ph?36:33}
+  let P,L,f;
+  if(mode==='tv'){/* câmara de transmissão: antecipa o ataque, segue a bola de perto e aproxima-se na zona de golo */
+   const asp=m.cam.aspect||((window.innerWidth||800)/(window.innerHeight||600)),por=asp<1.05,sm=(window.innerWidth||800)<620,att=M.hold!=null&&M.dots[M.hold]?(M.dots[M.hold].team===0?1:-1):(m.att||1);m.att=att;
+   const near=Math.abs(bx)>28,lead=att*(near?3:por?5:8),tx=cl(bx+lead,-46,46);m.cx+=(tx-m.cx)*Math.min(1,dt*1.5);m.cz+=(bz-m.cz)*Math.min(1,dt*1.7);
+   m.zm=(m.zm==null?0:m.zm)+((near?1:0)-(m.zm||0))*Math.min(1,dt*0.8);const z=m.zm;
+   const H=(por?15.5:13.5)-z*1.3,D=(por?30:27)-z*2;P=[m.cx*0.9,H,D+m.cz*0.5];L=[m.cx,0.2,m.cz*0.8+1.5];f=(por?40:sm?34:31)-z*1.5}
+  else{m.cx+=(cl(bx,-40,40)-m.cx)*Math.min(1,dt*1.8);m.cz+=(bz-m.cz)*Math.min(1,dt*1.6)}
+  if(mode==='tv'){}
   else if(mode==='alta'){P=[m.cx*0.6,78,36];L=[m.cx*0.6,0,3];f=42}else if(mode==='intro'){const a=-0.7+M.gt*0.28;P=[Math.sin(a)*50,26-M.gt*2.5,Math.cos(a)*30];L=[-Math.sin(a)*30,6,-Math.cos(a)*30];f=55}
   else if(mode==='baliza'){const g=tm;P=[g*70,13,m.cz*0.3];L=[g*15+m.cx*0.35,0,m.cz*0.5];f=42}
   else if(mode==='segue'){P=[bx-tm*17,7.5,bz+10];L=[bx+tm*8,0.5,bz];f=46}
@@ -3062,7 +3076,7 @@ const MX3=(()=>{let MS=null;const W=(x,y)=>[(x-0.5)*105,(y-0.5)*68],SCL=1.22;
   else if(mode==='sp'){const g=M.sp.T===0?1:-1;P=[g*24,16,bz*0.4+(bz<0?14:-14)];L=[g*46,0,bz*0.3];f=40}
   else if(mode==='cel'){const d=M.celT.d,[sx,sz]=W(d.x,d.y);P=[sx-(sx>0?9:-9),4.5,sz+(sz>0?-10:10)];L=[sx,1.6,sz];f=36}
   else{const g=M.replay&&M.replay.fr.length?(M.replay.fr[M.replay.fr.length-1].b[0]>0.5?1:-1):1;P=[g*43,4.5,bz>0?-18:18];L=[bx,0.6,bz];f=38}
-  const cut=mode!==m.mode;m.mode=mode;const k=cut?1:Math.min(1,dt*(mode==='tv'||mode==='alta'?3:4));
+  const cut=mode!==m.mode;m.mode=mode;const k=cut?1:Math.min(1,dt*(mode==='tv'?2.6:mode==='alta'?3:4));
   m.cam.position.x+=(P[0]-m.cam.position.x)*k;m.cam.position.y+=(P[1]-m.cam.position.y)*k;m.cam.position.z+=(P[2]-m.cam.position.z)*k;
   m.look.x+=(L[0]-m.look.x)*k;m.look.y+=(L[1]-m.look.y)*k;m.look.z+=(L[2]-m.look.z)*k;m.cam.lookAt(m.look);if(Math.abs(m.cam.fov-f)>0.1){m.cam.fov+=(f-m.cam.fov)*k;m.cam.updateProjectionMatrix()}}
  function upd(t,dt){const m=MS;if(!M)return;const D=M.dots,[bx,bz]=W(M.ball.x,M.ball.y);
@@ -3268,8 +3282,8 @@ function render(){const app=$('#app');if(!S){app.innerHTML=SCREEN==='setup'?rend
  if(S.mode==='player'&&S.pl&&S.pl.stage==='youth'){app.innerHTML=vYouthPage();requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('.fill[data-w]').forEach(e=>{e.style.width=e.dataset.w+'%'})));if(!modalOpen&&S.queue.length)showEvent();return}
  const x=document.scrollingElement.scrollTop;
  app.innerHTML=`<header class="top"><div class="who" role="button" tabindex="0" data-tab="vida" title="Gravação e menu em Vida"><b>${S.mode==='player'?'':'Míster '}${esc(S.name)}</b><span>${myLg()!=null?esc(clubName())+' · '+LEAGUES[myLg()].n:'Sem clube'}${S.mode==='player'?' · '+S.age+' anos':''}</span></div><div class="dt"><span>${fdate(S.day)}</span><b class="num ${S.money<0?'neg':''}">${money(S.money)}</b></div><button class="mbtn" data-do="pausa" aria-label="Menu do jogo" title="Menu (Esc)"><i></i><i></i><i></i></button></header>
- <main>${({hoje:vHoje,equipa:vEquipa,staff:staffHTML,liga:vLiga,noticias:vNoticias,vida:vVida,diario:vDiario})[TAB]()}</main>
- <nav class="tabs" aria-label="Secções"><div class="in">${[['hoje','Hoje'],['equipa',S.mode==='player'?'Carreira':'Equipa'],['staff','Staff'],['liga','Liga'],['noticias','Notícias'],['vida','Vida'],['diario','Diário']].map(([k,l])=>`<button data-tab="${k}" class="${TAB===k?'on':''}">${l}</button>`).join('')}</div></nav>`;
+ <main>${({hoje:vHoje,equipa:vEquipa,staff:staffHTML,liga:vLiga,noticias:vNoticias,trof:vTrof,tlm:vTlm,vida:vVida,diario:vDiario})[TAB]()}</main>
+ <nav class="tabs" aria-label="Secções"><div class="in">${[['hoje','Hoje'],['equipa',S.mode==='player'?'Carreira':'Equipa'],['staff','Staff'],['liga','Liga'],['noticias','Notícias'],['trof','Troféus'],['tlm','Telemóvel'],['vida','Vida'],['diario','Diário']].map(([k,l])=>`<button data-tab="${k}" class="${TAB===k?'on':''}">${l}</button>`).join('')}</div></nav>`;
  deskify();lastDesk=isDesk();document.scrollingElement.scrollTop=x;
  requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('.fill[data-w]').forEach(e=>{e.style.width=e.dataset.w+'%'})));
  if(!modalOpen&&S.queue.length)showEvent()}
@@ -3970,8 +3984,8 @@ function plSk(){const P=S.pl;if(!P.sk){const o=P.ovr,b={GR:{gr:6,pas:-4,fis:0,te
 const interactive=()=>typeof window!=='undefined'&&window.document&&typeof requestAnimationFrame==='function'&&document.body&&document.body.appendChild;
 function ptrAuto(kind,dr){const P=S.pl,sk=plSk(),k=dr||pick(PDPOS[P.pos]||['fis']);const s=cl(0.42+(sk[k]-60)/90+randn()*0.12,0.05,0.98);return ptrResult(kind,k,s,true)}
 function ptrResult(kind,k,s,auto){const P=S.pl,sk=plSk(),ex=kind==='extra';
- const tr=ex?1.0+1.5*s:0.6+0.8*s,tg=ex?Math.round(1+3.2*s):Math.round(0.4+2.2*s),pr=(ex?2.5:1.6)+(ex?4:3)*s;
- P.tr=(P.tr||0)+tr;P.trust=cl(P.trust+tg);P.skp=P.skp||{};P.skp[k]=(P.skp[k]||0)+pr;let up=0;while(P.skp[k]>=10){P.skp[k]-=10;if(sk[k]<Math.min(97,P.pot+6)){sk[k]++;up++}}
+ const tr=ex?1.0+1.5*s:0.6+0.8*s,tg=ex?Math.round(1+3.2*s):Math.round(0.4+2.2*s),pr=(ex?1.2:0.8)+(ex?2:1.5)*s;
+ P.tr=(P.tr||0)+tr;P.trust=cl(P.trust+tg);P.skp=P.skp||{};P.skp[k]=(P.skp[k]||0)+pr;let up=0;while(P.skp[k]>=10){P.skp[k]-=10;if(sk[k]<Math.min(97,P.ovr+8)){sk[k]++;up++}}
  P.form=cl((P.form||6.5)+(s-0.5)*0.15,4,9.5);let inj='';if(ex&&R()<0.03+(s<0.25?0.02:0)){P.inj=ri(5,20);inj=` Sentiste uma pontada no fim… Lesão de ${P.inj} dias.`}
  P.trLog=(P.trLog||[]).concat([{d:S.day,k,s:Math.round(s*100),ex}]).slice(-20);
  const q=s>=0.8?'Treino excelente':s>=0.6?'Bom treino':s>=0.4?'Treino razoável':'Treino fraco';
@@ -4045,7 +4059,7 @@ const MINI={
 (function(){const a=ACTS.find(x=>x.id==='ptreino'),b=ACTS.find(x=>x.id==='pextra');if(a){a.h='Escolhe o exercício e treina. Evolução e confiança do míster';a.choice=()=>ptrOpen('normal')}
  if(b){b.n='Treino extra';b.h='Ficas a treinar mais. Evolução e confiança maiores, risco de lesão';b.req=()=>S.pl.inj?'Estás lesionado.':(S.flags&&S.flags.pex===S.day?'Já fizeste treino extra hoje.':null);b.choice=()=>{S.flags=S.flags||{};S.flags.pex=S.day;ptrOpen('extra')}}
  if(a){const r0=a.req;a.req=()=>r0&&r0();const c0=a.choice;a.choice=()=>{S.flags=S.flags||{};S.flags.ptr=S.day;c0()}}})();
-{const _WP=weeklyPl;weeklyPl=function(){const P=S.pl;if(P)plSk();const r=_WP.apply(this,arguments);try{if(P&&P.sk){const top=Object.values(P.sk).sort((a,b)=>b-a).slice(0,3),avg=top.reduce((s,v)=>s+v,0)/3;if(avg>P.ovr+3&&P.ovr<P.pot&&R()<0.12)P.ovr++}}catch(e){}return r}}
+{const _WP=weeklyPl;weeklyPl=function(){const P=S.pl;if(P)plSk();const r=_WP.apply(this,arguments);try{if(P&&P.sk){const top=Object.values(P.sk).sort((a,b)=>b-a).slice(0,3),avg=top.reduce((s,v)=>s+v,0)/3;if(avg>P.ovr+5&&P.ovr<P.pot&&R()<0.025)P.ovr++}}catch(e){}return r}}
 
 /* ============ ATRIBUTOS DOS JOGADORES (v1.9) ============ */
 const ATG=[['Técnicos',[['fin','Finalização'],['fnt','Finta'],['tec','Técnica'],['pas','Passe'],['cru','Cruzamento'],['cab','Cabeceamento'],['lng','Remate de longe'],['liv','Livres'],['pen','Penáltis'],['des','Desarme'],['mar','Marcação']]],
@@ -4086,7 +4100,7 @@ function bestBy(k){const xi=M.xi.filter(x=>!M.off.has(x.p.id)&&x.p.pos!=='GR');i
   if(ks){const v=(A[ks[0]]+A[ks[1]])/2;o[2]=(o[2]||0)+cl((v-12)/40,-0.18,0.18)}}}catch(e){}return _RD2.apply(this,arguments)}}
 /* --- treino do jogador sobe atributos --- */
 const SK2AT={fin:['fin','cmp','lng'],pas:['pas','vis','cru'],tec:['tec','fnt','agi'],fis:['vel','ace','res','for'],def:['des','mar','pos'],gr:['ref','mao','ucu','sai']};
-{const _PR=ptrResult;ptrResult=function(kind,k,s,auto){const P=S.pl;P.atB=P.atB||{};const g=(kind==='extra'?0.18:0.1)*(0.4+s);(SK2AT[k]||[]).forEach(a=>{P.atB[a]=Math.min(6,(P.atB[a]||0)+g*(0.6+R()*0.8))});return _PR.apply(this,arguments)}}
+{const _PR=ptrResult;ptrResult=function(kind,k,s,auto){const P=S.pl;P.atB=P.atB||{};const g=(kind==='extra'?0.07:0.04)*(0.4+s);(SK2AT[k]||[]).forEach(a=>{const c0=P.atB[a]||0;P.atB[a]=Math.min(4,c0+g*(0.6+R()*0.8)*Math.max(0.15,1-c0/4.5))});return _PR.apply(this,arguments)}}
 /* --- interface --- */
 function atCol(v){return v>=16?'a5':v>=13?'a4':v>=10?'a3':v>=6?'a2':'a1'}
 function radarSVG(A,pos){const ax=pos==='GR'?[['Reflexos',(A.ref+A.agi)/2],['Mãos',A.mao],['Saídas',(A.sai+A.imp)/2],['Um contra um',A.ucu],['Jogo de pés',(A.jpe+A.pas)/2],['Mental',(A.pos+A.cmp+A.dec)/3]]
@@ -4940,6 +4954,415 @@ const DEC3D={shot:['rem','fin'],volley:['rem','tec'],drib:['dri','fnt'],pass:['t
   const fin=r=>{let ok=false;if(r){ok=['rem','dri','tab'].includes(m[0])||act==='head'?r.goals>0:!r.lastW&&!/GOLO SOFRIDO|PASSOU|FALHASTE|CORTADO|DESARMADO|FORA DE TEMPO|NÃO SALTASTE|CEDO|DEMORASTE|PERDESTE|FALTA/.test(r.last||'')}
    M.force=r?ok:null;try{_RD6.call(this,k,false)}finally{M.force=null}};
   const okk=CRQ.open(wrap,m[0],{sk:lv,n:1,single:true,done:r=>{CRQ.close();ov.remove();fin(r)}});if(!okk){ov.remove();fin(null)}return}}}catch(e){M.force=null}return _RD6.apply(this,arguments)}}
+
+/* ============ TELEMÓVEL: CONTACTOS, MENSAGENS ESCRITAS POR TI E NÚMEROS DESCONHECIDOS SEPARADOS (v2.7) ============ */
+const tlmNorm=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+function newNum(){S.numUsed=S.numUsed||{};let n;do{n='+351 9'+pick(['1','2','3','6'])+ri(0,9)+' '+String(ri(0,999)).padStart(3,'0')+' '+String(ri(0,999)).padStart(3,'0')}while(S.numUsed[n]);S.numUsed[n]=1;return n}
+const isNum=f=>/^\+\d/.test(f||'');
+/* cada desconhecido tem o seu próprio número */
+{const _TW7=thWho;thWho=function(w){if(w==='desc')return newNum();return _TW7.apply(this,arguments)}}
+{const _CT7=ctType;ctType=function(from){const f=from||'';if(isNum(f)||/^Número desconhecido/.test(f))return 'desc';if((S.contacts||[]).some(c=>c.n===f))return 'ct';return _CT7.apply(this,arguments)}}
+if(typeof TH!=='undefined'&&TH.desc_escola)TH.desc_escola.nm='Rui (escola primária)';
+{const _CE7=ctEffect;ctEffect=function(type,from,tone,round){if(type==='ct'){const c=(S.contacts||[]).find(x=>x.n===from);if(c){const v=tone==='w'?(round?2:3):tone==='c'?-5:0;c.rel=cl((c.rel==null?50:c.rel)+v);if(v>0)add('social',1)}return}return _CE7.apply(this,arguments)}}
+/* ---------- perceber o que escreves ---------- */
+const TLM_POS=/\b(sim|claro|obrigad|adoro|amo-te|amo te|otimo|fixe|boa|bora|vamos|combinado|perfeito|com certeza|parabens|lindo|linda|forca|conta comigo|aceito|quero|gosto|top|espetacular|incrivel|ok|okay|pode ser|vou|estou bem|tudo bem|beijinhos|beijos|abraco|saudades)\b|❤|😍|😊|😘|🙌|👍|😄|😁|💪/;
+const TLM_NEG=/\b(nao|nunca|recus|esquece|desaparece|chato|irrit|odeio|cala|idiota|estupid|parvo|burro|vergonha|deixa-me|pessim|nem pensar|nao quero|nao posso|nao da|larga-me|vai-te|merda|porra|chatea|farto|farta)\b|😠|😡|🙄/;
+const TLM_INS=/\b(idiota|estupid|parvo|burro|cala-te|cala a boca|odeio-te|vai-te|merda|otario|imbecil|nojo)\b/;
+function tlmTone(txt){const t=tlmNorm(txt);const ins=TLM_INS.test(t),neg=TLM_NEG.test(t),pos=TLM_POS.test(t)||/[❤😍😊😘🙌👍😄😁💪]/u.test(txt);if(ins)return 'c';if(pos&&!neg)return 'w';if(neg&&!pos)return 'c2';return 'n'}
+const TLM_STOP=new Set('a o e de da do das dos em no na um uma que para por com se te me eu tu ele ela os as ja mas ou ao aos isso isto esta este ta e la ca muito mais tens tenho foi vai ser estou es sou'.split(' '));
+const tlmWords=t=>tlmNorm(t).replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(w=>w.length>2&&!TLM_STOP.has(w));
+function tlmMatch(txt,opts,strict){const tw=new Set(tlmWords(txt)),tone=tlmTone(txt),t0=tone==='c2'?'c':tone;let best=-1,bs=-1,bo=0;
+ opts.forEach((o,k)=>{const ow=tlmWords(o.t);let ov=0;ow.forEach(w=>{if(tw.has(w))ov++;else if([...tw].some(x=>x.length>4&&(x.startsWith(w.slice(0,5))||w.startsWith(x.slice(0,5)))))ov+=0.6});const ovr=ow.length?ov/Math.min(ow.length,6):0;
+  let sc=ovr*2.2+(o.tone===t0?1:o.tone==='n'&&tone==='n'?0.6:0);if(tone==='c2'&&o.tone==='n')sc+=0.5;
+  if(/clicar|enviar os dados|pagar/i.test(o.t)&&!/clic|pag|envi|dados|cart/.test(tlmNorm(txt)))sc-=3;if(/denunc/i.test(o.t)&&/denunc|bloque|burla|fraude/.test(tlmNorm(txt)))sc+=3;if(/apagar/i.test(o.t)&&/apag|ignor/.test(tlmNorm(txt)))sc+=2;
+  if(sc>bs){bs=sc;best=k;bo=ovr}});if(strict&&(bo<0.4||bs<1.2))return -1;return best}
+/* ---------- respostas livres de cada pessoa ---------- */
+const TLM_INT=[['insult',TLM_INS],['love',/\b(amo-te|amo te|adoro-te|gosto muito de ti|es tudo para mim)\b|❤|😘|😍/],['miss',/saudade/],['bday',/parabens|aniversario|feliz aniv/],['thanks',/obrigad/],['sorry',/desculp|perdoa|perdao/],
+ ['invite',/jantar|almoc|cafe|cinema|sair|bora|vamos|aparece|vem ca|vem jantar|encontrar|beber um|copo|passear|praia|ferias|fim de semana|fim-de-semana|jogar|treinar juntos|ginasio/],['money',/emprest|dinheiro|euros|€|pagas-me|pagar-te|divida/],
+ ['help',/ajuda|preciso de ti|conselho|problema/],['football',/jogo|golo|treino|clube|vitoria|derrota|equipa|bola|campeonato|liga|mister|treinador|contrato|transfer/],['how',/como estas|tudo bem|como vai|como te sentes|que tal|novidades/],
+ ['joke',/haha|kkk|ahah|lol|😂|🤣/],['bye',/adeus|xau|tchau|ate logo|ate amanha|boa noite|beijinhos|abraco|fica bem/],['greet',/^(ola|oi|ei|hey|bom dia|boa tarde|boas|entao|epa)\b/],['q',/\?/]];
+function tlmIntent(txt){const t=tlmNorm(txt);for(const [k,r] of TLM_INT)if(r.test(t)||r.test(txt))return k;return 'other'}
+const TLR={
+ fam:{greet:['Olá! Que bom teres escrito 😊','Olá querido! Estava mesmo a pensar em ti.','Oi! Então, por aí?'],how:['Estamos bem, graças a Deus. E tu, comes bem?','Cá vamos. A tua avó pergunta sempre por ti.','Tudo bem por aqui! Tens dormido o suficiente?'],
+  invite:['Claro que sim! Diz o dia e eu trato do resto ❤️','Que bom! Faço aquele prato que tu gostas.','Combinado! Não te atrases 😄'],love:['Também te adoro ❤️','És o orgulho da família ❤️','Ai que me fazes chorar 🥹'],miss:['Também tenho muitas saudades! Aparece cá.','Saudades tuas todos os dias ❤️'],
+  thanks:['Não tens de agradecer, é para isso que cá estamos.','De nada, filho ❤️'],sorry:['Está tudo bem. Família é família.','Já passou. Dá cá um abraço.'],money:['Dinheiro? Precisas de alguma coisa? Fala comigo.','Cuidado com os gastos, ouviste?'],
+  help:['Diz o que se passa. Estou aqui.','Liga-me logo à noite e falamos com calma.'],football:['Vi tudo! O teu pai até se levantou do sofá 😂','A vizinha diz que és o melhor 😄','Cuidado com as lesões, ouviste?'],
+  joke:['😂😂 Não mudas!','Tu e as tuas piadas 😄'],bye:['Beijinhos! Cuida-te ❤️','Até logo, juízo!'],bday:['Obrigado!! ❤️'],insult:['Não me fales assim. Quando estiveres mais calmo, falamos.','Isso não se diz. Fiquei triste.'],q:['Boa pergunta… deixa-me pensar e logo digo-te.','Acho que sim, mas confirma.'],other:['Ok ❤️','Está bem, filho.','Hmm, conta-me mais.','Percebi 😊']},
+ par:{greet:['Olá amor ❤️','Oi 😘 estava a pensar em ti','Olá! Já tinha saudades de uma mensagem tua'],how:['Agora que me escreveste, melhor 😊','Cansada mas feliz. E tu?','Bem! Logo conto-te o meu dia.'],
+  invite:['Adoro a ideia 😍 Às 20h?','Siiim! Vou-me arranjar.','Combinado, mas escolho eu o sítio 😄'],love:['Também te amo ❤️','És o melhor que me aconteceu 😘','❤️❤️❤️'],miss:['Eu também… volta depressa 🥺','Saudades tuas a toda a hora'],
+  thanks:['Para ti, tudo ❤️','De nada, amor.'],sorry:['Está perdoado… mas fico à espera de um jantar 😏','Obrigada por dizeres isso. Também me excedi.'],money:['Dinheiro? O que se passa?','Falamos disso em casa, pode ser?'],
+  help:['Diz, amor. Estou aqui para ti.','Conta comigo, sempre.'],football:['Estive a ver! Gritei tanto 😂','Estás cada vez melhor. Orgulho ❤️','Só peço que não te lesiones.'],joke:['😂 És parvo','Ahah és impossível 😄'],bye:['Beijinho, até logo ❤️','Até já 😘'],
+  insult:['Uau. Não esperava isso de ti.','Não me fales assim. Quando estiveres calmo, falamos.'],q:['Hmm… acho que sim 😊','Logo vemos isso juntos.'],other:['Ok ❤️','Hmm 😊','Está bem, amor.','Ahah ok 😄']},
+ ami:{greet:['Boas, craque! 🙌','Eiii! Então, tudo?','Olha quem é ele! 😄'],how:['Tudo na boa! E tu, famoso? 😂','Cá vou andando. Muito trabalho.','Tudo top! Precisamos de combinar alguma coisa.'],
+  invite:['Bora! Diz quando 🍻','Siga! Eu levo os outros.','Fechado. Mas desta vez pagas tu 😂'],love:['Ahah também gosto de ti, mano ❤️','Isso é que é amizade 🙌'],miss:['Também, pá. Temos de nos ver.','Saudades daqueles tempos!'],
+  thanks:['Para isso servem os amigos 💪','Nada, estamos juntos.'],sorry:['Esquece isso, está tudo bem.','Tranquilo, mano.'],money:['Mano, ando teso… mas se precisares mesmo, diz.','Dinheiro? Conta lá o que se passa.'],
+  help:['Diz o que precisas. Conta comigo.','Liga-me agora se quiseres.'],football:['Que jogo, pá! Vi no café com a malta 🔥','Estás a rebentar com isso tudo!','Aquele lance foi de outro planeta.'],joke:['😂😂😂','Ahahah morri'],bye:['Abraço!','Fica bem, irmão 🤜🤛'],
+  insult:['Epá, calma. O que se passa contigo?','Não precisas de falar assim, ok?'],q:['Sei lá, pá 😂','Acho que sim. Depois confirmo.'],other:['Siga 👍','Ahah ok','Top!','Na boa.']},
+ kid:{greet:['Olá pai!! 😁','Oiii!'],how:['Bem! Hoje tive boa nota a matemática 😎','Bem, mas estou com fome 😂'],invite:['SIM!!! 😁','Boa! Posso levar um amigo?'],love:['Também te adoro ❤️','És o melhor pai do mundo!'],miss:['Eu também 🥺 quando vens?'],thanks:['De nada 😊'],sorry:['Ok… desculpa também.'],money:['Dás-me dinheiro para cromos? 😇'],help:['Eu ajudo-te!'],football:['Vi o jogo!! Na escola todos falam de ti 😎','Ensinas-me aquele drible?'],joke:['😂😂'],bye:['Xau pai!'],insult:['Porque estás zangado? 😢'],q:['Não sei 🤷'],other:['Ok 😊','Fixe!','Hum hum.']},
+ work:{greet:['Bom dia. Diga.','Olá. Em que posso ajudar?'],how:['Tudo em ordem, obrigado.','Muito trabalho, mas tudo bem.'],invite:['Agradeço o convite. Vejo a agenda e confirmo.','Pode ser, mas só depois do fim de semana.'],love:['😅 Obrigado pela simpatia.'],miss:['Ahah, também.'],thanks:['Não tem de quê.','Às ordens.'],sorry:['Não há problema.','Está esquecido.'],
+  money:['Questões de dinheiro tratam-se em reunião.','Isso tem de passar pela administração.'],help:['Diga o que precisa e eu trato.','Vou ver o que se pode fazer.'],football:['Estamos no bom caminho. Foco no próximo jogo.','Os números estão a melhorar.'],joke:['😄'],bye:['Até breve.','Cumprimentos.'],insult:['Peço-lhe que mantenha o respeito.','Esta conversa fica por aqui.'],q:['Vou confirmar e já lhe digo.','Neste momento não sei responder.'],other:['Entendido.','Tomei nota.','Ok.']},
+ fa:{greet:['OMG respondeste!!! 😱','Não acredito que és tu!!'],how:['Agora estou ótimo!! 😍'],invite:['A SÉRIO?!?! Vou contar a toda a gente!!'],love:['❤️❤️❤️ és o maior!!'],miss:['😍'],thanks:['Obrigado eu!!!'],sorry:['Não faz mal!!'],money:['Eu não quero nada, só um autógrafo 😅'],help:['Faço tudo por ti!'],football:['Aquele golo!!! Vi 50 vezes!!','És o meu ídolo!!'],joke:['😂😂😂'],bye:['Nunca vou esquecer isto!!'],insult:['… ok 😢'],q:['Sim sim sim!!'],other:['😍😍','Vou emoldurar esta mensagem!!','Obrigado!!!']},
+ desc:{greet:['Quem fala?','Olá… desculpe, quem é?'],how:['Desculpe, acho que se enganou no número.'],invite:['Eu nem o conheço 😅'],other:['Desculpe, quem é?','Acho que tem o número errado.','???','Não estou a perceber.'],insult:['Não precisa de ser mal-educado.'],q:['Desculpe, quem fala?'],bye:['Ok, boa tarde.'],thanks:['De nada?'],football:['Ah, é o jogador?! 😮 Não acredito!']},
+ scam:{other:['Para continuar, clique no link e confirme os seus dados.','A sua resposta foi registada. Falta só o pagamento.','Temos pouco tempo. Confirme já os dados do cartão.','Caro cliente, o processo expira hoje.'],insult:['…'],q:['É um processo normal, só precisa de pagar a taxa.']}};
+function tlmGroup(type){return ({mae:'fam',pai:'fam',irmao:'fam',par:'par',amante:'par',ex:'ami',amigo:'ami',ct:'ami',filho:'kid',pres:'work',staff:'work',emp:'work',jorn:'work',fa:'fa',desc:'desc',claque:'fa'})[type]||'ami'}
+function tlmReply(type,txt,from){const it=tlmIntent(txt),scam=type==='desc'&&(S.news||[]).some(n=>n.from===from&&/link|pague|cart|prémio|premio|taxa|código|codigo|\.top|\.club|clique/i.test(n.t));
+ if(scam){if(/denunc|bloque|fraude|burla|policia|polícia/.test(tlmNorm(txt))){S.blkNum=S.blkNum||{};S.blkNum[from]=1;return {s:'Número bloqueado e denunciado. Era uma burla.'}}return {t:pick(TLR.scam[it]||TLR.scam.other)}}
+ let g=tlmGroup(type);if(type==='ct'){const c=(S.contacts||[]).find(x=>x.n===from);if(c&&c.rel2==='familia')g='fam';else if(c&&c.rel2==='trabalho')g='work';else if(c&&c.rel2==='amor')g='par'}
+ const P=TLR[g]||TLR.ami;let pool=P[it]||P.other;
+ /* relação fria: respostas secas */
+ let rel=50;if(type==='par'&&S.partner)rel=S.partner.rel;else if(type==='ct'){const c=(S.contacts||[]).find(x=>x.n===from);rel=c&&c.rel!=null?c.rel:50}
+ if(rel<25&&it!=='sorry'&&it!=='love'&&R()<0.6)pool=['Hm.','Ok.','Agora não me apetece falar.','…'];
+ const tone=it==='insult'?'c':['love','thanks','invite','greet','how','miss','sorry','bday','help','joke','football'].includes(it)?'w':'n';
+ return {t:pick(pool),tone,it}}
+/* ---------- mensagens: muito mais variedade ---------- */
+const MSGV={
+ mae:['Já comeste hoje? 🍲','Vi-te na televisão! Estavas tão bonito ❤️','Fiz bolo de laranja. Guardei uma fatia para ti.','A tua tia Fernanda manda beijinhos.','Não te esqueças de levar casaco, vai arrefecer.','Quando vens cá a casa?','Sonhei contigo esta noite. Está tudo bem?','O teu pai anda a ver vídeos teus no telemóvel 😂','Já marcaste o dentista?','Encontrei as tuas fotos de bebé 🥹','Tenho tantas saudades tuas.','Hoje rezei por ti antes do jogo 🙏','Comprei-te umas meias novas, estão cá em casa.','A vizinha do 3.º pediu um autógrafo para o neto.','Estás a dormir bem? Pareces cansado.'],
+ pai:['Que jogo, rapaz! 👏','Aquele passe na segunda parte foi de mestre.','Estive a arranjar o carro. Precisavas de ver o motor 😂','O café do Zé ficou à pinha para te ver.','Domingo há churrasco. Vens?','Cuidado com os empresários, ouviste?','Lembras-te quando partiste o vidro da garagem? 😄','Hoje fui pescar. Nada. Zero. 🎣','Tens de chutar mais com o pé esquerdo.','Estou orgulhoso de ti, filho.','O teu avô ia adorar ver-te jogar.','Viste o jogo de ontem na televisão?'],
+ irmao:['Mano, empresta-me a consola no fim de semana? 😇','Já viste o meme que fizeram de ti? 😂','A mãe está a perguntar se vens no domingo.','Arranja-me bilhetes para o próximo jogo?','Comecei no ginásio. Daqui a nada estou como tu 💪','Lembras-te do nosso cão, o Bobi? Encontrei uma foto.','Vou ser tio ou quê? 😂','Bora jogar FIFA online logo?','Comprei um carro! Bem, usado 😅','Dá-me conselhos para uma entrevista de emprego?'],
+ par:['Bom dia, amor ❤️','Já tenho saudades tuas.','O que queres para o jantar?','Vi uma casa linda na praia… 😍','Hoje o dia foi horrível. Preciso de um abraço.','Não te esqueças: sábado é o aniversário da minha mãe.','Estás a ver o que eu estou a ver no céu? 🌙','Comprei os bilhetes para o concerto!','Sonhei que íamos de férias para as Maldivas 🏝️','Logo vemos aquela série?','És o meu orgulho ❤️','Acho que precisamos de umas férias, só nós os dois.'],
+ filho:['Pai, ganhámos o jogo na escola! Marquei 2 golos ⚽','Podes vir buscar-me hoje?','Os meus amigos querem conhecer-te 😁','Pai, ajudas-me no trabalho de ciências?','Posso ter um cão? 🐶','Hoje a professora falou de ti na aula!','Comprei cromos e saíste tu! 😎','Quando vamos à praia?'],
+ amigo:['Mano, este fim de semana há festa em casa do Tiago. Alinhas?','Vi o teu golo 10 vezes 🔥','Lembras-te do campo da escola? Puseram relva sintética!','Bora jogar padel na terça?','Preciso de um conselho sobre uma miúda 😅','Arranjas-me uma camisola autografada para o meu sobrinho?','Vou casar!!! E tu vais ser padrinho 🙌','Abri um negócio. Depois passa lá!','Estou a ver o resumo do jogo. És doido 😂','Já viste o novo filme? Bora ao cinema.','Tens de vir ao jantar de antigos alunos!'],
+ ct:['Olá! Então, como estás?','Lembrei-me de ti hoje 😊','Vi-te nas notícias! Parabéns!','Temos de combinar um café um dia destes.','Está tudo bem contigo?','Obrigado pela outra vez, foste impecável.','Tens planos para o fim de semana?'],
+ emp:['Tenho duas reuniões marcadas com clubes interessados. Falamos?','Uma marca de chuteiras quer falar contigo.','Atenção às redes sociais esta semana. Nada de polémicas.','Vamos renegociar o contrato no fim da época.','Recebi uma proposta interessante do estrangeiro.','Precisamos de uma sessão fotográfica para o patrocinador.'],
+ jorn:['Bom dia. Pode comentar os rumores desta semana?','Estamos a preparar uma reportagem sobre a sua carreira. Tem 5 minutos?','Uma pergunta rápida sobre o próximo jogo.','Confirma o interesse de outros clubes?'],
+ fa:['És o meu ídolo!! Respondes? 🙏','O meu filho chama-se como tu por tua causa 😅','Vi-te no centro comercial mas tive vergonha de falar 😳','Fiz um desenho teu, posso mandar?','Assinas-me a camisola no próximo treino?','Vou ao jogo de sábado com um cartaz para ti!'],
+ desc:['O seu cartão foi bloqueado. Para desbloquear, aceda a banco-seguro-pt.top','Olá, é a Sofia? Estou à tua espera no café.','Parabéns! Foi selecionado para um prémio de 5000 €. Responda SIM para receber.','Mãe, mudei de número. Podes transferir-me 300 € para pagar uma conta? É urgente.','Bom dia, sou da empresa de energia. O seu contrato vai ser cortado hoje. Ligue já.','A sua encomenda não foi entregue. Pague 2,49 € em correios-entrega.top','Olá! Desculpe, enganei-me no número 🙏','Investimento garantido em criptomoedas: 300% em 1 mês! Responda para saber mais.','Estamos a fazer um inquérito sobre hábitos de desporto. Pode responder a 3 perguntas?','Olá! Lembras-te de mim? Jogámos juntos nos infantis! É o Tó 😄','Boa noite. O seu pedido de crédito foi aprovado. Confirme com o código 4471.','Ei, ainda tens o meu carregador? 😂 Ah, desculpe, número errado.']};
+function msgVariety(){if(!S||S.age<14)return;const opts=[];const add2=(w,from)=>{if(from&&MSGV[w])opts.push([w,from])};
+ if(S.fam){try{add2('mae',S.fam.mae&&!S.fam.mae.dead?momS():null);add2('pai',S.fam.pai&&!S.fam.pai.dead?dadS():null)}catch(e){}if(S.fam.irmao)add2('irmao',S.fam.irmao.n)}
+ if(S.partner)add2('par',S.partner.n);(S.kids||[]).filter(k=>kAge(k)>=8).forEach(k=>add2('filho',k.n));(S.friends||[]).forEach(f=>add2('amigo',f.n+' (amigo)'));(S.contacts||[]).forEach(c=>add2('ct',c.n));
+ if(S.pl&&S.pl.agent)add2('emp','Empresário');if((S.fama||0)>=15){add2('jorn','Jornalista (Diário Desportivo)');add2('fa','Fã')}opts.push(['desc',null]);
+ const [w,f0]=pick(opts);let from=f0;if(w==='desc')from=newNum();if(w==='fa')from='Fã · '+pick(['Inês','Tiago','Mariana','Rodrigo','Beatriz','Duarte','Leonor','Gonçalo']);
+ const used=S.msgUsed=S.msgUsed||{};const pool=MSGV[w].filter(t=>!used[t]||S.day-used[t]>120);if(!pool.length)return;const t=pick(pool);used[t]=S.day;news(t,'msg',from)}
+{const _ED7=endDay;endDay=function(){const r=_ED7.apply(this,arguments);try{if(S&&R()<0.32)msgVariety()}catch(e){}return r}}
+/* ---------- conversa: escreves tu ---------- */
+let TLMDRAFT='';
+function renderChat(){modalOpen=true;const c=CHAT,L=chatLog(c.from),box=$('#modal'),num=isNum(c.from);box.hidden=false;const _u=0,bl=S.blkNum&&S.blkNum[c.from];
+ const sug=num?((S.news||[]).filter(n=>n.from===c.from&&n.th&&TH[n.th]&&TH[n.th].nm).map(n=>TH[n.th].nm)[0]||''):'';
+ box.innerHTML=`<div class="sheet scene sms" role="dialog" aria-modal="true" aria-label="Mensagens com ${esc(c.from)}"><div class="smsh"><span class="av">${num?'#':esc(ini(c.from.replace(/[()]/g,'')))}</span><div style="flex:1"><b>${esc(c.from)}</b><small>${bl?'bloqueado':c.typing?'a escrever…':'online'}</small></div>${num&&!bl?`<button class="btn ghost sm" data-ctsave="1">Guardar</button>`:''}</div>
+ ${num&&!bl&&c.saving?`<div class="ctsave"><input id="ctnm" maxlength="40" placeholder="Nome do contacto" value="${esc(sug)}"><select id="ctrl">${CTREL.map(([k,l])=>`<option value="${k}">${l}</option>`).join('')}</select><button class="btn" data-ctok="1">OK</button></div>`:''}
+ <div class="chat" id="bchat">${L.map(m=>`<div class="bub ${m.w}">${esc(m.t)}</div>`).join('')}${c.typing?'<div class="bub p typing"><i></i><i></i><i></i></div>':''}</div>
+ <div class="smsin">${bl?'<p class="hint" style="flex:1;margin:0">Este número está bloqueado.</p>':`<textarea id="smstx" rows="1" maxlength="400" placeholder="Escreve uma mensagem…" aria-label="Mensagem">${esc(TLMDRAFT)}</textarea><button class="btn send" data-smssend="1" aria-label="Enviar" ${c.typing?'disabled':''}>➤</button>`}</div>
+ <div class="mbtns"><button class="btn ghost" data-do="smsclose">Fechar</button></div></div>`;
+ const ch=$('#bchat');if(ch)ch.scrollTop=ch.scrollHeight;const tx=$('#smstx');if(tx&&!c.typing&&window.innerWidth>620)try{tx.focus()}catch(e){}}
+function smsSend(){const c=CHAT;if(!c||c.typing)return;const tx=$('#smstx');const txt=(tx?tx.value:'').trim();if(!txt)return;TLMDRAFT='';const L=chatLog(c.from);
+ const fixY=()=>{for(let i=L.length-1;i>=0;i--)if(L[i].w==='y'){L[i].t=txt;break}renderChat()};
+ const simple=/^(sim|claro|ok|okay|pode ser|combinado|bora|nao|não|nem pensar|obrigad[oa]|siga|vou|esquece)[!. ]*$/i.test(txt.trim());
+ if(c.mode==='node'){const o=chatOpts();if(o.length){const k=tlmMatch(txt,o,!simple);if(k>=0){smsPick(k);fixY();return}}}
+ if(c.mode==='first'&&c.type!=='desc'&&simple){const o=chatOpts();if(o.length){const k=tlmMatch(txt,o.map(x=>({t:'',tone:x.tone})),false);smsPick(k<0?0:k);fixY();return}}
+ const keepNode=c.mode==='node'?c.node:null;
+ if(c.mode==='fresh'){const o=chatOpts();const k=tlmMatch(txt,o,true);if(k>=0){smsPick(k);fixY();return}}
+ /* conversa livre */
+ L.push({w:'y',t:txt,d:S.day});if(c.pend&&!keepNode){(S.news||[]).forEach(n=>{if(n.k==='msg'&&n.from===c.from)n.ans=1});c.pend=null}c.mode=keepNode?'node':'end';c.node=keepNode;
+ try{if(typeof SND!=='undefined')SND.ui('send')}catch(e){}
+ const r=tlmReply(c.type,txt,c.from);S.ctDay=S.ctDay||{};const cd=S.ctDay[c.from]=S.ctDay[c.from]&&S.ctDay[c.from].d===S.day?S.ctDay[c.from]:{d:S.day,n:0};cd.n++;
+ if(r.tone&&(r.tone==='c'||cd.n<=3))ctEffect(c.type,c.from,r.tone,1);if(r.it==='invite'&&cd.n<=3){add('social',2);add('felicidade',1)}
+ if(r.s){L.push({w:'s',t:r.s,d:S.day});save();renderChat();return}
+ c.typing=1;renderChat();setTimeout(()=>{if(CHAT!==c)return;c.typing=0;L.push({w:'p',t:r.t,d:S.day});try{if(typeof SND!=='undefined')SND.ui('sms')}catch(e){}save();renderChat()},800+Math.min(1600,r.t.length*20))}
+const CTREL=[['amigo','Amigo/a'],['escola','Colega de escola'],['familia','Família'],['trabalho','Trabalho'],['amor','Interesse amoroso'],['outro','Outro']];
+function renameContact(from,nm,rel){nm=nm.trim().slice(0,40);if(!nm)return toast('Escreve um nome.');if((S.contacts||[]).some(c=>c.n===nm)||S.chats&&S.chats[nm]&&nm!==from)return toast('Já tens um contacto com esse nome.');
+ S.contacts=S.contacts||[];S.contacts.push({n:nm,rel2:rel||'amigo',rel:55,num:isNum(from)?from:null,d:S.day});S.chats=S.chats||{};if(S.chats[from]){S.chats[nm]=S.chats[from];delete S.chats[from]}(S.news||[]).forEach(n=>{if(n.from===from)n.from=nm});
+ if(CHAT&&CHAT.from===from){CHAT.from=nm;CHAT.type='ct';CHAT.saving=0}save();toast('Contacto guardado: '+nm)}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&e.target&&e.target.id==='smstx'){e.preventDefault();smsSend()}});
+document.addEventListener('input',e=>{if(e.target&&e.target.id==='smstx')TLMDRAFT=e.target.value});
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-smssend],[data-ctsave],[data-ctok],[data-tlmadd],[data-tlmdel]');if(!t)return;e.stopPropagation();e.preventDefault();
+ if(t.dataset.smssend)return smsSend();if(t.dataset.ctsave&&CHAT){CHAT.saving=!CHAT.saving;return renderChat()}
+ if(t.dataset.ctok&&CHAT){renameContact(CHAT.from,($('#ctnm')||{}).value||'',($('#ctrl')||{}).value);return renderChat()}
+ if(t.dataset.tlmadd){const n=(($('#tlmn')||{}).value||'').trim(),r=($('#tlmr')||{}).value||'amigo';if(!n)return toast('Escreve o nome do contacto.');if(n.length<2)return toast('Nome demasiado curto.');
+  if((S.contacts||[]).some(c=>c.n===n)||ctTypeBase(n)!=='outro')return toast('Esse contacto já existe.');S.contacts=S.contacts||[];S.contacts.push({n,rel2:r,rel:50,num:newNum(),d:S.day});save();toast('Contacto adicionado: '+n);render();return}
+ if(t.dataset.tlmdel){S.contacts=(S.contacts||[]).filter(c=>c.n!==t.dataset.tlmdel);save();render()}},true);
+function ctTypeBase(n){const s=S.contacts;S.contacts=[];try{return ctType(n)}finally{S.contacts=s}}
+/* abrir uma conversa com qualquer contacto (mesmo sem mensagens) */
+{const _OC7=openChat;openChat=function(from){const r=_OC7.apply(this,arguments);try{if(CHAT&&CHAT.from===from&&CHAT.mode==='fresh'){/* começas tu, a escrever */}}catch(e){}return r}}
+/* ---------- separador Telemóvel ---------- */
+function tlmThreads(){const by={};const touch=(f,d,un,t)=>{if(!f||!ctType(f))return;const o=by[f]=by[f]||{f,d:-1,un:0,t:''};if(d>o.d){o.d=d;o.t=t||o.t}if(un)o.un++};
+ (S.news||[]).forEach(n=>{if(n.k==='msg')touch(n.from,n.d,!n.ans&&S.day-n.d<=14,n.t)});Object.entries(S.chats||{}).forEach(([f,L])=>{const m=L[L.length-1];if(m)touch(f,m.d,0,m.t)});
+ return Object.values(by).sort((a,b)=>b.d-a.d)}
+function tlmContacts(){const G={'Família':[],'Amor':[],'Amigos':[],'Trabalho':[],'Os teus contactos':[],'Números desconhecidos':[]};const put=(g,n,s)=>{if(n&&!G[g].some(x=>x.n===n))G[g].push({n,s})};
+ try{if(S.fam){if(S.fam.mae&&!S.fam.mae.dead)put('Família',momS(),'Mãe');if(S.fam.pai&&!S.fam.pai.dead)put('Família',dadS(),'Pai');if(S.fam.irmao)put('Família',S.fam.irmao.n,'Irmão')}}catch(e){}
+ (S.kids||[]).filter(k=>kAge(k)>=7).forEach(k=>put('Família',k.n,'Filho'));if(S.partner)put('Amor',S.partner.n,S.partner.st==='casado'?'Casados':'Namoro');if(S.affair)put('Amor',S.affair.n,'Segredo');
+ (S.friends||[]).forEach(f=>put('Amigos',f.n+' (amigo)','Amigo'));if(S.pl&&S.pl.agent)put('Trabalho','Empresário','O teu empresário');if(S.job&&!S.job.nt&&S.job.pres)put('Trabalho','Presidente '+surname(S.job.pres.n),'Presidente');
+ (S.staff||[]).slice(0,4).forEach(x=>put('Trabalho',x.n,'Staff'));(S.contacts||[]).forEach(c=>put('Os teus contactos',c.n,(CTREL.find(r=>r[0]===c.rel2)||['','Contacto'])[1]+(c.num?' · '+c.num:'')));
+ tlmThreads().filter(t=>isNum(t.f)).forEach(t=>put('Números desconhecidos',t.f,S.blkNum&&S.blkNum[t.f]?'Bloqueado':'Não guardado'));return G}
+let TLMV='conv';
+function vTlm(){const T=tlmThreads(),G=tlmContacts(),un=T.reduce((s,t)=>s+t.un,0);
+ const head=`<div class="tlmtabs" role="tablist">${[['conv','Conversas'+(un?` (${un})`:'')],['ct','Contactos'],['novo','Novo contacto']].map(([k,l])=>`<button role="tab" aria-selected="${TLMV===k}" class="${TLMV===k?'on':''}" data-tlmv="${k}">${l}</button>`).join('')}</div>`;
+ let body='';
+ if(TLMV==='conv')body=T.length?`<div class="card phone">${T.map(t=>`<button class="msg chatrow" data-chat="${esc(t.f)}"><span class="av">${isNum(t.f)?'#':esc(ini(t.f.replace(/[()]/g,'')))}</span><div><b>${esc(t.f)}${t.un?` <span class="unr">${t.un}</span>`:''}</b><small>${t.d>=0?fshort(t.d):''}</small><p>${esc(t.t||'')}</p></div></button>`).join('')}</div>`:'<div class="card"><p class="hint">Ainda não tens conversas. Vai a Contactos e escreve a alguém.</p></div>';
+ else if(TLMV==='ct')body=Object.entries(G).filter(([g,a])=>a.length).map(([g,a])=>`<h2 class="sec">${g}<span>${a.length}</span></h2><div class="card phone">${a.map(c=>`<div class="ctrow"><button class="msg chatrow" data-chat="${esc(c.n)}"><span class="av">${isNum(c.n)?'#':esc(ini(c.n.replace(/[()]/g,'')))}</span><div><b>${esc(c.n)}</b><p>${esc(c.s||'')}</p></div></button>${g==='Os teus contactos'?`<button class="btn ghost sm" data-tlmdel="${esc(c.n)}" aria-label="Apagar ${esc(c.n)}">Apagar</button>`:''}</div>`).join('')}</div>`).join('');
+ else body=`<div class="card tlmnew"><label>Nome<input id="tlmn" maxlength="40" placeholder="Ex.: Rui, colega da escola primária"></label><label>Relação<select id="tlmr">${CTREL.map(([k,l])=>`<option value="${k}">${l}</option>`).join('')}</select></label><button class="btn" data-tlmadd="1">Adicionar contacto</button><p class="hint" style="margin:0">Depois de adicionares, toca no contacto para começares a conversa. Escreves tu as mensagens.</p></div>`;
+ return `<div class="tlm">${head}${body}</div>`}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-tlmv]');if(!b)return;e.stopPropagation();TLMV=b.dataset.tlmv;render()},true);
+TABTH.tlm={t:'Telemóvel',s:'Contactos e conversas'};
+if(typeof document!=='undefined'&&document.createElement&&document.head){const st=document.createElement('style');st.textContent=`
+#app[data-tab="tlm"]{--acc:#0e7c86}#app[data-tab="tlm"] .tband{background:linear-gradient(135deg,#0e7c86,#174a7c)}#app[data-tab="tlm"] .tband::after{background:radial-gradient(circle at 90% 50%,#fff 0 3px,transparent 4px) 0 0/18px 18px;opacity:.12}
+#app[data-tab="tlm"] .card{border-radius:18px}
+.tlmtabs{display:flex;gap:6px;margin:10px 0}.tlmtabs button{flex:1;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:8px 6px;font-family:var(--cond);font-weight:700;letter-spacing:.5px;text-transform:uppercase;font-size:13px;white-space:nowrap}
+.tlmtabs button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.ctrow{display:flex;align-items:center;gap:8px}.ctrow .chatrow{flex:1;min-width:0}
+.tlmnew{display:grid;gap:12px}.tlmnew label{display:grid;gap:6px;font-family:var(--cond);font-weight:600;letter-spacing:.5px;text-transform:uppercase;font-size:13px;color:var(--muted)}
+.tlmnew input,.tlmnew select,.ctsave input,.ctsave select,.smsin textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;font-size:16px;box-sizing:border-box}
+.smsin{display:flex;gap:8px;align-items:flex-end;margin-top:10px}.smsin textarea{resize:none;min-height:44px;max-height:120px}
+.smsin .send{flex:0 0 46px;height:46px;border-radius:50%;padding:0;font-size:18px;display:flex;align-items:center;justify-content:center}
+.ctsave{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;margin-bottom:10px}
+.btn.sm{padding:6px 10px;font-size:13px;min-height:0}
+@media (max-width:620px){nav.tabs .in{gap:0}nav.tabs button{flex:1 1 auto;padding:8px 2px;font-size:11px;letter-spacing:0}}
+@media (max-width:380px){nav.tabs button{font-size:10px}}
+`;document.head.appendChild(st)}
+/* gravações antigas: separar o "Número desconhecido" em números diferentes */
+{const _MG7=migrate;migrate=function(){_MG7.apply(this,arguments);try{if(!S||S.tlmV27)return;S.tlmV27=1;const OLD='Número desconhecido';const map={};
+ (S.news||[]).filter(n=>n.from===OLD).forEach(n=>{const k=n.th||n.t;if(!map[k])map[k]=newNum();n.from=map[k]});
+ const L=S.chats&&S.chats[OLD];if(L){let cur=null;L.forEach(m=>{if(m.w==='p'){const n=(S.news||[]).find(x=>x.t===m.t&&isNum(x.from));if(n)cur=n.from}const to=cur||Object.values(map)[0]||newNum();(S.chats[to]=S.chats[to]||[]).push(m)});delete S.chats[OLD]}}catch(e){}}}
+/* ---------- respostas ligadas ao que escreves: tema, dia, sim/não ---------- */
+const TLDAY={hoje:'Hoje',amanha:'Amanhã',logo:'Logo',segunda:'Segunda',terca:'Terça',quarta:'Quarta',quinta:'Quinta',sexta:'Sexta',sabado:'Sábado',domingo:'Domingo','fim de semana':'No fim de semana'};
+const TLTOP=[
+ [/jantar|jantarmos/,['{D}jantar? Combinado! Escolhes tu o restaurante?','Um jantar sabia mesmo bem. {D2}','Jantar? Conta comigo 🍽️'],['Jantar? Hoje não consigo, mas marcamos outro dia.']],
+ [/almoc/,['Almoço? Boa ideia! {D2}','Bora almoçar. Eu conheço um sítio ótimo.'],['Ao almoço não dá, desculpa.']],
+ [/cafe/,['Um café! Sempre ☕ {D2}','Bora ao café. Às quantas?'],['Hoje não dá para café, desculpa.']],
+ [/cinema|filme|serie/,['Cinema? Siiim! Que filme queres ver? 🍿','Adoro! Já viste aquele que estreou esta semana?'],['Filme hoje não, estou cansado.']],
+ [/praia|mar|piscina/,['Praia! 🏖️ Só se levares tu o guarda-sol 😄','Que saudades de praia. {D2}'],['Praia agora? Está frio 😅']],
+ [/ferias|viagem|viajar/,['Férias! Para onde? 😍','Uma viagem fazia-nos bem a todos.'],['Férias agora não dá, tenho muito que fazer.']],
+ [/carro|mota/,['Carro novo?! Manda foto! 🚗','Cuidado na estrada, ouviste?'],['Carros não percebo nada 😂']],
+ [/casa|apartamento|mudanc/,['Casa nova? Que bom! Quando é a festa de inauguração? 🏠','Precisas de ajuda com a mudança? Eu vou.'],['Mudanças são um pesadelo 😅']],
+ [/cao|cadela|gato|gata|animal/,['Ohhh manda foto! 🐶','Adoro animais. Como se chama?'],['Eu sou mais de gatos 😂']],
+ [/musica|concerto|festival/,['Concerto?! Eu alinho 🎶','Que música andas a ouvir?'],['Não é bem o meu estilo de música 😅']],
+ [/cansad|exaust|nao dormi|sono/,['Descansa! Não te esqueças de que o corpo é a tua ferramenta.','Dorme um bocadinho. Amanhã estás novo.'],['Descansa, vá.']],
+ [/lesao|lesionad|doente|dores|hospital|febre/,['Oh não! Estás bem? Precisas de alguma coisa?','As melhoras! Trata-te bem.'],['Cuida-te, a sério.']],
+ [/chuva|frio|calor|tempo/,['Este tempo está doido!','Leva casaco, ouviste? 😄'],['É o que é.']],
+ [/escola|professor|aulas/,['Bons tempos da escola! Lembras-te do professor de educação física? 😂','Ainda me lembro das aulas contigo!'],['A escola já foi há tanto tempo…']],
+ [/trabalho|reuniao|contrato|empresario/,['Muito trabalho? Não te esqueças de descansar.','Conta lá como correu.'],['Trabalho, trabalho… 😅']],
+ [/jogo|golo|vitoria|ganh|derrota|perd|marquei|treino/,['Vi tudo! Que jogo! 🔥','Estás em grande forma, nota-se.','Não ligues ao resultado, para a próxima corre melhor.'],['Não vi o jogo, desculpa 😅']],
+ [/presente|prenda|comprei|compras/,['Para mim?! 😍 Não precisavas!','Comprasteee o quê? Conta tudo!'],['Poupa esse dinheiro 😄']],
+ [/comer|fome|comida|cozinh|bolo/,['Fome também tenho eu 😂','Se cozinhares, eu vou 😋'],['Já comi, obrigado.']]];
+function tlmCompose(type,txt,from,g){const t=tlmNorm(txt),it=tlmIntent(txt),tone=tlmTone(txt),P=TLR[g]||TLR.ami;const dm=(t.match(/\b(hoje|amanha|logo|segunda|terca|quarta|quinta|sexta|sabado|domingo|fim de semana)\b/)||[])[1];const D=dm?TLDAY[dm]:'';
+ const fill=s=>s.replace('{D}',D?D+', ':'').replace(/^(\w)/,c=>c.toUpperCase()).replace('{D2}',D?D+' dá-me jeito.':'Quando?').replace(/^, /,'');
+ if(it==='insult')return pick(P.insult||TLR.ami.insult);
+ if(g==='desc'){if(/lembras|sou eu|e o |e a |chamo-me|sou o|sou a/.test(t))return pick(['Ah! Desculpa, não tinha o teu número guardado 😅','A sério? Então guarda o meu contacto!']);return pick(P[it]||P.other)}
+ const L=chatLog(from),lastP=[...L].reverse().find(m=>m.w==='p'),askd=lastP&&/\?|vens|vamos|alinhas|bora|queres|podes/.test(tlmNorm(lastP.t));
+ const yes=/^(sim|claro|pode ser|ok|okay|combinado|bora|vou|siga|com certeza|aceito|alinho|quero)\b/.test(t),no=/^(nao|nem pensar|hoje nao|nao da|nao posso|esquece)\b/.test(t);
+ if(askd&&yes&&g!=='work')return pick(['Boa! Combinado então 😊','Yesss! Fico à tua espera.','Perfeito! Depois mando-te a hora.','Fixe! Vai ser ótimo.'])+(D?' '+D+', então.':'');
+ if(askd&&no)return pick(['Pronto, fica para a próxima.','Ok… que pena. Outro dia então.','Está bem, sem problema.']);
+ for(const [r,pos,neg] of TLTOP)if(r.test(t)){const neg2=tone==='c2'||/\bnao\b/.test(t);if(g==='work')return pick(['Entendido. Tomo nota.','Muito bem, falamos disso pessoalmente.','Obrigado pela informação.']);return fill(pick(neg2?neg:pos))}
+ let out=pick(P[it]||P.other);
+ if(it==='greet'&&/\?/.test(txt))out+=' '+pick(P.how||TLR.ami.how);
+ if(it==='other'&&/\?/.test(txt))out=pick(P.q||TLR.ami.q);
+ return out}
+{const _TR=tlmReply;tlmReply=function(type,txt,from){const r=_TR.apply(this,arguments);if(r.s||!r.t)return r;const sc=type==='desc'&&(S.news||[]).some(n=>n.from===from&&/link|pague|cart|prémio|premio|taxa|código|codigo|\.top|\.club|clique/i.test(n.t));if(sc)return r;
+ let g=tlmGroup(type);if(type==='ct'){const c=(S.contacts||[]).find(x=>x.n===from);if(c&&c.rel2==='familia')g='fam';else if(c&&c.rel2==='trabalho')g='work';else if(c&&c.rel2==='amor')g='par'}
+ if(/^(Hm\.|Ok\.|Agora não me apetece falar\.|…)$/.test(r.t))return r;r.t=tlmCompose(type,txt,from,g);return r}}
+
+/* gravações antigas: ganhos de treino passam para a nova escala (máximo +4) */
+{const _MG8=migrate;migrate=function(){_MG8.apply(this,arguments);try{if(S&&S.pl&&S.pl.atB&&!S.atbV27){S.atbV27=1;for(const k in S.pl.atB)S.pl.atB[k]=Math.round(S.pl.atB[k]*4/6*100)/100}else if(S)S.atbV27=1}catch(e){}}}
+/* ============ TROFÉUS: CELEBRAÇÕES, DESFILE, PRÉMIOS INDIVIDUAIS E ESTATÍSTICAS DAS COMPETIÇÕES (v2.7) ============ */
+/* que troféu é: forma e metal (desenhos genéricos, não réplicas) */
+function trKind(n){n=String(n||'');if(/Bola de Ouro/.test(n))return['bola','g'];if(/Yashin|guarda-redes/i.test(n))return['luva','g'];if(/Müller|Bota|marcador/i.test(n))return['bota','g'];if(/assist/i.test(n))return['estrela','s'];if(/Kopa|jovem|Revela/i.test(n))return['estatueta','s'];if(/Treinador|jogador/i.test(n))return['estatueta','g'];
+ if(/Campeões|Champions/.test(n))return['orelhas','s'];if(/Liga Europa|Europa League/.test(n))return['vaso','s'];if(/Conference/.test(n))return['taca','s'];if(/Mundial|World|Mundo/.test(n))return['globo','g'];
+ if(/Supertaça|Super|Trophée|Community|Johan/.test(n))return['prato','s'];if(/Euro|Nações|América|Libertadores|AFC|CONCACAF|Ásia/.test(n))return['vaso','g'];if(/Taça|Cup|Pokal|Copa|Coppa|Coupe|KNVB|Rei/.test(n))return['taca','g'];return['prato','g']}
+function trophySVG(n,sz){const[k,m]=trKind(n),id='tg'+(jhash(n)%99999),a=m==='g'?['#fff3b0','#e8b923','#9a6b05']:['#ffffff','#c9d0d8','#6f7a86'];sz=sz||96;
+ const G=`<defs><linearGradient id="${id}" x1="0" x2="1"><stop offset="0" stop-color="${a[2]}"/><stop offset=".35" stop-color="${a[0]}"/><stop offset=".6" stop-color="${a[1]}"/><stop offset="1" stop-color="${a[2]}"/></linearGradient></defs>`,F=`fill="url(#${id})"`,B='<rect x="34" y="84" width="32" height="10" rx="2" fill="#2a2420"/><rect x="38" y="78" width="24" height="7" rx="2" fill="#3a302a"/>';
+ const S={orelhas:`<path ${F} d="M36 16h28c0 22-4 36-10 44v16h-8V60c-6-8-10-22-10-44z"/><path fill="none" stroke="url(#${id})" stroke-width="5" d="M36 20c-22-6-26 26-4 34M64 20c22-6 26 26 4 34"/>`,
+  taca:`<path ${F} d="M32 14h36c0 20-6 32-14 38v20h-8V52c-8-6-14-18-14-38z"/><path fill="none" stroke="url(#${id})" stroke-width="4" d="M33 20c-12 0-12 16 2 18M67 20c12 0 12 16-2 18"/>`,
+  vaso:`<path ${F} d="M38 8h24l-4 10c8 10 8 30 0 42l-2 18h-12l-2-18c-8-12-8-32 0-42z"/>`,
+  prato:`<circle cx="50" cy="40" r="30" ${F}/><circle cx="50" cy="40" r="20" fill="none" stroke="${a[2]}" stroke-width="2" opacity=".6"/><circle cx="50" cy="40" r="8" fill="${a[2]}" opacity=".4"/><rect x="46" y="68" width="8" height="12" ${F}/>`,
+  globo:`<circle cx="50" cy="24" r="16" ${F}/><path fill="none" stroke="${a[2]}" stroke-width="1.5" d="M34 24h32M50 8c-8 8-8 24 0 32M50 8c8 8 8 24 0 32"/><path ${F} d="M40 40c4 6 4 20 2 38h16c-2-18-2-32 2-38z"/>`,
+  bola:`<circle cx="50" cy="40" r="26" ${F}/><path fill="none" stroke="${a[2]}" stroke-width="1.6" d="M50 14v52M26 32c16 6 32 6 48 0M26 50c16-6 32-6 48 0"/><rect x="44" y="66" width="12" height="12" ${F}/>`,
+  bota:`<path ${F} d="M36 14h16v38c10 2 22 6 24 14l-2 10H30l-2-12c4-4 8-6 8-10z"/><path stroke="${a[2]}" stroke-width="2" d="M38 30h12M38 38h12"/>`,
+  luva:`<path ${F} d="M32 72V40c0-6 8-6 8 0V22c0-6 8-6 8 0v16-22c0-6 8-6 8 0v22-14c0-6 8-6 8 0v34l6-8c4-4 10 0 6 6L60 72z"/>`,
+  estrela:`<path ${F} d="M50 8l10 22 24 2-18 16 6 24-22-13-22 13 6-24-18-16 24-2z"/><rect x="46" y="68" width="8" height="12" ${F}/>`,
+  estatueta:`<circle cx="50" cy="16" r="8" ${F}/><path ${F} d="M40 26h20l4 22h-6l-2 30h-12l-2-30h-6z"/>`};
+ return `<svg viewBox="0 0 100 100" width="${sz}" height="${sz}" role="img" aria-label="${esc(n)}">${G}${S[k]||S.taca}${B}</svg>`}
+/* ---------- registo de títulos ---------- */
+{const _CW=compWon;compWon=function(c){const n0=(S.troph||[]).length;const r=_CW.apply(this,arguments);try{if((S.troph||[]).length>n0){const t=S.troph[S.troph.length-1];t.k='taca';t.s=S.seasonYear;(S.trSeason=S.trSeason||[]).push(t.n)}}catch(e){}return r}}
+{const _CS=closeSeason;closeSeason=function(){const T=table();const r=_CS.apply(this,arguments);try{const champ=T[0];let mine=false;
+  if(isPro()&&S.pl.club!=null&&S.pl.lg===S.leagueId&&champ.i===S.pl.club)mine=true;if(S.job&&!S.job.nt&&S.job.lg===S.leagueId&&champ.i===S.job.club)mine=true;
+  if(mine){const n=LEAGUES[S.leagueId].n;S.troph=S.troph||[];S.troph.push({n,y:dt(S.day).getUTCFullYear(),s:S.seasonYear,k:'liga'});(S.trSeason=S.trSeason||[]).push(n);S.queue.push({id:'trofeu',d:{n,b:0,liga:1}})}}catch(e){}return r}}
+/* ---------- estatísticas de todas as competições ---------- */
+const STFN=['João','Diego','Lucas','Marco','André','Rafael','Tomás','Kevin','Luca','Mateo','Jonas','Hugo','Ibrahim','Samuel','Pedro','Nico','Theo','Adam','Yusuf','Daniel','Erik','Bruno','Iker','Moussa','Ryan','Liam','Mehdi','Tiago','Felix','Omar'];
+const STLN=['Silva','Moreau','Rossi','Müller','García','Jansen','Costa','Novak','Haddad','Dubois','Bianchi','Fischer','Santos','Ortega','Peeters','Lindqvist','Kovač','Mendes','Ferreira','Romero','Schmidt','Laurent','Conti','Vidal','Okafor','Nielsen','Barros','Martín','Keller','Duarte'];
+let SQC={};
+function stSquad(club){const y=S.seasonYear||0,k=club+'|'+y;if(SQC[k])return SQC[k];let L=[];const db=REALDB[club];const dy=Math.max(0,curSeasonYear()-2026);
+ if(db&&db.length>=11)db.forEach(e=>{const p=realPlayer(e,dy);if(p)L.push({n:p.n,pos:p.pos,ovr:p.ovr,age:p.age})});
+ if(L.length<14){const r=jrng(jhash(club+y)),[lg,i]=lgOfClub(club),R0=lg&&S.ratings[lg][i]?S.ratings[lg][i].r:65;const need={GR:2,DEF:5,MED:5,AV:3};
+  for(const pos in need){let have=L.filter(p=>p.pos===pos).length;while(have<need[pos]){L.push({n:STFN[Math.floor(r()*STFN.length)]+' '+STLN[Math.floor(r()*STLN.length)],pos,ovr:Math.round(R0-4+r()*8),age:19+Math.floor(r()*14)});have++}}}
+ return SQC[k]=L}
+function cstComp(key,name){S.cst=S.cst||{y:S.seasonYear,c:{}};const C=S.cst.c[key]=S.cst.c[key]||{n:name,p:{}};return C}
+function cstAdd(C,club,p,g,a,j){const k=p.n+'|'+club;const r=C.p[k]=C.p[k]||[p.n,club,p.pos,0,0,0,p.ovr||60,p.age||25];r[3]+=g;r[4]+=a;r[5]+=j;if(p.ovr)r[6]=p.ovr;return r}
+function wPickP(L,w){let s=0;const W=L.map(p=>{const x=Math.max(0.01,w(p));s+=x;return x});let r=R()*s;for(let i=0;i<L.length;i++){r-=W[i];if(r<=0)return L[i]}return L[L.length-1]}
+function cstSynth(C,club,goals){const sq=stSquad(club);if(!sq.length)return;const xi=sq.slice().sort((a,b)=>(b.ovr+R()*6)-(a.ovr+R()*6));const st=[...xi.filter(p=>p.pos==='GR').slice(0,1),...xi.filter(p=>p.pos!=='GR').slice(0,10)];
+ st.forEach(p=>cstAdd(C,club,p,0,0,1));const fw=p=>({AV:5,MED:2.2,DEF:0.6,GR:0})[p.pos]*Math.pow(1.08,(p.ovr||60)-70);const aw=p=>({AV:2,MED:3,DEF:1,GR:0.05})[p.pos]*Math.pow(1.06,(p.ovr||60)-70);
+ for(let i=0;i<goals;i++){const s=wPickP(st,fw);cstAdd(C,club,s,1,0,0);if(R()<0.7){const o=st.filter(p=>p!==s);if(o.length)cstAdd(C,club,wPickP(o,aw),0,1,0)}}}
+function myClubNames(){const o=[];try{if(myClub()!=null)o.push(clubName())}catch(e){}return o}
+function cstFix(f,lgKey){try{if(f._st||f.hg==null||f.nt)return;f._st=1;let key,name,h,a;if(lgKey){key='L:'+lgKey;name=LEAGUES[lgKey].n;h=S.ratings[lgKey][f.h].n;a=S.ratings[lgKey][f.a].n}else{const c=S.comps&&S.comps[f.c];if(!c)return;key='C:'+f.c;name=c.n;h=f.h;a=f.a}
+ const C=cstComp(key,name),mine=S.mode==='player'?[]:myClubNames();if(!mine.includes(h))cstSynth(C,h,f.hg);if(!mine.includes(a))cstSynth(C,a,f.ag)}catch(e){}}
+{const _SA=simAI;simAI=function(f){const r=_SA.apply(this,arguments);cstFix(f,S.leagueId);return r}}
+{const _SC=simC;simC=function(f){const r=_SC.apply(this,arguments);cstFix(f,null);return r}}
+/* os teus jogos: golos e assistências a sério, tirados do jogo */
+function cstMine(){try{if(!M)return;const f=M.f||(M.cfg&&M.cfg.f);if(!f||f.nt)return;let key,name;if(f.c&&S.comps&&S.comps[f.c]){key='C:'+f.c;name=S.comps[f.c].n}else{key='L:'+S.leagueId;name=LEAGUES[S.leagueId].n}
+ const C=cstComp(key,name),us=M.usN||myClubNames()[0],opp=M.oppN||'';f._st=1;const ourG=M.ev.filter(e=>e.t==='g'&&e.us),theirG=M.ev.filter(e=>e.t==='g'&&!e.us).length;
+ if(M.pm){const mine=ourG.filter(e=>e.s===M.me).length;if(M.meOn||mine)cstAdd(C,us,{n:S.name,pos:S.pl.pos,ovr:S.pl.ovr,age:S.age},mine,0,1);cstSynth(C,us,ourG.length-mine)}
+ else{(M.xi||[]).forEach(x=>{if(x&&x.p)cstAdd(C,us,{n:x.p.n,pos:x.p.pos,ovr:x.p.ovr,age:x.p.age},0,0,1)});ourG.filter(e=>e.s&&e.s.n).forEach(e=>{cstAdd(C,us,{n:e.s.n,pos:e.s.pos,ovr:e.s.ovr,age:e.s.age},1,0,0);if(R()<0.7){const o=(M.xi||[]).filter(x=>x&&x.p&&x.p!==e.s&&x.pos!=='GR');if(o.length){const q=wPickP(o,x=>({MED:3,AV:2.4,DEF:1})[x.pos]||1).p;cstAdd(C,us,{n:q.n,pos:q.pos,ovr:q.ovr,age:q.age},0,1,0)}}})}
+ if(opp)cstSynth(C,opp,theirG)}catch(e){}}
+{const _FM=finishMatch;finishMatch=function(){const was=M&&M.done;const r=_FM.apply(this,arguments);if(!was&&M&&!M.pm)cstMine();return r}}
+{const _PF=pmFinish;pmFinish=function(){const was=M&&M.done;const r=_PF.apply(this,arguments);if(!was)cstMine();return r}}
+/* ---------- prémios individuais ---------- */
+function plScore(r,mx){return r[3]*1+r[4]*0.7+((r[6]||60)-70)*0.32*(r[5]/Math.max(1,mx))}
+function top20(L,val,fmt){return L.slice().sort((a,b)=>val(b)-val(a)).slice(0,20).map(r=>({n:r.n,c:r.c,v:fmt(r)}))}
+function seasonPlayers(){/* junta tudo: estatísticas registadas + estimativa para quem joga em ligas que não acompanhamos */
+ const by={};const C=(S.cst&&S.cst.c)||{};Object.entries(C).forEach(([key,c])=>Object.values(c.p).forEach(r=>{const k=r[0]+'|'+r[1];const o=by[k]=by[k]||{n:r[0],c:r[1],pos:r[2],g:0,a:0,j:0,ovr:r[6],age:r[7],trk:1};o.g+=r[3];o.a+=r[4];o.j+=r[5];o.ovr=r[6]||o.ovr;if(key.startsWith('L:'))o.lgT=1}));
+ const est=(o,club)=>{const[lg,i]=lgOfClub(club);const cr=lg&&S.ratings[lg][i]?S.ratings[lg][i].r:70,big=lg&&LEAGUES[lg]&&LEAGUES[lg].tier!==2,rr=jrng(jhash(o.n+S.seasonYear)),ov=o.ovr||70;
+  const gx=o.pos==='AV'?Math.max(0,(ov-64)*0.95):o.pos==='MED'?Math.max(0,(ov-68)*0.35):o.pos==='DEF'?Math.max(0,(ov-74)*0.12):0,ax=o.pos==='MED'?Math.max(0,(ov-64)*0.5):o.pos==='AV'?Math.max(0,(ov-66)*0.45):o.pos==='DEF'?Math.max(0,(ov-72)*0.2):0,f=(big?1:0.85)*(0.7+(cr-70)*0.02)*(0.75+rr()*0.5);return[Math.round(gx*f),Math.round(ax*f),Math.round(28+rr()*10)]};
+ Object.values(by).forEach(o=>{if(!o.lgT&&o.ovr>=70){const[g,a,j]=est(o,o.c);o.g+=g;o.a+=a;o.j+=j}});
+ const dy=Math.max(0,curSeasonYear()-2026),seenN=new Set(Object.values(by).map(o=>o.n));
+ for(const club in REALDB){const[lg,i]=lgOfClub(club);if(!lg)continue;const cr=S.ratings[lg][i].r||70,big=LEAGUES[lg]&&LEAGUES[lg].tier!==2;REALDB[club].forEach(e=>{if(seenN.has(e.n))return;const p=realPlayer(e,dy);if(!p||p.ovr<74)return;const rr=jrng(jhash(p.n+S.seasonYear));
+  const gx=p.pos==='AV'?Math.max(0,(p.ovr-64)*0.95):p.pos==='MED'?Math.max(0,(p.ovr-68)*0.35):p.pos==='DEF'?Math.max(0,(p.ovr-74)*0.12):0,ax=p.pos==='MED'?Math.max(0,(p.ovr-64)*0.5):p.pos==='AV'?Math.max(0,(p.ovr-66)*0.45):p.pos==='DEF'?Math.max(0,(p.ovr-72)*0.2):0,f=(big?1:0.85)*(0.7+(cr-70)*0.02)*(0.75+rr()*0.5);
+  by[p.n+'|'+club]={n:p.n,c:club,pos:p.pos,g:Math.round(gx*f),a:Math.round(ax*f),j:Math.round(30+rr()*18),ovr:p.ovr,age:p.age,lg}})}
+ if(isPro()&&S.pl){const k=S.name+'|'+(S.pl.club!=null?clubName():'');const o=by[k]=by[k]||{n:S.name,c:S.pl.club!=null?clubName():'Sem clube',pos:S.pl.pos};o.g=S.pl.sGoals||0;o.a=S.pl.sAst||0;o.j=S.pl.sApps||0;o.ovr=S.pl.ovr;o.age=S.age;o.me=1}
+ return Object.values(by)}
+function giveAwards(){try{const y=S.seasonYear,lgN=LEAGUES[S.leagueId]?LEAGUES[S.leagueId].n:'Liga';const LK='L:'+S.leagueId,lc=S.cst&&S.cst.c[LK];const out=[];
+ let T=[];try{T=table()}catch(e){}const rk=n=>{const i=T.findIndex(t=>t.n===n);return i<0?T.length:i};const champs=new Set([T[0]&&T[0].n,S.lastCL].filter(Boolean));
+ if(lc){const L=Object.values(lc.p).map(r=>({n:r[0],c:r[1],pos:r[2],g:r[3],a:r[4],j:r[5],ovr:r[6],age:r[7]}));if(isPro()&&S.pl&&S.pl.lg===S.leagueId){const m=L.find(o=>o.n===S.name);if(m){m.g=S.pl.sGoals||m.g;m.a=S.pl.sAst||m.a;m.j=S.pl.sApps||m.j;m.ovr=S.pl.ovr}}
+  const mx=Math.max(...L.map(o=>o.j),1),sc=o=>o.g*1+o.a*0.7+((o.ovr||60)-70)*0.3*(o.j/mx)+Math.max(0,8-rk(o.c))*0.5;
+  out.push({s:'nac',n:'Melhor marcador · '+lgN,L:top20(L,o=>o.g*100+o.a,o=>o.g+' golos')});out.push({s:'nac',n:'Melhor assistente · '+lgN,L:top20(L,o=>o.a*100+o.g,o=>o.a+' assist.')});
+  out.push({s:'nac',n:'Melhor jogador da época · '+lgN,L:top20(L.filter(o=>o.j>=mx*0.4),sc,o=>o.g+' g · '+o.a+' a')});out.push({s:'nac',n:'Jovem revelação · '+lgN,L:top20(L.filter(o=>o.age<=21&&o.j>=mx*0.3),sc,o=>o.age+' anos · '+o.g+' g')});
+  out.push({s:'nac',n:'Melhor guarda-redes · '+lgN,L:top20(L.filter(o=>o.pos==='GR'&&o.j>=mx*0.4),o=>(o.ovr||60)+Math.max(0,10-rk(o.c))*0.6,o=>'nível '+o.ovr)});
+  if(S.job&&!S.job.nt&&S.job.lg===S.leagueId){const ex=T.map((t,i)=>({n:t.n===clubName()?S.name:'Treinador do '+t.n,c:t.n,p:i+1,v:(S.ratings[S.leagueId].slice().sort((a,b)=>b.r-a.r).findIndex(x=>x.n===t.n)-i)+(T.length-i)*0.4+(i===0?8:i<3?2:0)}));out.push({s:'nac',n:'Treinador do ano · '+lgN,L:ex.sort((a,b)=>b.v-a.v).slice(0,20).map(o=>({n:o.n,c:o.c,v:o.p+'.º lugar'}))})}}
+ const P=seasonPlayers(),bo=o=>((o.ovr||70)-76)*1.7+o.g*0.42+o.a*0.28+(champs.has(o.c)?5:0)+(jrng(jhash(o.n+y))()-0.5)*3;
+ out.push({s:'int',n:'Bola de Ouro',L:top20(P.filter(o=>o.ovr>=78||o.me),bo,o=>o.g+' g · '+o.a+' a')});out.push({s:'int',n:'Troféu Yashin',L:top20(P.filter(o=>o.pos==='GR'),o=>(o.ovr||70)+(champs.has(o.c)?3:0)+jrng(jhash(o.n+y+'g'))()*2,o=>'nível '+o.ovr)});
+ out.push({s:'int',n:'Troféu Kopa',L:top20(P.filter(o=>o.age<=21),bo,o=>o.age+' anos · '+o.g+' g')});out.push({s:'int',n:'Troféu Gerd Müller',L:top20(P,o=>o.g*100+o.a,o=>o.g+' golos')});
+ S.awards=S.awards||[];S.awards.push({y,A:out});if(S.awards.length>8)S.awards.shift();
+ /* tu ganhaste alguma coisa? */
+ const me=S.mode==='player'?S.name:null,mine=out.map(a=>({a,i:a.L.findIndex(o=>me?o.n===me:(S.squad||[]).some(p=>p.n===o.n&&o.c===clubName())||o.n===S.name)})).filter(x=>x.i>=0&&x.i<3);
+ mine.forEach(({a,i})=>{const who=a.L[i].n;if(i===0){(S.indiv=S.indiv||[]).push({n:a.n,y,who});if(who===S.name||me){S.fama=famUp(a.s==='int'?14:6);S.queue.push({id:'premio',d:{n:a.n,who,y}})}else news(`${who} vence o prémio ${a.n}!`,'good')}else news(`${who} fica em ${i+1}.º no prémio ${a.n}.`,'good')});
+ const bw=out.find(a=>a.n==='Bola de Ouro');if(bw&&bw.L[0])news(`${bw.L[0].n} (${bw.L[0].c}) vence a Bola de Ouro ${y}.`,'good')}catch(e){console.warn(e)}}
+{const _NS=newSeason;newSeason=function(){giveAwards();try{if((S.trSeason||[]).length)S.queue.push({id:'desfile',d:{L:S.trSeason.slice(),y:S.seasonYear}})}catch(e){}S.trSeason=[];const old=S.cst;const r=_NS.apply(this,arguments);if(old&&old.c&&Object.keys(old.c).length)S.cstPrev=old;S.cst={y:S.seasonYear,c:{}};SQC={};return r}}
+/* ---------- eventos com cena 3D ---------- */
+Object.assign(EV,{desfile:{t:'Festa na cidade!',x:d=>`O plantel e o staff desfilam pelas ruas num autocarro aberto com ${d.L.length>1?'os troféus da época: '+d.L.join(', '):'o troféu: '+d.L[0]}. A cidade inteira saiu à rua!`,ch:()=>[{l:'Que noite!',f:()=>{add('felicidade',8);S.fama=famUp(2)}}]},
+ premio:{t:'Prémio individual!',x:d=>`Gala de ${d.y}: ${d.who} vence o prémio ${d.n}!`,ch:()=>[{l:'Subir ao palco',f:()=>{add('felicidade',12)}}]}});
+EV3.desfile='desfile';EV3.premio='gala';
+{const _C3=cast3;cast3=function(set,id,d){const r=_C3.apply(this,arguments)||{};if(id==='trofeu'||id==='desfile'||id==='premio')Object.assign(r,{tn:d&&d.n,tl:d&&d.L,who:d&&d.who});return r}}
+{const _SE7=showEvent;showEvent=function(){try{const q=S&&S.queue&&S.queue[0];if(q&&(q.id==='desfile'||q.id==='premio'))SND.ui('trophy')}catch(e){}return _SE7.apply(this,arguments)}}
+/* ---------- separador Troféus ---------- */
+let TRV='col',TRY=null,TRC=null;
+function trColHTML(){const T=S.troph||[];if(!T.length)return '<div class="card"><p class="hint" style="margin:0">Ainda não ganhaste nenhum troféu coletivo. Quando ganhares, aparece aqui.</p></div>';
+ const by={};T.forEach(t=>{(by[t.n]=by[t.n]||[]).push(t.y)});
+ return `<div class="trgal">${Object.entries(by).sort((a,b)=>b[1].length-a[1].length).map(([n,ys])=>`<div class="trit"><div class="trimg">${trophySVG(n,92)}${ys.length>1?`<span class="trx">×${ys.length}</span>`:''}</div><b>${esc(n)}</b><small>${ys.join(' · ')}</small></div>`).join('')}</div>`}
+function trIndHTML(){const W=S.indiv||[],AW=S.awards||[];let h='';
+ h+=`<h2 class="sec">Os teus prémios<span>${W.filter(w=>w.who===S.name).length}</span></h2>`;const mine=W.filter(w=>S.mode==='player'?w.who===S.name:true);
+ h+=mine.length?`<div class="trgal">${mine.slice().reverse().map(w=>`<div class="trit"><div class="trimg">${trophySVG(w.n,80)}</div><b>${esc(w.n)}</b><small>${w.y}${w.who!==S.name?' · '+esc(w.who):''}</small></div>`).join('')}</div>`:'<div class="card"><p class="hint" style="margin:0">Ainda não ganhaste prémios individuais. Os prémios são entregues no fim de cada época.</p></div>';
+ if(!AW.length)return h+'<div class="card"><p class="hint" style="margin:0">As classificações dos prémios aparecem no fim da primeira época.</p></div>';
+ const ys=AW.map(a=>a.y);if(TRY==null||!ys.includes(TRY))TRY=ys[ys.length-1];const E=AW.find(a=>a.y===TRY);
+ h+=`<div class="trsel"><label>Época <select data-trys="1">${ys.slice().reverse().map(y=>`<option ${y===TRY?'selected':''}>${y}</option>`).join('')}</select></label></div>`;
+ [['int','Prémios internacionais'],['nac','Prémios nacionais']].forEach(([s,l])=>{const A=E.A.filter(a=>a.s===s);if(!A.length)return;h+=`<h2 class="sec">${l}<span>top 20</span></h2>`;
+  h+=A.map(a=>`<details class="card trlist" ${a.n==='Bola de Ouro'?'open':''}><summary><span class="trmini">${trophySVG(a.n,40)}</span><span><b>${esc(a.n)}</b><small>${a.L[0]?'Vencedor: '+esc(a.L[0].n)+' ('+esc(a.L[0].c)+')':''}</small></span></summary><ol>${a.L.map((o,i)=>`<li class="${o.n===S.name?'me':''}"><span class="rk">${i+1}</span><span class="nm">${esc(o.n)}<small>${esc(o.c||'')}</small></span><span class="vl">${esc(String(o.v))}</span></li>`).join('')}</ol></details>`).join('')});
+ return h}
+function trStatHTML(){const C={};Object.entries((S.cst&&S.cst.c)||{}).forEach(([k,v])=>C[k]=v);Object.entries((S.cstPrev&&S.cstPrev.c)||{}).forEach(([k,v])=>C['P|'+k]={n:v.n+' · época '+S.cstPrev.y+'/'+String((S.cstPrev.y||0)+1).slice(2),p:v.p});const K=Object.keys(C);if(!K.length)return '<div class="card"><p class="hint" style="margin:0">As estatísticas das competições aparecem depois dos primeiros jogos.</p></div>';
+ if(!TRC||!C[TRC])TRC=K.find(k=>k.startsWith('L:')&&Object.keys(C[k].p).length>40)||K.find(k=>k.startsWith('P|L:'))||K[0];const c=C[TRC];const L=Object.values(c.p).map(r=>({n:r[0],c:r[1],pos:r[2],g:r[3],a:r[4],j:r[5],ovr:r[6]}));const mx=Math.max(1,...L.map(o=>o.j));
+ const list=(t,arr,v)=>`<details class="card trlist" open><summary><span><b>${t}</b></span></summary><ol>${arr.map((o,i)=>`<li class="${o.n===S.name?'me':''}"><span class="rk">${i+1}</span><span class="nm">${esc(o.n)}<small>${esc(o.c)}</small></span><span class="vl">${v(o)}</span></li>`).join('')}</ol></details>`;
+ const by=(f,flt)=>L.filter(flt||(()=>true)).slice().sort((a,b)=>f(b)-f(a)).slice(0,20);
+ return `<div class="trsel"><label>Competição <select data-trc="1">${K.map(k=>`<option value="${esc(k)}" ${k===TRC?'selected':''}>${esc(C[k].n)}</option>`).join('')}</select></label></div>
+ ${list('Melhores marcadores',by(o=>o.g*100+o.a),o=>o.g+' golos')}${list('Melhores assistentes',by(o=>o.a*100+o.g),o=>o.a+' assist.')}${list('Melhores jogadores',by(o=>o.g+o.a*0.7+((o.ovr||60)-70)*0.3*o.j/mx,o=>o.j>=mx*0.3),o=>o.g+' g · '+o.a+' a · '+o.j+' j')}`}
+function vTrof(){const tabs=[['col','Coletivos'],['ind','Individuais'],['est','Estatísticas']];
+ return `<div class="trof"><div class="tlmtabs" role="tablist">${tabs.map(([k,l])=>`<button role="tab" aria-selected="${TRV===k}" class="${TRV===k?'on':''}" data-trv="${k}">${l}</button>`).join('')}</div>${TRV==='col'?trColHTML():TRV==='ind'?trIndHTML():trStatHTML()}</div>`}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-trv]');if(!b)return;e.stopPropagation();TRV=b.dataset.trv;render()},true);
+document.addEventListener('change',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.trys){TRY=+t.value;render()}if(t&&t.dataset&&t.dataset.trc){TRC=t.value;render()}});
+TABTH.trof={t:'Troféus',s:'Vitrine, prémios e estatísticas'};
+if(typeof document!=='undefined'&&document.head){const st=document.createElement('style');st.textContent=`
+#app[data-tab="trof"]{--acc:#b8860b}#app[data-tab="trof"] .tband{background:linear-gradient(135deg,#1a1408,#3d2c06);color:#f2c94c}#app[data-tab="trof"] .tband::after{background:radial-gradient(#f2c94c 1px,transparent 1.5px) 0 0/10px 10px;opacity:.15}
+.trgal{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin:10px 0}
+.trit{background:radial-gradient(circle at 50% 30%,#2c2a22,#14130f);border:1px solid #3b3424;border-radius:16px;padding:14px 10px 12px;text-align:center;color:#f5ecd2}
+.trit b{display:block;font-size:14px;line-height:1.25;margin-top:6px}.trit small{display:block;color:#bfb08a;font-size:12px;margin-top:3px}
+.trimg{position:relative;display:inline-block}.trx{position:absolute;right:-6px;top:0;background:#f2c94c;color:#1a1408;font-weight:800;border-radius:999px;padding:1px 7px;font-size:12px}
+.trsel{margin:10px 0}.trsel label{display:flex;gap:10px;align-items:center;font-family:var(--cond);font-weight:600;text-transform:uppercase;letter-spacing:.5px;font-size:13px;color:var(--muted)}
+.trsel select{flex:1;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;font-size:15px;text-transform:none}
+.trlist{padding:0;overflow:hidden}.trlist summary{display:flex;gap:10px;align-items:center;padding:10px 12px;cursor:pointer;list-style:none}.trlist summary::-webkit-details-marker{display:none}
+.trlist summary b{display:block}.trlist summary small{display:block;color:var(--muted);font-size:12.5px}.trmini{flex:0 0 40px}
+.trlist ol{list-style:none;margin:0;padding:0 12px 10px}.trlist li{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line);font-size:14px}
+.trlist li .rk{font-family:var(--cond);font-weight:800;color:var(--muted);text-align:center}.trlist li:nth-child(1) .rk{color:#d4a017}.trlist li:nth-child(2) .rk{color:#9aa4ae}.trlist li:nth-child(3) .rk{color:#b0703a}
+.trlist li .nm small{display:block;color:var(--muted);font-size:12px}.trlist li .vl{font-family:var(--cond);font-weight:700;white-space:nowrap}.trlist li.me{background:color-mix(in srgb,var(--acc) 14%,transparent);border-radius:8px}
+@media (max-width:620px){nav.tabs .in{overflow-x:auto;scrollbar-width:none;justify-content:flex-start}nav.tabs .in::-webkit-scrollbar{display:none}nav.tabs button{flex:0 0 auto;padding:8px 7px;font-size:11.5px}}
+`;document.head.appendChild(st)}
+/* no telemóvel, a barra de separadores desliza: o separador aberto fica sempre à vista */
+{const _R9=render;render=function(){const r=_R9.apply(this,arguments);try{const b=document.querySelector('nav.tabs button.on');if(b&&window.innerWidth<=620)b.scrollIntoView({block:'nearest',inline:'center'})}catch(e){}return r}}
+
+/* ---------- cenas 3D: entrega da taça, volta ao relvado, desfile de autocarro e gala ---------- */
+(function(){if(typeof THREE==='undefined'||typeof G3==='undefined'||!G3._)return;const{SET,person,box,cyl,sph,at,plane,txtTex,baseScene,meLook,looks,mat}=G3._;
+ const MT={};const metal=m=>MT[m]||(MT[m]=new THREE.MeshPhongMaterial(m==='g'?{color:0xe0b030,specular:0xfff1a8,shininess:90,emissive:0x2a1800}:{color:0xd4dbe2,specular:0xffffff,shininess:100,emissive:0x15181c}));
+ function troph3(n){const[k,m]=trKind(n),M=metal(m),g=new THREE.Group();const L=(pts,seg)=>new THREE.Mesh(new THREE.LatheGeometry(pts.map(([x,y])=>new THREE.Vector2(x,y)),seg||24),M);
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.18,0.14,18),mat('#2a2420'));base.position.y=0.07;g.add(base);
+  const hand=(r,t,x,y,rz)=>{const h=new THREE.Mesh(new THREE.TorusGeometry(r,t,8,18,Math.PI*1.2),M);h.position.set(x,y,0);h.rotation.z=rz;g.add(h)};
+  if(k==='orelhas'){g.add(L([[0.06,0.14],[0.05,0.32],[0.09,0.38],[0.17,0.52],[0.2,0.72],[0.21,0.84],[0,0.84]]));hand(0.16,0.022,-0.27,0.6,Math.PI*0.4);hand(0.16,0.022,0.27,0.6,-Math.PI*0.4-Math.PI*0.2)}
+  else if(k==='taca'){g.add(L([[0.05,0.14],[0.045,0.3],[0.08,0.36],[0.15,0.48],[0.17,0.62],[0.18,0.7],[0,0.7]]));hand(0.07,0.015,-0.2,0.56,Math.PI*0.45);hand(0.07,0.015,0.2,0.56,-Math.PI*0.65)}
+  else if(k==='vaso'){g.add(L([[0.05,0.14],[0.08,0.2],[0.12,0.42],[0.1,0.66],[0.065,0.76],[0.11,0.88],[0,0.88]]))}
+  else if(k==='prato'){const d=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.28,0.03,36),M);d.rotation.x=Math.PI/2;d.position.y=0.48;g.add(d);g.add(at(cyl(0.025,0.03,0.22,'#6b5a2a'),0,0.24,0))}
+  else if(k==='globo'){g.add(L([[0.07,0.14],[0.05,0.3],[0.08,0.45],[0.05,0.55],[0,0.55]]));const s=new THREE.Mesh(new THREE.SphereGeometry(0.14,20,14),M);s.position.y=0.66;g.add(s)}
+  else if(k==='bola'){g.add(at(cyl(0.04,0.06,0.12,'#2a2420'),0,0.2,0));const s=new THREE.Mesh(new THREE.SphereGeometry(0.17,24,16),M);s.position.y=0.42;g.add(s)}
+  else if(k==='bota'){const a=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.3,0.14),M);a.position.set(0,0.32,0);g.add(a);const b=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.1,0.3),M);b.position.set(0,0.2,0.08);g.add(b)}
+  else if(k==='luva'){const a=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.2,0.08),M);a.position.y=0.3;g.add(a);for(let i=0;i<4;i++){const f=new THREE.Mesh(new THREE.CylinderGeometry(0.025,0.025,0.16,8),M);f.position.set(-0.075+i*0.05,0.48,0);g.add(f)}const th=new THREE.Mesh(new THREE.CylinderGeometry(0.025,0.025,0.12,8),M);th.position.set(0.13,0.34,0);th.rotation.z=-0.8;g.add(th)}
+  else if(k==='estrela'){const s=new THREE.Mesh(new THREE.OctahedronGeometry(0.18),M);s.scale.set(1,1,0.35);s.position.y=0.4;g.add(s)}
+  else{const s=new THREE.Mesh(new THREE.SphereGeometry(0.06,14,10),M);s.position.y=0.62;g.add(s);g.add(L([[0.05,0.14],[0.08,0.3],[0.07,0.46],[0.09,0.54],[0,0.56]]))}
+  return g}
+ G3._.troph3=troph3;
+ const cv=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);return t};
+ const crowd=(a,b)=>cv(512,128,(c,W,H)=>{c.fillStyle='#1b1f27';c.fillRect(0,0,W,H);for(let i=0;i<1400;i++){c.fillStyle=[a,b,a,'#e9d9c0','#2b2b2b'][i%5];c.fillRect(Math.random()*W,Math.random()*H,3,4)}});
+ const pitch=()=>cv(256,256,(c,W,H)=>{for(let i=0;i<8;i++){c.fillStyle=i%2?'#2f7a45':'#2a6d3e';c.fillRect(0,i*H/8,W,H/8)}});
+ const conf=(sc,n,area)=>{const L=[];for(let i=0;i<n;i++){const m=new THREE.Mesh(new THREE.PlaneGeometry(0.08,0.12),new THREE.MeshBasicMaterial({color:['#f2c23a','#ffffff',COL.us,'#4aa3ff'][i%4],side:THREE.DoubleSide}));m.position.set((Math.random()-0.5)*area,Math.random()*7,(Math.random()-0.5)*area*0.6);m.userData.v=0.5+Math.random()*0.9;sc.add(m);L.push(m)}return dt=>L.forEach(m=>{m.position.y-=m.userData.v*dt;m.rotation.x+=dt*3;m.rotation.z+=dt*2;if(m.position.y<0)m.position.y=7})};
+ const fireworks=sc=>{const P=[];for(let i=0;i<5;i++){const g=new THREE.Group();for(let j=0;j<18;j++){const s=new THREE.Mesh(new THREE.SphereGeometry(0.06,6,4),new THREE.MeshBasicMaterial({color:['#ffd34d','#ff6b5a','#7ad3ff','#ffffff'][i%4]}));const a=j/18*Math.PI*2,b=(j%3-1)*0.6;s.userData.d=new THREE.Vector3(Math.cos(a)*Math.cos(b),Math.sin(b)+0.2,Math.sin(a)*Math.cos(b));g.add(s)}g.userData.t0=i*0.7;g.userData.x=-6+i*3;sc.add(g);P.push(g)}
+  return t=>P.forEach(g=>{const u=(t+g.userData.t0)%3.5;g.visible=u<1.6;g.position.set(g.userData.x,7+u*0.4,-9);g.children.forEach(s=>{s.position.copy(s.userData.d).multiplyScalar(u*2.4)})})};
+ const kitP=(i,extra)=>person({...looks('x','tm'+i),shirt:COL.us,kit:true,pants:'#151515',...(extra||{})});
+ /* 1) entrega da taça ao estilo FM: entrada, levantar a taça e volta ao relvado */
+ const _T0=SET.trofeu;SET.trofeu=c=>{if(!c||!c.tn)return _T0(c);const sc=baseScene('#0b1a12');sc.children[0].intensity=0.62;const g=new THREE.Mesh(new THREE.PlaneGeometry(40,30),new THREE.MeshLambertMaterial({map:pitch()}));g.rotation.x=-Math.PI/2;sc.add(g);
+  const st=box(40,9,2,'#20252c');st.position.set(0,4.5,-12);sc.add(st);const cr=plane(40,8,crowd(COL.us,'#f2c23a'),{transparent:false});cr.position.set(0,4.6,-10.95);sc.add(cr);
+  const stage=box(3.2,0.5,1.8,'#f1f1f1');stage.position.set(0,0.25,-2);sc.add(stage);const ban=plane(3.2,0.45,txtTex(['CAMPEÕES'],{w:512,h:72,bg:COL.us,color:'#fff',fs:44}),{transparent:false});ban.position.set(0,0.25,-1.09);sc.add(ban);
+  const ped=box(0.5,0.9,0.5,'#2b2f38');ped.position.set(0.9,0.95,-2.2);sc.add(ped);const tr=troph3(c.tn);tr.scale.setScalar(0.85);sc.add(tr);
+  const me=person({...meLook(),shirt:COL.us,kit:true,pants:'#151515'});sc.add(me);const A=[me];const tm=[];for(let i=0;i<10;i++){const p=kitP(i);const s=i<5?-1:1,r=i%5;p.position.set(s*1.5,0,3.6-r*1.25);p.rotation.y=s>0?-Math.PI/2:Math.PI/2;p.userData.pose='clap';sc.add(p);tm.push(p);A.push(p)}
+  const sp=new THREE.SpotLight(0xffffff,1.3,26,0.45);sp.position.set(0,10,4);sp.target=me;sc.add(sp);const cf=conf(sc,140,12),fw=fireworks(sc);const PER=16;
+  const ph=t=>t%PER;const tick=(t,dt)=>{const u=ph(t);cf(dt);fw(t);
+   if(u<3.6){const k=u/3.6;me.position.set(0,0,5.2-k*6.4);me.rotation.y=Math.PI;me.userData.pose='walk';me.userData.base=0;tr.position.set(0.9,1.4,-2.2);tr.rotation.y=t*0.4}
+   else if(u<4.2){me.position.set(0,0.5,-2);me.userData.base=0.5;me.rotation.y=0;me.userData.pose='stand';tr.position.set(0.45,1.55,-1.95)}
+   else if(u<8){me.position.set(0,0.5,-2);me.userData.base=0.5;me.rotation.y=0;me.userData.pose='trophy';const b=Math.max(0,Math.sin((u-4.2)*5))*0.08;tr.position.set(0,0.5+2.02+b,-1.95);tr.rotation.y=0;tm.forEach(p=>{p.userData.pose='happy';p.rotation.y=0})}
+   else{const k=(u-8)/(PER-8),a=-Math.PI/2+k*Math.PI*2*0.9,R0=5.2;me.userData.base=0;me.position.set(Math.cos(a)*R0,0,Math.sin(a)*R0+1);me.rotation.y=-a;me.userData.pose='trophy';tr.position.set(me.position.x,2.02,me.position.z+0.05);
+    tm.forEach((p,i)=>{const b=a-0.32*(i+1);p.position.set(Math.cos(b)*R0,0,Math.sin(b)*R0+1);p.rotation.y=-b;p.userData.pose=i%3?'walk':'happy'})}
+   if(u<0.05)tm.forEach((p,i)=>{const s=i<5?-1:1,r=i%5;p.position.set(s*1.5,0,3.6-r*1.25);p.rotation.y=s>0?-Math.PI/2:Math.PI/2;p.userData.pose='clap'})};
+  const camFn=(t,cam)=>{const u=ph(t);let P,L;if(u<3.6){P=[2.4,1.9,me.position.z+3.6];L=[0,1.2,me.position.z-1.5]}else if(u<8){P=[Math.sin(u*0.3)*1.2,1.9,2.3];L=[0,2.1,-2]}else{const a=(u-8)*0.35;P=[Math.cos(a)*9,3.4,Math.sin(a)*4+7];L=[me.position.x,1.4,me.position.z]}
+   cam.position.lerp(new THREE.Vector3(...P),0.08);cam.lookAt(...L)};
+  me.position.set(0,0,5.2);return{sc,A,cam:[2.4,1.9,8.5],look:[0,1.2,3],tick,camFn}};
+ /* 2) desfile de autocarro pela cidade (fim de época) */
+ SET.desfile=c=>{const sc=baseScene('#f2b27a');sc.fog=new THREE.Fog(0xf2b27a,25,70);sc.children[0].intensity=0.7;const gnd=new THREE.Mesh(new THREE.PlaneGeometry(80,160),mat('#8f8a82'));gnd.rotation.x=-Math.PI/2;gnd.position.set(0,-0.02,-40);sc.add(gnd);const road=new THREE.Mesh(new THREE.PlaneGeometry(9,140),mat('#3a3d44'));road.rotation.x=-Math.PI/2;road.position.z=-40;sc.add(road);
+  [-1,1].forEach(s=>{const sw=new THREE.Mesh(new THREE.PlaneGeometry(4,140),mat('#a9a39a'));sw.rotation.x=-Math.PI/2;sw.position.set(s*6.5,0.01,-40);sc.add(sw)});
+  const win=cv(128,256,(c,W,H)=>{c.fillStyle='#d9cbb5';c.fillRect(0,0,W,H);for(let y=10;y<H;y+=28)for(let x=10;x<W;x+=30){c.fillStyle=Math.random()<0.5?'#ffd98a':'#4a5566';c.fillRect(x,y,18,18)}});
+  const city=[];const cols=['#d8c3a5','#c97b63','#e8e2d0','#a4b4c4','#d6a85c','#b9c9b3'];for(let i=0;i<22;i++){[-1,1].forEach(s=>{const h=6+((i*7+s*3)%5)*2.2,b=new THREE.Mesh(new THREE.BoxGeometry(5,h,6),[mat(cols[(i+s+6)%6]),mat(cols[(i+s+6)%6]),mat(cols[i%6]),mat(cols[i%6]),new THREE.MeshLambertMaterial({map:win}),new THREE.MeshLambertMaterial({map:win})]);
+   b.position.set(s*11,h/2,-i*6.4);sc.add(b);city.push(b)})}
+  const fans=[];const cc=[COL.us,'#ffffff','#f2c23a'];for(let i=0;i<120;i++){const s=i%2?1:-1,f=new THREE.Group();f.add(at(cyl(0.2,0.24,1.1,cc[i%3],6),0,0.55,0));f.add(at(sph(0.15,'#e0b48f',6),0,1.25,0));if(i%4===0){const fl=box(0.03,0.9,0.03,'#444');fl.position.set(0.25,1.6,0);f.add(fl);const fg=box(0.5,0.32,0.02,cc[(i+1)%3]);fg.position.set(0.5,1.9,0);f.add(fg)}
+   f.position.set(s*(5.2+Math.random()*2.6),0,-Math.random()*130+8);f.userData.ph=Math.random()*6;sc.add(f);fans.push(f)}
+  /* autocarro aberto */
+  const bus=new THREE.Group();const body=box(2.7,2.3,10,COL.us);body.position.y=1.55;bus.add(body);const strip=box(2.74,0.55,9.4,'#1d2430');strip.position.set(0,1.75,0);bus.add(strip);
+  for(let i=0;i<4;i++){const w=new THREE.Mesh(new THREE.CylinderGeometry(0.48,0.48,0.32,14),mat('#111'));w.rotation.z=Math.PI/2;w.position.set(i<2?-1.3:1.3,0.48,i%2?3:-3);bus.add(w)}
+  const deck=box(2.7,0.12,10,'#e6e6e6');deck.position.y=2.76;bus.add(deck);[-1,1].forEach(s=>{const r=box(0.06,0.7,10,'#e6e6e6');r.position.set(s*1.32,3.15,0);bus.add(r)});const fr=box(2.7,0.7,0.06,'#e6e6e6');fr.position.set(0,3.15,-4.97);bus.add(fr);
+  const sg=plane(7.5,0.62,txtTex(['CAMPEÕES '+(S.seasonYear||'')],{w:1024,h:96,bg:'#ffffff',color:'#111',fs:62}),{transparent:false});sg.position.set(1.38,1.8,0);sg.rotation.y=Math.PI/2;bus.add(sg);
+  sc.add(bus);const A=[];const me=person({...meLook(),shirt:COL.us,kit:true,pants:'#151515'});me.position.set(0,2.82,-3.6);me.userData.base=2.82;me.userData.pose='trophy';bus.add(me);A.push(me);
+  const held=troph3((c.tl&&c.tl[0])||c.tn);held.scale.setScalar(0.8);bus.add(held);
+  for(let i=0;i<9;i++){const p=i===8?person({...looks('x','mister'),shirt:'#1f2633',pants:'#1f2633'}):kitP(i);p.position.set(i%2?0.7:-0.7,2.82,-2.6+Math.floor(i/2)*1.3);p.userData.base=2.82;p.userData.pose=['happy','clap','happy','scarf','happy'][i%5];bus.add(p);A.push(p)}
+  const L=(c.tl||[c.tn]).slice(0,5);L.forEach((n,i)=>{const t=troph3(n);t.scale.setScalar(0.75);t.position.set(-0.9+i*(1.8/Math.max(1,L.length-1||1)),3.5,-4.75);if(L.length===1)t.position.x=0;bus.add(t)});if(L.length>1)held.visible=false;
+  const cf=conf(sc,160,14);const SP=5.5;
+  const tick=(t,dt)=>{cf(dt);city.forEach(b=>{b.position.z+=SP*dt;if(b.position.z>12)b.position.z-=22*6.4});fans.forEach(f=>{f.position.z+=SP*dt;if(f.position.z>12)f.position.z-=135;f.position.y=Math.max(0,Math.sin(t*6+f.userData.ph))*0.18});
+   bus.position.y=Math.sin(t*9)*0.015;held.position.set(me.position.x,me.position.y+2.0+Math.max(0,Math.sin(t*5))*0.08,me.position.z+0.05)};
+  const camFn=(t,cam)=>{const a=Math.sin(t*0.16);cam.position.set(6.2+a*0.8,5.6+Math.sin(t*0.23)*0.4,3.5+a*4);cam.lookAt(0,3.3,-1.5)};
+  return{sc,A,cam:[6,4.6,-1],look:[0,3,-1.5],tick,camFn}};
+ /* 3) gala de prémios individuais */
+ SET.gala=c=>{const sc=baseScene('#07080d');sc.children[0].intensity=0.25;const fl=new THREE.Mesh(new THREE.PlaneGeometry(30,20),new THREE.MeshPhongMaterial({color:0x0c0d12,shininess:60,specular:0x333333}));fl.rotation.x=-Math.PI/2;sc.add(fl);
+  const stg=box(9,0.4,4,'#14151c');stg.position.set(0,0.2,-1.5);sc.add(stg);const scr=plane(8,3.2,txtTex([String(c.tn||'Prémio').toUpperCase(),String(S.seasonYear||'')],{w:1024,h:400,bg:'#0d0a02',color:'#f2c94c',fs:110}),{transparent:false});scr.position.set(0,3.5,-3.4);sc.add(scr);
+  const lect=box(0.7,1.1,0.5,'#2a2a33');lect.position.set(2.6,0.95,-1.2);sc.add(lect);const host=person({...looks('x','apres'),shirt:'#1a1c24',pants:'#1a1c24'});host.position.set(2.6,0.4,-1.7);host.userData.base=0.4;host.userData.pose='clap';sc.add(host);
+  const win=(c.who&&c.who!==S.name)?person({...looks('x',c.who),shirt:'#191b22',pants:'#191b22'}):person({...meLook(),shirt:'#191b22',pants:'#191b22'});sc.add(win);const A=[win,host];
+  const aw=troph3(c.tn);aw.scale.setScalar(0.9);sc.add(aw);const ped=box(0.5,0.9,0.5,'#d9d9d9');ped.position.set(-1.1,0.85,-1.6);sc.add(ped);
+  for(let r=0;r<3;r++)for(let i=0;i<12;i++){const p=new THREE.Group();p.add(at(cyl(0.22,0.26,0.8,'#0f1015',6),0,0.4,0));p.add(at(sph(0.15,'#1b1c22',6),0,0.95,0));p.position.set(-6.6+i*1.2+(r%2)*0.5,0,3+r*1.3);p.userData.ph=Math.random()*6;sc.add(p);A.push(p)}
+  const spots=[];[-3,0,3].forEach((x,i)=>{const s=new THREE.SpotLight([0xfff2c8,0xffffff,0xc8e0ff][i],1.6,22,0.32,0.5);s.position.set(x,9,3);s.target=win;sc.add(s);spots.push(s);const cone=new THREE.Mesh(new THREE.ConeGeometry(1.6,9,20,1,true),new THREE.MeshBasicMaterial({color:0xfff3c4,transparent:true,opacity:0.06,side:THREE.DoubleSide,depthWrite:false}));cone.position.set(x*0.5,4.5,0);sc.add(cone)});
+  const cf=conf(sc,90,10);const PER=12;
+  const tick=(t,dt)=>{const u=t%PER;cf(dt);if(u<3){win.position.set(-4+u/3*4,0.4,-1.2);win.rotation.y=Math.PI/2;win.userData.base=0.4;win.userData.pose='walk';aw.position.set(-1.1,1.3,-1.6)}
+   else if(u<4){win.rotation.y=0;win.userData.pose='stand';aw.position.set(-0.3,1.4,-1.0)}else{win.position.set(0,0.4,-1.2);win.rotation.y=0;win.userData.pose='trophy';aw.position.set(0,0.4+2.02+Math.max(0,Math.sin(u*5))*0.06,-1.15)}
+   A.slice(2).forEach(p=>{p.position.y=Math.max(0,Math.sin(t*7+p.userData.ph))*0.05})};
+  const camFn=(t,cam)=>{const u=t%PER,k=Math.min(1,u/6);cam.position.set(Math.sin(t*0.2)*1.2,2.1+(1-k)*1.6,9.5-k*5);cam.lookAt(0,1.9-(1-k)*0.2,-1.4)};
+  return{sc,A,cam:[0,3.6,9],look:[0,1.6,-1.4],tick,camFn}};
+ if(document.head){const st=document.createElement('style');st.textContent='.v3[data-set="trofeu"],.v3[data-set="desfile"],.v3[data-set="gala"]{height:260px}@media (min-width:900px){.v3[data-set="trofeu"],.v3[data-set="desfile"],.v3[data-set="gala"]{height:360px}}';document.head.appendChild(st)}
+})();
 
 /* ============ ARRANQUE ============ */
 function start(data){migrateOld();S=(data&&data.S)||null;if(S)migrate();SCREEN='menu';render()}
