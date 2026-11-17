@@ -398,7 +398,6 @@ button.msg{display:flex;width:100%;text-align:left;background:none;border:0;padd
 
 <script src="three.min.js"></script>
 <script>
-
 /* ============ DADOS ============ */
 const LEAGUES={
  pt:{n:'Liga Portugal',c:'Portugal',t:[['Benfica',84],['FC Porto',83],['Sporting CP',84],['SC Braga',78],['Vitória SC',74],['Famalicão',71],['Gil Vicente',69],['Moreirense',68],['Casa Pia',67],['Rio Ave',67],['Estoril Praia',68],['FC Arouca',67],['Santa Clara',68],['CD Nacional',65],['Estrela da Amadora',64],['AVS',63],['CD Tondela',63],['FC Alverca',62]]},
@@ -1781,7 +1780,7 @@ const G3=(()=>{
  const on=()=>ok()&&pref();
  function rend(){if(RD||failed)return RD;try{RD=new THREE.WebGLRenderer({antialias:true});RD.setPixelRatio(Math.min(2,window.devicePixelRatio||1));RD.shadowMap.enabled=false;RD.shadowMap.type=THREE.PCFSoftShadowMap;RD.domElement.className='g3cv'}catch(e){failed=true;RD=null}return RD}
  const MC={},GC={};
- const mat=(c,o)=>{if(c&&c.isMaterial)return c;const k=c+(o?JSON.stringify(o):'');return MC[k]||(MC[k]=new THREE.MeshLambertMaterial(Object.assign({color:c},o||{})))};
+ const mat=(c,o)=>{if(c&&c.isMaterial)return c;const k=c+(o?JSON.stringify(o):'');return MC[k]||(MC[k]=new THREE.MeshPhongMaterial(Object.assign({color:c,shininess:18,specular:0x222222},o||{})))};
  const geo=(k,f)=>GC[k]||(GC[k]=f());
  const box=(w,h,d,c)=>new THREE.Mesh(geo('b'+w+'|'+h+'|'+d,()=>new THREE.BoxGeometry(w,h,d)),mat(c));
  const cyl=(a,b,h,c,s)=>new THREE.Mesh(geo('c'+a+'|'+b+'|'+h+'|'+(s||12),()=>new THREE.CylinderGeometry(a,b,h,s||12)),mat(c));
@@ -1817,7 +1816,7 @@ const G3=(()=>{
    L.position.set(i?0.098:-0.098,0.86,0);g.add(L);return L});
   /* tronco */
   const torso=new THREE.Group();torso.position.y=0.84;g.add(torso);
-  const ch=sm(lathe('torso',[[0.155,0.02],[0.162,0.1],[0.17,0.22],[0.198,0.36],[0.212,0.45],[0.2,0.53],[0.15,0.6],[0.085,0.64]],lo?12:20,shirt));ch.scale.z=0.64;torso.add(ch);
+  const ch=sm(lathe('torso',[[0.155,0.02],[0.162,0.1],[0.17,0.22],[0.198,0.36],[0.212,0.45],[0.2,0.53],[0.15,0.6],[0.085,0.64]],lo?10:16,shirt));ch.scale.z=0.64;torso.add(ch);
   torso.add(at(lathe('pelvis',[[0.16,-0.09],[0.175,-0.04],[0.168,0.04],[0.158,0.08]],S1,pants),0,0,0));torso.children[torso.children.length-1].scale.z=0.72;
   [-1,1].forEach(s=>{const sp=sm(sph(0.078,shirt,lo?6:10));sp.position.set(s*0.235,0.565,0);sp.scale.set(1,0.9,0.85);torso.add(sp)});
   if(!lo){const col=cyl(0.074,0.082,0.045,o.collar||(kit?o.socks2||'#ffffff':shirt),S1);col.position.y=0.63;torso.add(col)}
@@ -1834,7 +1833,7 @@ const G3=(()=>{
    A.position.set(i?0.25:-0.25,0.57,0);torso.add(A);return A});
   /* cabeça */
   const head=new THREE.Group();head.position.y=0.66;torso.add(head);head.add(at(cyl(0.052,0.06,0.13,skin,8),0,0.05,0));
-  const ft=lo?null:faceTex(skin,hair,EYES[hh%EYES.length],(o.beard?1:0));const sk=new THREE.Mesh(geo('headS'+(lo?1:0),()=>new THREE.SphereGeometry(0.13,lo?14:24,lo?12:18)),ft?new THREE.MeshLambertMaterial({map:ft}):mat(skin));
+  const ft=lo?null:faceTex(skin,hair,EYES[hh%EYES.length],(o.beard?1:0));const sk=new THREE.Mesh(geo('headS'+(lo?1:0),()=>new THREE.SphereGeometry(0.13,lo?16:24,lo?12:18)),ft?new THREE.MeshLambertMaterial({map:ft}):mat(skin));
   sk.scale.set(0.9,1.14,1.0);sk.position.y=0.22;head.add(sk);
   const chin=sph(0.062,skin,8);chin.scale.set(1.1,0.8,0.9);chin.position.set(0,0.12,0.06);head.add(chin);
   if(!lo){[-1,1].forEach(s=>{const e=sph(0.03,skin,6);e.scale.set(0.45,1.05,0.75);e.position.set(s*0.118,0.215,0.0);head.add(e)});
@@ -1861,10 +1860,10 @@ const G3=(()=>{
   if(ps==='play'){p.position.y=u.base-0.38;lL.rotation.x=lR.rotation.x=-1.45;aL.rotation.x=aR.rotation.x=-1.15+Math.sin(q*9)*0.04;aL.rotation.z=0.35;aR.rotation.z=-0.35;h.rotation.x=0.12;T.rotation.x=-0.05+Math.sin(q*3)*0.03}
   else if(ps==='massage'){aL.rotation.x=aR.rotation.x=-1.0+Math.sin(q*4)*0.25;T.rotation.x=0.35;h.rotation.x=0.3}
   else if(ps==='lie'){aL.rotation.z=0.1;aR.rotation.z=-0.1;h.rotation.x=-0.2}
-  else if(ps==='run'){const s=Math.sin(u.cyc),a=u.amp||0.7;lL.rotation.x=s*a;lR.rotation.x=-s*a;aL.rotation.x=-s*a*0.8;aR.rotation.x=s*a*0.8;T.rotation.x=0.12*a;T.rotation.y=Math.sin(u.cyc*0.5)*0.065*a;T.rotation.z=Math.sin(u.cyc)*0.018*a;h.rotation.y=-T.rotation.y*0.55;p.position.y=u.base+Math.abs(Math.cos(u.cyc))*0.05*a}
+  else if(ps==='run'){const s=Math.sin(u.cyc),c=Math.cos(u.cyc),a=u.amp||0.7;lL.rotation.x=s*a;lR.rotation.x=-s*a;aL.rotation.x=-s*a*0.82;aR.rotation.x=s*a*0.82;if(u.knees){u.knees[0].rotation.x=Math.max(0,c)*0.42;u.knees[1].rotation.x=Math.max(0,-c)*0.42}T.rotation.x=0.10+0.08*a;T.rotation.y=Math.sin(u.cyc*0.5)*0.035;h.rotation.x=-0.035+Math.sin(u.cyc*2)*0.018;h.rotation.y=-T.rotation.y*0.45;p.rotation.z=Math.sin(u.cyc)*0.025;p.position.y=u.base+Math.abs(c)*0.055*a}
   else if(ps==='sit'){p.position.y=u.base-0.38;lL.rotation.x=lR.rotation.x=-1.45;aL.rotation.x=aR.rotation.x=-0.5;aR.rotation.x=-0.5+Math.sin(q*1.3)*0.05;h.rotation.y=Math.sin(q*0.4)*0.15}
   else if(ps==='sittalk'){p.position.y=u.base-0.38;lL.rotation.x=lR.rotation.x=-1.45;aL.rotation.x=-0.5;aR.rotation.x=-0.9+Math.sin(q*3)*0.35;aR.rotation.z=-0.2;h.rotation.x=Math.sin(q*5)*0.07}
-  else if(ps==='talk'){aR.rotation.x=-0.6+Math.sin(q*3)*0.35;aR.rotation.z=-0.15;aL.rotation.x=-0.2+Math.sin(q*2.3)*0.15;h.rotation.x=Math.sin(q*5)*0.07;T.rotation.y=Math.sin(q*0.9)*0.08}
+  else if(ps==='talk'){const g=Math.max(0,Math.sin(q*2.8));aR.rotation.x=-0.58+Math.sin(q*3.1)*0.29;aR.rotation.z=-0.13-Math.max(0,Math.sin(q*1.4))*0.08;aL.rotation.x=-0.18+Math.sin(q*2.1)*0.13;aL.rotation.z=0.04+g*0.045;h.rotation.x=Math.sin(q*4.7)*0.045;h.rotation.y=Math.sin(q*0.8)*0.08;T.rotation.y=Math.sin(q*0.9)*0.055;T.position.y=0.84+Math.sin(q*1.7)*0.008}
   else if(ps==='dance'){const b=Math.abs(Math.sin(q*4.5));p.position.y=u.base+b*0.1;aL.rotation.z=-2.2+Math.sin(q*4.5)*0.5;aR.rotation.z=2.2+Math.cos(q*4.5)*0.5;T.rotation.y=Math.sin(q*2.2)*0.4;lL.rotation.x=Math.sin(q*4.5)*0.3;lR.rotation.x=-Math.sin(q*4.5)*0.3}
   else if(ps==='angry'){aR.rotation.x=-2.7+Math.sin(q*9)*0.3;aL.rotation.x=-0.3;aL.rotation.z=0.3;T.rotation.x=0.12;h.rotation.x=0.1+Math.sin(q*9)*0.05;p.position.y=u.base+Math.max(0,Math.sin(q*9))*0.04}
   else if(ps==='scarf'){aL.rotation.x=aR.rotation.x=-2.9;aL.rotation.z=-0.25;aR.rotation.z=0.25;p.position.y=u.base+Math.max(0,Math.sin(q*6))*0.06;if(u.scarfM)u.scarfM.position.x=-0.28}
@@ -1874,11 +1873,11 @@ const G3=(()=>{
   else if(ps==='sad'){h.rotation.x=0.4;T.rotation.x=0.12;aL.rotation.z=0.05;aR.rotation.z=-0.05}
   else if(ps==='phone'){aR.rotation.x=-1.25;aR.rotation.z=0.35;h.rotation.x=0.3}
   else if(ps==='clap'){aL.rotation.x=aR.rotation.x=-1.2;aL.rotation.z=-0.5+Math.sin(q*12)*0.25;aR.rotation.z=0.5-Math.sin(q*12)*0.25}
-  else if(ps==='walk'){const s=Math.sin(q*5);lL.rotation.x=s*0.45;lR.rotation.x=-s*0.45;aL.rotation.x=-s*0.35;aR.rotation.x=s*0.35}
+  else if(ps==='walk'){const s=Math.sin(q*5),c=Math.cos(q*5);lL.rotation.x=s*0.48;lR.rotation.x=-s*0.48;aL.rotation.x=-s*0.34;aR.rotation.x=s*0.34;T.rotation.y=Math.sin(q*2.5)*0.025;h.rotation.y=-T.rotation.y*0.55;p.position.y=u.base+Math.abs(c)*0.012}
   else{aL.rotation.z=0.06;aR.rotation.z=-0.06;T.position.y=0.84+Math.sin(q*1.6)*0.006;h.rotation.y=Math.sin(q*0.5)*0.2}}
  function dog(c){const g=new THREE.Group();g.add(at(box(0.7,0.28,0.26,c),0,0.42,0));g.add(at(box(0.26,0.24,0.22,c),0.42,0.6,0));g.add(at(box(0.12,0.08,0.12,'#222'),0.58,0.56,0));[[-0.25,-0.09],[-0.25,0.09],[0.25,-0.09],[0.25,0.09]].forEach(([x,z])=>g.add(at(box(0.07,0.3,0.07,c),x,0.15,z)));const tail=at(box(0.25,0.05,0.05,c),-0.45,0.6,0);tail.rotation.z=0.6;g.add(tail);g.userData={tail};return g}
  /* ---------- cenários ---------- */
- function baseScene(bg){const sc=new THREE.Scene();sc.background=new THREE.Color(bg);const hl=new THREE.HemisphereLight(0xfff8ef,0x3d3a48,0.72);sc.add(hl);const dl=new THREE.DirectionalLight(0xfff4e6,0.6);dl.position.set(3,6,5);dl.castShadow=true;dl.shadow.mapSize.set(1024,1024);const sc2=dl.shadow.camera;sc2.left=-8;sc2.right=8;sc2.top=8;sc2.bottom=-8;sc2.near=0.5;sc2.far=30;dl.shadow.bias=-0.0006;dl.shadow.radius=3;sc.add(dl);const fl=new THREE.DirectionalLight(0xbfd4ff,0.16);fl.position.set(-5,3,6);sc.add(fl);return sc}
+ function baseScene(bg){const sc=new THREE.Scene();sc.background=new THREE.Color(bg);const hl=new THREE.HemisphereLight(0xfff8ef,0x3d3a48,0.82);sc.add(hl);const dl=new THREE.DirectionalLight(0xfff4e6,0.72);dl.position.set(3,6,5);dl.castShadow=true;dl.shadow.mapSize.set(1024,1024);const sc2=dl.shadow.camera;sc2.left=-8;sc2.right=8;sc2.top=8;sc2.bottom=-8;sc2.near=0.5;sc2.far=30;dl.shadow.bias=-0.0006;dl.shadow.radius=3;sc.add(dl);const fl=new THREE.DirectionalLight(0xbfd4ff,0.22);fl.position.set(-5,3,6);sc.add(fl);return sc}
  function room(sc,floor,wall,w,d){w=w||10;d=d||8;const fl=new THREE.Mesh(new THREE.PlaneGeometry(w,d),typeof floorMat==='function'?floorMat(floor,w,d):mat(floor));fl.rotation.x=-Math.PI/2;fl.receiveShadow=true;sc.add(fl);const wm=typeof wallMat==='function'?wallMat(wall):wall;const bw=box(w,4,0.1,wm);bw.position.set(0,2,-d/2+1.5);bw.receiveShadow=true;sc.add(bw);const sw=box(0.1,4,d,wm);sw.position.set(-w/2+1.2,2,0);sw.receiveShadow=true;sc.add(sw);if(typeof floorMat==='function'){const sk=box(w,0.12,0.03,'#e9e4da');sk.position.set(0,0.06,-d/2+1.565);sc.add(sk);const sk2=box(0.03,0.12,d,'#e9e4da');sk2.position.set(-w/2+1.265,0.06,0);sc.add(sk2);try{if(typeof roomDecor==='function'){const bg=sc.background&&sc.background.isColor?sc.background:null;roomDecor(sc,w,d,bg?(bg.r*0.3+bg.g*0.59+bg.b*0.11)<0.25:false)}}catch(e){}}return bw}
  function tableR(sc,x,z,r,c,cloth){const t=new THREE.Group();t.add(at(cyl(r,r,0.05,cloth||c,20),0,0.76,0));t.add(at(cyl(0.05,0.05,0.75,'#333',8),0,0.38,0));t.add(at(cyl(0.3,0.3,0.03,'#333',12),0,0.02,0));t.position.set(x,0,z);sc.add(t);return t}
  function chair(sc,x,z,ry,c){const g=new THREE.Group();g.add(at(box(0.45,0.06,0.45,c),0,0.46,0));g.add(at(box(0.45,0.55,0.06,c),0,0.75,-0.2));[[-0.19,-0.19],[0.19,-0.19],[-0.19,0.19],[0.19,0.19]].forEach(([a,b])=>g.add(at(box(0.04,0.46,0.04,c),a,0.23,b)));g.position.set(x,0,z);g.rotation.y=ry;sc.add(g);return g}
@@ -6507,123 +6506,229 @@ function tvBug(){try{const e=document.getElementById('m3d');if(!e||e.hidden||!M)
 /* nos lances 3D: marcador e minuto em cima */
 {const _CO2=CRQ.open;CRQ.open=function(host,m,o){const ok=_CO2.apply(this,arguments);try{const st=ok&&host.querySelector('.cq-stage');const old=st&&st.querySelector('.cq-ctx');if(old)old.remove();if(ok&&typeof M!=='undefined'&&M&&M.pm&&!M.done){if(st){let c=null;if(!c){c=document.createElement('div');c.className='cq-ctx';st.appendChild(c)}c.textContent=`${abbr3(M.usN)} ${M.us}–${M.them} ${abbr3(M.oppN)} · ${clockTxt()}`}}}catch(e){}return ok}}
 
+/* ============ FORA DE CAMPO 4.0 — UPGRADE INTEGRADO ============ */
+const FDC_UPGRADE_VERSION='4.0.0';
+function fdcStoryState(){
+ if(!S)return null;
+ const q=S.fdcStory||(S.fdcStory={v:1,matchMessageDay:-1,plans:[],lastReply:{},sceneHistory:[],pressHistory:[]});
+ q.v=1;q.plans=Array.isArray(q.plans)?q.plans:[];q.lastReply=q.lastReply||{};q.sceneHistory=Array.isArray(q.sceneHistory)?q.sceneHistory:[];q.pressHistory=Array.isArray(q.pressHistory)?q.pressHistory:[];
+ return q;
+}
+function fdcNorm(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim()}
+function fdcParsePlan(txt){
+ const t=fdcNorm(txt).replace(/-/g,' '),today=dt(S.day).getUTCDay();let delta=null,label='';
+ if(/\bhoje\b/.test(t)){delta=0;label='hoje'}
+ else if(/\bamanha\b/.test(t)){delta=1;label='amanhã'}
+ else if(/fim de semana/.test(t)){delta=(6-today+7)%7;if(delta===0)delta=7;label='sábado'}
+ else{
+  const days=[['domingo',0],['segunda',1],['terca',2],['quarta',3],['quinta',4],['sexta',5],['sabado',6]];
+  for(const [n,d] of days){if(new RegExp('\\b'+n+'(?:-feira)?\\b').test(t)){delta=(d-today+7)%7;if(delta===0)delta=7;label=n==='domingo'?'domingo':n==='sabado'?'sábado':n+'-feira';break}}
+ }
+ return delta==null?null:{day:S.day+delta,label};
+}
+function fdcScoreText(m){return `${m.gf??0}–${m.ga??0}`}
+function fdcGroup(type,from){let g=tlmGroup(type);if(type==='ct'){const c=(S.contacts||[]).find(x=>x.n===from);if(c&&c.rel2==='familia')g='fam';else if(c&&c.rel2==='trabalho')g='work';else if(c&&c.rel2==='amor')g='par'}return g}
+
+/* Migração aditiva: jogos antigos ganham apenas o novo estado narrativo. */
+{
+ const _fdcMigrate=migrate;
+ migrate=function(){const r=_fdcMigrate.apply(this,arguments);try{fdcStoryState()}catch(e){}return r};
+ const _fdcSave=save;
+ save=function(){try{fdcStoryState()}catch(e){}return _fdcSave.apply(this,arguments)};
+}
+
+/* O modo jogador passa a guardar o resultado para conversas, imprensa e eventos posteriores. */
+{
+ const _fdcProAfter=proAfter;
+ proAfter=function(f,r){
+  const out=_fdcProAfter.apply(this,arguments);
+  try{if(S&&S.pl&&f&&r){const home=fH(f)===clubName(),opp=home?fA(f):fH(f);S.lastMatch={res:r.res,gf:r.gf,ga:r.ga,opp,best:r.g>0?S.name:null,d:S.day,player:1,g:r.g||0,a:r.a||0,rt:r.rt??null,min:r.min||0};const st=fdcStoryState();st.lastPlayerMatch={d:S.day,opp,res:r.res,gf:r.gf,ga:r.ga,g:r.g||0,a:r.a||0,rt:r.rt??null};save()}}catch(e){console.warn('FDC match memory',e)}
+  return out;
+ };
+}
+
+/* Respostas com contexto real: último jogo, lesão, relação e repetição recente. */
+try{if(Array.isArray(TLM_INT))TLM_INT.unshift(['injury',/lesao|lesionado|lesionada|lesionei|lesionou|recuperacao|fisioterapia|tornozelo|muscular|joelho/])}catch(e){}
+{
+ const _fdcTlmReply=tlmReply;
+ tlmReply=function(type,txt,from){
+  const r=_fdcTlmReply.apply(this,arguments);if(!r||r.s||!r.t||!S)return r;
+  try{
+   const it=r.it||tlmIntent(txt),g=fdcGroup(type,from),m=S.lastMatch,age=m?S.day-m.d:999;
+   if(it==='football'&&m&&age>=0&&age<=5){
+    const sc=fdcScoreText(m),opp=m.opp||'o adversário',win=m.res==='V',loss=m.res==='D',goals=m.g||0;
+    if(g==='par')r.t=win?`Vi o jogo com ${opp} (${sc}). Fiquei contente por ti. Como estás depois de tudo aquilo? ❤️`:loss?`Vi o resultado com ${opp}. Sei que querias outro desfecho. Queres falar um pouco? ❤️`:`Vi o empate com ${opp} (${sc}). Foi daqueles jogos que deixam a sensação de que podia ter caído para qualquer lado.`;
+    else if(g==='fam')r.t=win?`Vi a vitória com ${opp}, ${sc}! Fiquei muito contente. Já conseguiste descansar?`:loss?`Vi o jogo com ${opp}. Não deixes que uma derrota apague o trabalho que tens feito. Estamos a torcer por ti.`:`Vi o empate com ${opp}, ${sc}. Foi disputado. Cuida de ti e descansa.`;
+    else if(g==='ami')r.t=win?`Vi o jogo com ${opp}: ${sc}! Ainda quero ouvir a tua versão daquele lance. Grande resultado! ⚽`:loss?`Vi o resultado com ${opp}. Hoje não saiu, mas não vale a pena ficar preso a isso. Falamos quando puderes.`:`Empate com ${opp}, ${sc}. Aquele jogo ainda dava conversa para o café.`;
+    else if(g==='work')r.t=win?`Bom resultado frente ao ${opp} (${sc}). Importa agora manter a consistência.`:loss?`Já vi o resultado com ${opp} (${sc}). Vamos analisar o jogo antes de tirar conclusões.`:`O empate com ${opp} (${sc}) deixa pontos para rever na análise.`;
+    if(m.player&&goals>0&&g!=='work')r.t+=` E ainda marcaste ${goals} golo${goals>1?'s':''}!`;
+   }else if(it==='injury'){
+    const injured=!!(S.pl&&S.pl.inj>0),days=S.pl&&S.pl.inj||0;
+    if(g==='par')r.t=injured?`O importante agora é recuperares com calma. Não vale a pena apressar o regresso. Estou aqui para o que precisares. ❤️`:`Espero que não seja nada de grave. Já sabes quando podes voltar a treinar?`;
+    else if(g==='fam')r.t=injured?`Tem juízo e cumpre o que os médicos disserem. ${days?`Ainda faltam ${days} dias de recuperação.`:''} O futebol não vale a pena se não estiveres bem.`:`Se estás com problemas físicos, não deixes isso andar. Procura a equipa médica.`;
+    else if(g==='ami')r.t=injured?`Que azar… Se precisares de companhia enquanto recuperas, diz. E nada de voltar antes do tempo.`:`Espero que não seja nada sério. Dá notícias.`;
+    else r.t=injured?`A recuperação deve ser a prioridade. A equipa médica acompanhará a evolução antes de qualquer regresso.`:`Regista a situação e confirma a avaliação da equipa médica.`;
+   }else if(it==='invite'){
+    const plan=fdcParsePlan(txt),no=/\b(nao|não|esquece|deixa estar)\b/.test(fdcNorm(r.t));
+    if(plan&&!no){const st=fdcStoryState();st.plans.push({from,day:plan.day,label:plan.label,created:S.day,reminded:0});st.plans=st.plans.slice(-8);r.t=g==='par'?`${plan.label.charAt(0).toUpperCase()+plan.label.slice(1)} fica combinado. Estava mesmo a precisar de um tempo contigo. ❤️`:g==='fam'?`${plan.label.charAt(0).toUpperCase()+plan.label.slice(1)} então. Vou guardar esse bocadinho para estarmos juntos.`:`${plan.label.charAt(0).toUpperCase()+plan.label.slice(1)} fechado! Depois acertamos a hora.`}
+   }
+   const hist=(S.chats&&S.chats[from])||[],recent=hist.filter(x=>x.w==='p').slice(-5).map(x=>fdcNorm(x.t)),nr=fdcNorm(r.t);
+   if(recent.includes(nr)){const pool=((TLR[g]||TLR.ami)[it]||[]).filter(x=>!recent.includes(fdcNorm(x)));if(pool.length)r.t=pick(pool);else if(g==='par')r.t='Quero responder-te com calma, não quero estar sempre a dizer o mesmo. ❤️';else if(g==='fam')r.t='Percebi o que me disseste. Depois falamos melhor, está bem?';else r.t='Já te respondi há pouco, mas percebo o que queres dizer.'}
+   const st=fdcStoryState();st.lastReply[from]={day:S.day,intent:it,text:r.t};
+  }catch(e){console.warn('FDC dialogue context',e)}
+  return r;
+ };
+}
+
+/* Mensagens espontâneas após jogos do modo jogador, com vozes diferentes por relação. */
+{
+ const _fdcMsgVariety=msgVariety;
+ msgVariety=function(){
+  try{
+   const st=fdcStoryState(),m=S&&S.lastMatch,age=m?S.day-m.d:999;
+   if(S&&S.mode==='player'&&m&&m.player&&age>=0&&age<=2&&st.matchMessageDay!==m.d){
+    const people=[];if(S.partner)people.push(['par',S.partner.n]);if(S.fam){if(S.fam.mae&&!S.fam.mae.dead)people.push(['mae',momS()]);if(S.fam.pai&&!S.fam.pai.dead)people.push(['pai',dadS()])}
+    (S.friends||[]).forEach(f=>people.push(['amigo',f.n+' (amigo)']));
+    if(people.length){const [who,from]=pick(people),score=fdcScoreText(m),opp=m.opp||'o adversário';let t='';
+     if(who==='par')t=m.res==='V'?`Vi o jogo com ${opp}, ${score}. Fiquei mesmo feliz por ti. Agora quero saber como te sentes. ❤️`:m.res==='D'?`Vi o resultado com ${opp}. Sei que custa, mas estou aqui. Não precisas de fingir que está tudo bem. ❤️`:`Vi o empate com ${opp}, ${score}. Foi intenso. Já conseguiste desligar um pouco?`;
+     else if(who==='mae')t=m.res==='V'?`Vi a vitória com ${opp}, ${score}! Que orgulho. Já comeste alguma coisa depois do jogo? ❤️`:m.res==='D'?`Vi o jogo com ${opp}. Não fiques a pensar só no resultado, filho. Descansa.`:`Vi o empate com ${opp}, ${score}. Foi um jogo difícil. Cuida de ti.`;
+     else if(who==='pai')t=m.res==='V'?`Boa vitória frente ao ${opp}, ${score}. Gostei de ver a tua entrega.`:m.res==='D'?`Vi a derrota com ${opp}. Amanhã é dia de rever o jogo e seguir em frente.`:`Empate com ${opp}, ${score}. Faltou pouco para trazer a vitória.`;
+     else t=m.res==='V'?`Vi o jogo com ${opp}: ${score}! Grande resultado. Agora contas-me como foi aquele lance.`:m.res==='D'?`Vi o jogo com ${opp}. Hoje não correu, mas o próximo é outra história.`:`Então, ${score} com ${opp}. Aquele jogo dava conversa para o café.`;
+     if((m.g||0)>0&&who!=='pai')t+=` E ainda fizeste ${m.g} golo${m.g>1?'s':''}!`;
+     news(t,'msg',from);st.matchMessageDay=m.d;save();return;
+    }
+   }
+  }catch(e){console.warn('FDC match message',e)}
+  return _fdcMsgVariety.apply(this,arguments);
+ };
+}
+
+/* Lembretes de encontros combinados por mensagem. */
+{
+ const _fdcDailyMsgs=dailyMsgs;
+ dailyMsgs=function(){const r=_fdcDailyMsgs.apply(this,arguments);try{const st=fdcStoryState();if(st){const p=st.plans.find(x=>!x.reminded&&x.day===S.day);if(p){p.reminded=1;news(p.day===S.day?`Hoje tinhas combinado encontrar-te com ${p.from}. Não te esqueças do plano.`:`Tinham combinado encontrar-se com ${p.from}.`,'msg',p.from);save()}}}catch(e){}return r};
+}
+
+/* Memória das escolhas nas cenas: o historial influencia a expressão e a postura nas cenas seguintes. */
+{
+ const _fdcSceneOpt=sceneOpt;
+ sceneOpt=function(k){
+  let rec=null;try{if(SCN){const sc=SC[SCN.id],node=SCN.node,o=sc&&sc.n[node]&&sc.n[node].o[k];if(o)rec={id:SCN.id,day:S.day,node,choice:scLab(o),tone:fxMood(o[1])}}}catch(e){}
+  const out=_fdcSceneOpt.apply(this,arguments);
+  try{if(rec){const st=fdcStoryState();st.sceneHistory.push(rec);st.sceneHistory=st.sceneHistory.slice(-24);st.lastChoice=rec;save()}}catch(e){}
+  return out;
+ };
+ const _fdcSceneCfg=sceneCfg;
+ sceneCfg=function(s,who){const pair=_fdcSceneCfg.apply(this,arguments);try{const cfg=pair&&pair[1],cast=cfg&&cfg.cast;if(Array.isArray(cast)){cast.forEach(c=>{
+   if(c.k==='partner'&&S.partner){if(S.partner.rel<28)c.pose='sad';else if(S.partner.rel<42)c.pose='angry';else if(S.partner.rel>82&&c.pose!=='angry')c.pose='happy'}
+   if((c.k==='mae'||c.k==='pai')&&S.fam){const p=S.fam[c.k],rel=p&&p.rel!=null?p.rel:S.familia;if(rel<30)c.pose='sad';else if(rel>85&&c.pose!=='angry')c.pose='happy'}
+   if(c.k==='amigo'&&S.friends&&S.friends.length){const f=S.friends.find(x=>String(who||'').includes(x.n));if(f&&f.rel<28)c.pose='sad'}
+  })}}catch(e){}return pair};
+}
+{
+ const _fdcStartScene=startScene;
+ startScene=function(id,b0){const out=_fdcStartScene.apply(this,arguments);try{const st=fdcStoryState(),last=st.sceneHistory.slice().reverse().find(x=>x.id===id&&S.day-x.day<=21);if(last&&SCN){let line='';if(last.tone<0)line='Ainda há algum desconforto desde a última conversa. A outra pessoa parece mais reservada.';else if(last.tone>0)line='A conversa começa com mais confiança; a última vez que estiveram juntos correu bem.';else line='A última conversa ficou no ar e ambos parecem lembrar-se do que foi dito.';SCN.log.push({w:'s',t:line});renderScene()}}catch(e){}return out};
+}
+
+
+/* Conferências: novas perguntas situacionais sem substituir as perguntas originais. */
+try{
+ if(Array.isArray(PQ)){
+  if(!PQ.some(q=>q.id==='fdc-forma'))PQ.push({id:'fdc-forma',w:4,c:x=>x.streakW>=2||x.streakL>=2,q:x=>x.streakW>=2?`A equipa soma ${x.streakW} vitórias consecutivas. Como evita que o grupo perca a concentração?`:`A equipa atravessa uma série de ${x.streakL} derrotas. Como vai recuperar a confiança?`,a:x=>x.streakW>=2?[{t:'O mérito é dos jogadores, mas ainda não ganhámos nada.',tone:'calmo',fx:{mor:2,conf:1}},{t:'A equipa está forte e não tem medo de ninguém.',tone:'confiante',fx:{fama:1,mor:2}},{t:'Quem duvida desta equipa vai ter de esperar sentado.',tone:'polémico',fx:{fama:2,conf:-1}}]:[{t:'A responsabilidade é minha. Vamos corrigir os erros juntos.',tone:'calmo',fx:{mor:3,conf:1}},{t:'Precisamos de mais personalidade dentro de campo.',tone:'exigente',fx:{mor:-2,conf:1}},{t:'Não vou esconder que estou insatisfeito com a resposta.',tone:'polémico',fx:{mor:-4,fama:1}}]});
+  if(!PQ.some(q=>q.id==='fdc-balneario'))PQ.push({id:'fdc-balneario',w:3,c:x=>!!x.lowP,q:x=>`Há sinais de descontentamento no balneário. ${x.lowP.n} parece particularmente insatisfeito. Vai falar com o jogador?`,tgt:x=>x.lowP,a:[{t:'Vou falar com ele em privado. O grupo está acima de tudo.',tone:'calmo',fx:{pmor:5,conf:1}},{t:'Todos têm de lutar pelo lugar. Ninguém tem privilégios.',tone:'exigente',fx:{pmor:-2,mor:1}},{t:'Se não está satisfeito, terá de mostrar mais nos treinos.',tone:'polémico',fx:{pmor:-5,fama:1}}]});
+  if(!PQ.some(q=>q.id==='fdc-jovem'))PQ.push({id:'fdc-jovem',w:3,c:x=>!!x.youngP,q:x=>`A formação está a produzir talento. ${x.youngP.n} pode ter uma oportunidade na equipa principal?`,tgt:x=>x.youngP,a:[{t:'Se continuar a trabalhar, terá a oportunidade que merece.',tone:'confiante',fx:{pmor:5,mor:1}},{t:'Não vou apressar a evolução. Cada jogador tem o seu tempo.',tone:'calmo',fx:{pmor:2,conf:1}},{t:'Ainda é cedo para colocar essa pressão no jovem.',tone:'exigente',fx:{pmor:-1}}]});
+ }
+}catch(e){console.warn('FDC press extension',e)}
+{
+ const _fdcPressRoom=pressRoom;
+ pressRoom=function(mode){const out=_fdcPressRoom.apply(this,arguments);try{if(PC&&PC.qs){const st=fdcStoryState(),recent=st.pressHistory.filter(x=>S.day-x.day<=35).flatMap(x=>x.ids||[]),used=[];PC.qs.forEach((item,i)=>{const id=item.q&&item.q.id;if(id==='ultimo'||(!recent.includes(id)&&!used.includes(id))){used.push(id);return}const pool=PQ.filter(q=>{try{return q.id!==id&&!recent.includes(q.id)&&!used.includes(q.id)&&!PC.qs.some((z,j)=>j!==i&&z.q===q)&&q.c(PC.x)}catch(e){return false}});if(pool.length){item.q=pick(pool);item.j=pickJ(item.q);used.push(item.q.id)}});st.pressHistory.push({day:S.day,ids:PC.qs.map(x=>x.q.id)});st.pressHistory=st.pressHistory.slice(-12);renderPress();save()}}catch(e){console.warn('FDC press memory',e)}return out};
+}
+
+/* Conversa com o treinador mais ligada à forma, confiança, minutos e condição física. */
+function coachTalk(){
+ const P=S.pl,cr=S.ratings[P.lg][P.club].r,form=P.form||6.5,lm=S.lastMatch&&S.day-S.lastMatch.d<=5?S.lastMatch:null;
+ const opening=P.inj?`O treinador olha para o relatório médico. «A prioridade é recuperares bem. Não vou arriscar o teu regresso.»`:form>=7.5?`O treinador recebe-te com um sorriso. «Tens estado num grande momento. Continua assim.»`:form<6?`O treinador fecha o dossier. «Precisamos de mais de ti. A tua forma recente está abaixo do que esperamos.»`:`O treinador senta-se contigo. «Quero perceber como estás a sentir a época e o teu papel na equipa.»`;
+ const recent=lm?` O último jogo frente ao ${lm.opp} terminou ${fdcScoreText(lm)}.`:'';
+ S.n.energia=cl(S.n.energia-6);S.slots++;
+ modal('Conversa com o treinador',`<p>${opening}${recent}</p>`,[
+  {l:'Pedir para ser titular',f(){if(!P.inj&&P.trust>=55&&P.ovr>=cr-3&&form>=6.3){P.trust=cl(P.trust+3);toast('«A tua forma dá-te argumentos. Vou ter isso em conta na próxima convocatória.»')}else{P.trust=cl(P.trust-4);toast(P.inj?'«Primeiro tens de recuperar. Depois voltamos a falar.»':'«Ainda tens de mostrar mais nos treinos e nos jogos.»')}}},
+  {l:'Perguntar o que tens de melhorar',f(){P.tr=(P.tr||0)+0.5;P.trust=cl(P.trust+2);const advice=P.inj?'«Segue o plano de recuperação e regressa sem precipitações.»':P.pos==='AV'?'«Ataca melhor a profundidade e decide mais depressa na área.»':P.pos==='MED'?'«Levanta a cabeça antes de receber e acelera a circulação.»':P.pos==='DEF'?'«Melhora o posicionamento e a comunicação com a linha defensiva.»':'«Mantém a concentração e trabalha a consistência.»';toast(advice)}} ,
+  {l:'Ameaçar pedir a transferência',f(){P.trust=cl(P.trust-8);fdcStoryState().coachConflict=S.day;if(R()<0.6)plOffer();toast('«Se queres sair, fala com o presidente. Mas não esperes que a equipa fique parada à tua espera.»')}}
+ ]);
+}
+
+/* Grafismo de transmissão nos jogos 3D: marcador, relógio e identidade dos clubes. */
+function fdcAbbr(n){return String(n||'').replace(/^(FC|SC|CD|CF|AC|AS|SL|RC|RCD|UD|SD|CA|SS|SSC|US|AFC|1\. FC)\s+/i,'').split(/\s+/).map(x=>x.slice(0,3)).join('').slice(0,4).toUpperCase()}
+function fdcTVBug(){try{const host=$('#m3d');if(!host||!M||host.hidden)return;let b=host.querySelector('.fdc-tvbug');if(!b){b=document.createElement('div');b.className='fdc-tvbug';host.appendChild(b);const v=document.createElement('div');v.className='fdc-tv-vignette';host.appendChild(v)}
+ const a=M.usN||clubName()||'CASA',z=M.oppN||'FORA',home=M.home!==false,hn=home?a:z,an=home?z:a,hs=home?(M.us??0):(M.them??0),as=home?(M.them??0):(M.us??0),time=typeof clockTxt==='function'?clockTxt():`${M.min||0}'`;
+ const html=`<span class="fdc-tv-team">${fdcAbbr(hn)}</span><b>${hs} – ${as}</b><span class="fdc-tv-team">${fdcAbbr(an)}</span><i>${time}</i>`;if(b.dataset.html!==html){b.dataset.html=html;b.innerHTML=html}
+ }catch(e){}}
+try{
+ const _fdcHud=hud;hud=function(){const r=_fdcHud.apply(this,arguments);fdcTVBug();return r};
+ const _fdcAdv=advMinute;advMinute=function(){const r=_fdcAdv.apply(this,arguments);fdcTVBug();return r};
+}catch(e){}
+
+/* Iluminação e detalhes discretos em todas as cutscenes 3D existentes. */
+try{
+ const SET3=G3&&G3._&&G3._.SET;
+ if(SET3&&typeof THREE!=='undefined')Object.keys(SET3).forEach(key=>{
+  const original=SET3[key];if(typeof original!=='function'||original.__fdc40)return;
+  const wrapped=function(){const B=original.apply(this,arguments);try{if(B&&B.sc&&!B.sc.userData.fdc40){B.sc.userData.fdc40=1;
+    const fill=new THREE.DirectionalLight(0xfff0d8,0.16);fill.position.set(-4,4,5);B.sc.add(fill);
+    const rim=new THREE.DirectionalLight(0xc5ddff,0.12);rim.position.set(4,3,-4);B.sc.add(rim);
+    if(['rua','jardim','praia','desfile'].includes(key)&&!B.sc.fog)B.sc.fog=new THREE.Fog(B.sc.background||0xb7c8cf,32,105);
+    (B.A||[]).forEach(p=>{try{const t=p&&p.userData&&p.userData.torso;if(!t||p.userData.fdcTrim)return;p.userData.fdcTrim=1;
+      const seamMat=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.20,depthWrite:false});
+      [-1,1].forEach(side=>{const seam=new THREE.Mesh(new THREE.PlaneGeometry(0.012,0.30),seamMat);seam.position.set(side*0.145,0.30,0.133);t.add(seam)});
+      const badge=new THREE.Mesh(new THREE.CircleGeometry(0.022,12),new THREE.MeshBasicMaterial({color:0xe0bd55,transparent:true,opacity:0.72,depthWrite:false}));badge.position.set(-0.115,0.43,0.135);t.add(badge);
+    }catch(e){}});
+   }}catch(e){}return B};wrapped.__fdc40=1;SET3[key]=wrapped;
+ });
+}catch(e){console.warn('FDC scene lighting',e)}
+
+/* Pequenos refinamentos visuais sem trocar a identidade verde/dourada do jogo. */
+/* ============ FIM FORA DE CAMPO 4.0 ============ */
+
 /* ============ ARRANQUE ============ */
 function start(data){migrateOld();S=(data&&data.S)||null;if(S)migrate();SCREEN='menu';render()}
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
-
-
-/* ============ v3.3: DIÁLOGOS COM CONTEXTO E MEMÓRIA ============ */
-{
-  const _FDC33_PRO_AFTER = proAfter;
-  proAfter = function(f,r){
-    const out = _FDC33_PRO_AFTER.apply(this,arguments);
-    try{
-      if(S && S.pl && f && r){
-        const club=clubName(),home=fH(f)===club;
-        S.lastMatch={res:r.res,gf:r.gf,ga:r.ga,opp:home?fA(f):fH(f),best:null,d:S.day,player:1};
-      }
-    }catch(e){}
-    return out;
-  };
-}
-{
-  const _FDC33_MSG_VARIETY = msgVariety;
-  msgVariety = function(){
-    if(!S || S.age<14)return _FDC33_MSG_VARIETY.apply(this,arguments);
-    try{
-      const lm=S&&S.lastMatch,age=lm&&S.day-lm.d;
-      if(lm && age>=0 && age<=2 && S.fdcMatchMsgDay!==lm.d){
-        const people=[];
-        if(S.partner)people.push(['par',S.partner.n]);
-        if(S.fam){
-          try{
-            if(S.fam.mae&&!S.fam.mae.dead)people.push(['mae',momS()]);
-            if(S.fam.pai&&!S.fam.pai.dead)people.push(['pai',dadS()]);
-          }catch(e){}
-        }
-        (S.friends||[]).forEach(f=>people.push(['amigo',f.n+' (amigo)']));
-        if(S.mode==='player'&&S.pl&&S.pl.agent)people.push(['emp','Empresário']);
-        if(S.job&&S.job.pres)people.push(['pres','Presidente '+surname(S.job.pres.n)]);
-        if(people.length){
-          const [kind,from]=pick(people),opp=lm.opp||'o adversário',score=(lm.gf??0)+'–'+(lm.ga??0);
-          let t='';
-          if(kind==='par'){
-            t=lm.res==='V'?`Vi o jogo com ${opp}. Grande vitória por ${score}! Agora quero saber como estás. ❤️`
-              :lm.res==='D'?`Vi o resultado com ${opp}. Sei que custa, mas não deixes que um jogo estrague a tua semana. Estou aqui. ❤️`
-              :`Vi o empate com ${opp}, ${score}. Foi renhido! Já estás a pensar no próximo?`;
-          }else if(kind==='mae'){
-            t=lm.res==='V'?`Vi a vitória com ${opp}, ${score}! Fiquei tão contente por ti. Já comeste alguma coisa? ❤️`
-              :lm.res==='D'?`Vi o jogo com ${opp}. Não fiques em baixo por causa do resultado. Tenho orgulho em ti na mesma.`
-              :`Vi o empate com ${opp}. Foi um jogo difícil, filho. Descansa um bocadinho.`;
-          }else if(kind==='pai'){
-            t=lm.res==='V'?`Grande vitória frente ao ${opp}, ${score}! Gostei de ver a equipa a lutar até ao fim.`
-              :lm.res==='D'?`Vi a derrota com ${opp}. Há dias assim. Analisa o que correu mal e segue em frente.`
-              :`Empate com ${opp}, ${score}. Faltou pouco para trazer os três pontos.`;
-          }else if(kind==='amigo'){
-            t=lm.res==='V'?`Vi o jogo com ${opp}: ${score}! Já vi o resumo duas vezes 😂 Grande!`
-              :lm.res==='D'?`Vi o jogo com ${opp}. Hoje não correu, mas no próximo pagas-me um café e esquecemos isso.`
-              :`Então, ${score} com ${opp}. Aquele jogo dava para ganhar! Quando é que vemos o próximo juntos?`;
-          }else if(kind==='emp'){
-            t=lm.res==='V'?`Bom resultado frente ao ${opp} (${score}). Vou aproveitar este momento para reforçar a tua posição no mercado.`
-              :lm.res==='D'?`Já vi o resultado com ${opp}. Não vamos reagir a quente; amanhã analisamos o jogo com calma.`
-              :`Empate com ${opp} (${score}). É importante manter a consistência nas próximas jornadas.`;
-          }else{
-            t=lm.res==='V'?`Parabéns pela vitória frente ao ${opp}, ${score}. É este o nível de resposta que espero.`
-              :lm.res==='D'?`A derrota frente ao ${opp} (${score}) ficou aquém do esperado. Quero uma reação no próximo jogo.`
-              :`O empate com ${opp}, ${score}, mantém-nos na luta. Vamos preparar a próxima jornada.`;
-          }
-          S.fdcMatchMsgDay=lm.d;
-          news(t,'msg',from);
-          return;
-        }
-      }
-    }catch(e){}
-    return _FDC33_MSG_VARIETY.apply(this,arguments);
-  };
-}
-{
-  const _FDC33_TLM_REPLY = tlmReply;
-  const _FDC33_NORM = s => tlmNorm(String(s||'')).replace(/\s+/g,' ').trim();
-  tlmReply = function(type,txt,from){
-    const r=_FDC33_TLM_REPLY.apply(this,arguments);
-    if(!r || r.s || !r.t || type==='desc')return r;
-    try{
-      const intent=r.it||tlmIntent(txt),hist=(S.chats&&S.chats[from])||[];
-      const recent=hist.filter(m=>m.w==='p').slice(-5).map(m=>_FDC33_NORM(m.t));
-      let g=tlmGroup(type);
-      if(type==='ct'){
-        const c=(S.contacts||[]).find(x=>x.n===from);
-        if(c&&c.rel2==='familia')g='fam';
-        else if(c&&c.rel2==='trabalho')g='work';
-        else if(c&&c.rel2==='amor')g='par';
-      }
-      const lm=S.lastMatch,days=lm&&S.day-lm.d;
-      if(intent==='football'&&lm&&days>=0&&days<=5){
-        const opp=lm.opp||'o adversário',score=(lm.gf??0)+'–'+(lm.ga??0);
-        if(g==='par')r.t=lm.res==='V'?`Vi o jogo com ${opp}, ${score}! Fiquei mesmo contente por ti. Como te sentes agora? ❤️`:lm.res==='D'?`Vi o resultado com ${opp}. Sei que querias outro desfecho. Queres falar sobre isso? ❤️`:`Vi o empate com ${opp}, ${score}. Foi equilibrado, não foi?`;
-        else if(g==='fam')r.t=lm.res==='V'?`Vi a vitória com ${opp}, ${score}. Que orgulho! Já descansaste? ❤️`:lm.res==='D'?`Vi o jogo com ${opp}. O resultado não foi o melhor, mas estamos sempre a torcer por ti.`:`Vi o empate com ${opp}. Foi disputado até ao fim!`;
-        else if(g==='ami')r.t=lm.res==='V'?`Vi o resumo contra ${opp}: ${score}! Grande jogo, temos de falar desse lance. ⚽`:lm.res==='D'?`Vi o jogo com ${opp}. Não foi desta, mas o próximo é para ganhar. Vamos ver juntos?`:`Empate com ${opp}, ${score}. Faltou só mais um bocadinho!`;
-        else if(g==='work')r.t=lm.res==='V'?`Bom resultado frente ao ${opp} (${score}). É importante manter este nível.`:lm.res==='D'?`Já vi o resultado com ${opp}. Vamos analisar os motivos antes de tomar decisões.`:`O empate com ${opp} (${score}) mantém o trabalho em curso.`;
-      }else if(intent==='invite'&&tlmTone(txt)!=='c2'){
-        const t=_FDC33_NORM(txt);
-        const day=['amanha','sabado','domingo','sexta','segunda','terca','quarta','quinta','hoje','fim de semana'].find(d=>t.includes(d));
-        if(day){
-          const label=day==='amanha'?'amanhã':day==='sabado'?'sábado':day==='sexta'?'sexta-feira':day==='segunda'?'segunda-feira':day==='terca'?'terça-feira':day==='quarta'?'quarta-feira':day==='quinta'?'quinta-feira':day;
-          r.t=g==='par'?`${label.charAt(0).toUpperCase()+label.slice(1)} fica combinado ❤️ Diz-me só a que horas.`:g==='fam'?`${label.charAt(0).toUpperCase()+label.slice(1)} então! Vou reservar esse bocadinho para ti.`:`${label.charAt(0).toUpperCase()+label.slice(1)} fechado! Depois combinamos a hora.`;
-        }
-      }
-      if(recent.includes(_FDC33_NORM(r.t))){
-        const P=TLR[g]||TLR.ami,pool=P[intent]||P.other||[];
-        const fresh=pool.filter(s=>!recent.includes(_FDC33_NORM(s)));
-        if(fresh.length)r.t=pick(fresh);
-      }
-    }catch(e){}
-    return r;
-  };
-}
-/* ============ FIM v3.3 ============ */
 </script>
 
+<style id="fdc-upgrade-style">
+:root{--fdc-ease:cubic-bezier(.2,.75,.25,1);--fdc-shadow:0 10px 28px rgba(10,30,18,.10)}
+.card,.placard,.sheet{box-shadow:var(--fdc-shadow)}
+.card{transition:transform .22s var(--fdc-ease),box-shadow .22s var(--fdc-ease),border-color .22s var(--fdc-ease)}
+.btn{transition:transform .16s var(--fdc-ease),filter .16s var(--fdc-ease),box-shadow .16s var(--fdc-ease)}
+.btn:active{transform:translateY(1px) scale(.985);filter:brightness(.96)}
+.btn.primary{box-shadow:0 4px 12px rgba(29,90,55,.18)}
+.btn.ans{border-radius:11px;border-left:3px solid var(--line);background:linear-gradient(110deg,var(--surface),var(--soft));}
+.btn.ans:active{border-left-color:var(--cartao)}
+#modal{backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);background:rgba(5,12,8,.62)}
+.sheet.scene{border-radius:20px 20px 16px 16px;border-top:3px solid var(--cartao);box-shadow:0 18px 55px rgba(0,0,0,.28);animation:fdc-sheet-in .28s var(--fdc-ease)}
+@keyframes fdc-sheet-in{from{opacity:.55;transform:translateY(16px)}to{opacity:1;transform:none}}
+.v3{height:clamp(205px,48vw,252px);border:1px solid rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 8px 20px rgba(0,0,0,.16);background:radial-gradient(ellipse at 50% 25%,#344d40,#111c17 72%);}
+.v3 canvas{filter:saturate(1.08) contrast(1.035)}
+.scene .v3{margin-top:8px;margin-bottom:14px}
+.pres{padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--surface) 86%,var(--soft))}
+.pres span{box-shadow:0 2px 8px rgba(0,0,0,.16);border:2px solid var(--cartao)}
+.chat{scrollbar-width:thin;scrollbar-color:var(--line) transparent;overscroll-behavior:contain}
+.bub{box-shadow:0 2px 8px rgba(0,0,0,.045)}
+.bub.p{border:1px solid var(--line)}
+.bub.y{box-shadow:0 3px 10px rgba(29,90,55,.14)}
+nav.tabs{box-shadow:0 -6px 22px rgba(10,30,18,.07);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+nav.tabs button{transition:background .18s,color .18s,transform .18s}
+nav.tabs button.on{box-shadow:inset 0 -2px 0 var(--cartao)}
+.track .fill{box-shadow:0 0 8px color-mix(in srgb,var(--relva) 25%,transparent)}
+.fdc-tvbug{position:absolute;z-index:8;top:9px;left:9px;display:flex;align-items:stretch;overflow:hidden;border-radius:7px;background:rgba(7,19,13,.92);color:#f5f7ef;font:800 12px/1 system-ui,sans-serif;letter-spacing:.035em;box-shadow:0 4px 16px rgba(0,0,0,.34);pointer-events:none}
+.fdc-tvbug span,.fdc-tvbug b,.fdc-tvbug i{display:flex;align-items:center;padding:7px 8px}
+.fdc-tvbug b{background:#f2c23a;color:#17170d;font-variant-numeric:tabular-nums}
+.fdc-tvbug i{font-style:normal;background:#183b27;color:#f2c23a;font-variant-numeric:tabular-nums}
+.fdc-tv-team{color:#fff}
+.fdc-tv-vignette{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at 50% 48%,transparent 58%,rgba(0,0,0,.20) 100%)}
+#m3d{position:relative;overflow:hidden}
+@media(max-width:420px){.sheet{padding:15px 14px 12px}.v3{height:214px}.pres{gap:9px}.pres span{width:42px;height:42px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
 </body>
 </html>
