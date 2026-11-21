@@ -16,6 +16,37 @@
 <style>[hidden]{display:none!important}body{margin:0}</style>
 <script>window.FDC_PWA=1;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.FDC_INST=e;try{if(typeof render==='function'&&typeof S!=='undefined'&&!S)render()}catch(_){}});
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
+<style id="tema-vivo">/* ===== Tema vivo (v4.3): cores mais fortes e cor do clube como destaque ===== */
+:root{--bg:#f1f6ef;--surface:#ffffff;--soft:#e3f1e6;--line:#d2e3d4;--muted:#4c6353;--relva:#0f8a45;--relva-fg:#ffffff;--bom:#16a957;--cartao:#f5b301;--vermelho:#e5432d;--placard:#0b3d23;--placard-led:#ffc72c;
+ --clube:#0f8a45;--clube-fg:#ffffff;--clube-ink-l:#0f7a3d;--clube-ink:var(--clube-ink-l);--fdc-shadow:0 10px 26px rgba(12,60,30,.12)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#08110c;--surface:#122019;--soft:#183126;--line:#24402f;--muted:#9db8a5;--relva:#2fc46e;--relva-fg:#04110a;--bom:#38d27c;--cartao:#ffc83d;--vermelho:#ff5b45;--placard:#05180d;--clube-ink:color-mix(in srgb,var(--clube) 62%,#ffffff)}}
+:root[data-theme="dark"]{--bg:#08110c;--surface:#122019;--soft:#183126;--line:#24402f;--muted:#9db8a5;--relva:#2fc46e;--relva-fg:#04110a;--bom:#38d27c;--cartao:#ffc83d;--vermelho:#ff5b45;--placard:#05180d;--clube-ink:color-mix(in srgb,var(--clube) 62%,#ffffff)}
+html,body{background:radial-gradient(1100px 380px at 50% -80px,color-mix(in srgb,var(--clube) 18%,transparent),transparent 72%) no-repeat,var(--bg)!important;background-attachment:fixed!important}
+.top{background:color-mix(in srgb,var(--bg) 86%,transparent)!important;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:3px solid var(--clube)!important}
+.top .who b{color:var(--clube-ink)}
+.top .dt b{color:var(--fg)}
+.tband{background-color:var(--clube)!important;color:var(--clube-fg)!important;box-shadow:0 10px 24px color-mix(in srgb,var(--clube) 35%,transparent)}
+.tband *{color:inherit}
+h2.sec,.lab2{color:var(--clube-ink)!important}
+.card{border-color:var(--line);box-shadow:var(--fdc-shadow)}
+.card.stack{border-left-color:var(--clube)!important}
+.track{background:color-mix(in srgb,var(--fg) 9%,transparent)!important;height:10px}
+.fill{background-image:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.38))!important;box-shadow:0 0 10px color-mix(in srgb,currentColor 0%,transparent)}
+.chip{font-weight:700}
+.chips .chip:nth-child(3n+1){background:color-mix(in srgb,#f5b301 24%,var(--surface))!important;color:color-mix(in srgb,#8a5a00 80%,var(--fg))}
+.chips .chip:nth-child(3n+2){background:color-mix(in srgb,#2f7cff 18%,var(--surface))!important;color:color-mix(in srgb,#1d4fb0 80%,var(--fg))}
+.chips .chip:nth-child(3n){background:color-mix(in srgb,#e8456f 18%,var(--surface))!important;color:color-mix(in srgb,#a3214a 80%,var(--fg))}
+.placard{background:radial-gradient(500px 160px at 20% 0%,color-mix(in srgb,var(--clube) 40%,transparent),transparent 70%),linear-gradient(135deg,#123826,#06150d)!important;box-shadow:0 12px 28px rgba(5,30,15,.28)}
+.btn.primary{background:linear-gradient(135deg,var(--clube),color-mix(in srgb,var(--clube) 68%,#000))!important;border-color:transparent!important;color:var(--clube-fg)!important;box-shadow:0 6px 16px color-mix(in srgb,var(--clube) 35%,transparent)}
+.slot.now{border-color:var(--clube)!important;background:color-mix(in srgb,var(--clube) 12%,var(--surface))!important;color:var(--clube-ink)!important}
+.act:hover{border-color:var(--clube)!important}
+.msg .av,.sms .smsh .av{background:var(--clube)!important;color:var(--clube-fg)!important}
+nav.tabs button{color:var(--muted)}
+nav.tabs button:hover{color:var(--clube-ink)}
+nav.tabs button.on{background:var(--clube)!important;color:var(--clube-fg)!important;box-shadow:inset 0 -3px 0 var(--cartao)!important}
+.lg button.on,.chipset2 button.on,.phs.now,.jn.on span{background:var(--clube)!important;color:var(--clube-fg)!important;border-color:var(--clube)!important}
+.ticker{background:linear-gradient(90deg,#14201a,#1d2e24)!important}
+</style>
 </head>
 <body>
 
@@ -2459,7 +2490,7 @@ function slotsModal(kind){const L=[1,2,3,4,5].map(i=>({i,s:slotSum(i)}));
   L.map(({i,s})=>({l:`Espaço ${i}${S&&S.slot===i?' (atual)':''} · ${s?s.t+' — '+s.d:'vazio'}`,dis:kind==='load'&&!s,f(){if(kind==='save'){if(M){toast('Acaba o jogo antes de gravar.');resumeM();return}S.slot=i;save();toast('Jogo gravado no espaço '+i+'.');resumeM()}else{if(M){cancelAnimationFrame(RAF);M=null;closeModal()}loadSlot(i)}}})).concat([{l:'Voltar',ghost:true,f(){pauseMenu()}}]))}
 function optionsModal(){if(M&&!M.done)M.paused=true;const o=(n,v,l)=>`<button data-opt="${n}|${v}" class="${String(PREF[n])===String(v)?'on':''}">${l}</button>`;
  pmodal('Opções',`<div class="stack"><span class="lab2">Gráficos dos jogos e das cenas</span><div class="chipset2">${G3.ok()?`<button data-opt="g3|1" class="${G3.pref()?'on':''}">3D</button><button data-opt="g3|0" class="${G3.pref()?'':'on'}">2D</button>`:'<span class="hint">O 3D não está disponível neste aparelho.</span>'}</div>
- <p class="hint" style="margin:0 0 6px">Fora de Campo · versão 4.2</p><p class="hint" style="margin:0 0 6px">Pessoas 3D: modelos MakeHuman/MPFB (CC0)</p>
+ <p class="hint" style="margin:0 0 6px">Fora de Campo · versão 4.3</p><p class="hint" style="margin:0 0 6px">Pessoas 3D: modelos MakeHuman/MPFB (CC0)</p>
  <span class="lab2">Música</span><div class="chipset2">${o('vmus',0,'Desligada')}${o('vmus',0.35,'Baixa')}${o('vmus',0.6,'Média')}${o('vmus',0.85,'Alta')}</div>
  <span class="lab2">Efeitos sonoros</span><div class="chipset2">${o('vsfx',0,'Desligados')}${o('vsfx',0.45,'Baixos')}${o('vsfx',0.85,'Normais')}${o('vsfx',1,'Altos')}</div>
  <span class="lab2">Ambiente do estádio</span><div class="chipset2">${o('vamb',0,'Desligado')}${o('vamb',0.4,'Baixo')}${o('vamb',0.7,'Normal')}${o('vamb',1,'Alto')}</div>
@@ -3505,7 +3536,8 @@ const PREV={};
 function bar(lab,v,inv){v=Math.round(v);const p=PREV[lab]??v;PREV[lab]=v;return `<div class="need"><span class="lab">${lab}</span><div class="track"><div class="fill" data-w="${v}" style="width:${p}%;background:${color(v,inv)}"></div></div><span class="v">${v}</span></div>`}
 function mini(v,inv){return `<span class="mini"><i style="width:${Math.round(v)}%;background:${color(v,inv)}"></i></span>`}
 
-function render(){const app=$('#app');if(!S){app.innerHTML=SCREEN==='setup'?renderSetup():renderMenu();return}
+function setClubVars(){const r=document.documentElement.style,hx=c=>{c=String(c||'').trim();if(/^#[0-9a-f]{3}$/i.test(c))c='#'+c[1]+c[1]+c[2]+c[2]+c[3]+c[3];return /^#[0-9a-f]{6}$/i.test(c)?c:null},L=c=>{const n=parseInt(c.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};let a='#0f8a45',b='#ffffff';try{if(S&&myLg()!=null){const cc=clubColor(clubName());if(cc&&hx(cc[0])){a=hx(cc[0]);b=hx(cc[1])||'#ffffff'}}}catch(e){}if(L(a)>0.8){a=b&&L(b)<0.8?b:'#0f8a45'}r.setProperty('--clube',a);r.setProperty('--clube-fg',L(a)>0.6?'#111111':'#ffffff');r.setProperty('--clube-ink-l',L(a)<0.55?a:'#5c4300')}
+function render(){try{setClubVars()}catch(e){}const app=$('#app');if(!S){app.innerHTML=SCREEN==='setup'?renderSetup():renderMenu();return}
  if(S.mode==='player'&&S.pl&&S.pl.stage==='youth'){app.innerHTML=vYouthPage();requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('.fill[data-w]').forEach(e=>{e.style.width=e.dataset.w+'%'})));if(!modalOpen&&S.queue.length)showEvent();return}
  const x=document.scrollingElement.scrollTop;
  app.innerHTML=`<header class="top"><div class="who" role="button" tabindex="0" data-tab="vida" title="Gravação e menu em Vida"><b>${S.mode==='player'?'':'Míster '}${esc(S.name)}</b><span>${myLg()!=null?esc(clubName())+' · '+LEAGUES[myLg()].n:'Sem clube'}${S.mode==='player'?' · '+S.age+' anos':''}</span></div><div class="dt"><span>${fdate(S.day)}</span><b class="num ${S.money<0?'neg':''}">${money(S.money)}</b></div><button class="mbtn" data-do="pausa" aria-label="Menu do jogo" title="Menu (Esc)"><i></i><i></i><i></i></button></header>
