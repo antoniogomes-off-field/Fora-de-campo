@@ -46,6 +46,28 @@ nav.tabs button:hover{color:var(--clube-ink)}
 nav.tabs button.on{background:var(--clube)!important;color:var(--clube-fg)!important;box-shadow:inset 0 -3px 0 var(--cartao)!important}
 .lg button.on,.chipset2 button.on,.phs.now,.jn.on span{background:var(--clube)!important;color:var(--clube-fg)!important;border-color:var(--clube)!important}
 .ticker{background:linear-gradient(90deg,#14201a,#1d2e24)!important}
+/* ===== v4.4: mais vivo no escuro + menu de secções numa janela lateral (telemóvel/tablet) ===== */
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0a1510;--surface:#13251b;--soft:#1a3326;--line:#28473a}}
+:root[data-theme="dark"]{--bg:#0a1510;--surface:#13251b;--soft:#1a3326;--line:#28473a}
+.tband{background-image:linear-gradient(135deg,rgba(255,255,255,.16),rgba(0,0,0,.22))!important}
+.need .lab{color:var(--fg)}
+@media (max-width:1023px){
+ nav.tabs{top:0!important;bottom:0!important;left:0!important;right:auto!important;width:min(82vw,320px)!important;flex-direction:column!important;justify-content:flex-start!important;align-items:stretch!important;padding:calc(18px + env(safe-area-inset-top,0px)) 14px calc(18px + env(safe-area-inset-bottom,0px))!important;border-top:0!important;border-right:3px solid var(--clube)!important;transform:translateX(-106%);transition:transform .28s var(--fdc-ease,ease);z-index:14!important;overflow-y:auto;box-shadow:12px 0 40px rgba(0,0,0,.35)!important;background:var(--surface)!important}
+ nav.tabs.open{transform:none}
+ nav.tabs .in{flex-direction:column!important;gap:6px;max-width:none!important;overflow:visible!important}
+ nav.tabs .in::before{content:'FORA DE CAMPO';font-family:var(--display);font-weight:800;font-size:30px;line-height:.95;padding:4px 10px 18px;color:var(--clube-ink);letter-spacing:.4px}
+ nav.tabs button{flex:none!important;display:flex;align-items:center;gap:14px;text-align:left;padding:13px 14px!important;font-size:18px!important;border-radius:12px;color:var(--fg)!important;background:transparent}
+ nav.tabs button::before{font-size:20px;width:26px;text-align:center;filter:saturate(1.2)}
+ nav.tabs button.on{color:var(--clube-fg)!important}
+ nav.tabs button[data-tab=hoje]::before{content:'📅'}nav.tabs button[data-tab=equipa]::before{content:'⚽'}nav.tabs button[data-tab=staff]::before{content:'👥'}nav.tabs button[data-tab=liga]::before{content:'📊'}nav.tabs button[data-tab=noticias]::before{content:'📰'}nav.tabs button[data-tab=trof]::before{content:'🏆'}nav.tabs button[data-tab=tlm]::before{content:'📱'}nav.tabs button[data-tab=vida]::before{content:'🏠'}nav.tabs button[data-tab=diario]::before{content:'📔'}
+ .navbk{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:13;opacity:0;pointer-events:none;transition:opacity .25s}
+ .navbk.open{opacity:1;pointer-events:auto}
+ .navfab{position:fixed;z-index:12;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:10px;padding:12px 20px 12px 16px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--clube),color-mix(in srgb,var(--clube) 65%,#000));color:var(--clube-fg);font-family:var(--cond);font-weight:800;font-size:17px;letter-spacing:1px;text-transform:uppercase;box-shadow:0 10px 26px color-mix(in srgb,var(--clube) 45%,rgba(0,0,0,.4)),0 0 0 3px color-mix(in srgb,var(--cartao) 70%,transparent)}
+ .navfab .ic{display:inline-grid;gap:3px}.navfab .ic i{display:block;width:18px;height:2.5px;border-radius:2px;background:currentColor}
+ #app main{padding-bottom:96px}
+}
+@media (min-width:1024px){.navfab,.navbk{display:none}}
+.tband b{color:var(--clube-fg)!important}
 </style>
 </head>
 <body>
@@ -2490,7 +2512,7 @@ function slotsModal(kind){const L=[1,2,3,4,5].map(i=>({i,s:slotSum(i)}));
   L.map(({i,s})=>({l:`Espaço ${i}${S&&S.slot===i?' (atual)':''} · ${s?s.t+' — '+s.d:'vazio'}`,dis:kind==='load'&&!s,f(){if(kind==='save'){if(M){toast('Acaba o jogo antes de gravar.');resumeM();return}S.slot=i;save();toast('Jogo gravado no espaço '+i+'.');resumeM()}else{if(M){cancelAnimationFrame(RAF);M=null;closeModal()}loadSlot(i)}}})).concat([{l:'Voltar',ghost:true,f(){pauseMenu()}}]))}
 function optionsModal(){if(M&&!M.done)M.paused=true;const o=(n,v,l)=>`<button data-opt="${n}|${v}" class="${String(PREF[n])===String(v)?'on':''}">${l}</button>`;
  pmodal('Opções',`<div class="stack"><span class="lab2">Gráficos dos jogos e das cenas</span><div class="chipset2">${G3.ok()?`<button data-opt="g3|1" class="${G3.pref()?'on':''}">3D</button><button data-opt="g3|0" class="${G3.pref()?'':'on'}">2D</button>`:'<span class="hint">O 3D não está disponível neste aparelho.</span>'}</div>
- <p class="hint" style="margin:0 0 6px">Fora de Campo · versão 4.3</p><p class="hint" style="margin:0 0 6px">Pessoas 3D: modelos MakeHuman/MPFB (CC0)</p>
+ <p class="hint" style="margin:0 0 6px">Fora de Campo · versão 4.4</p><p class="hint" style="margin:0 0 6px">Pessoas 3D: modelos MakeHuman/MPFB (CC0)</p>
  <span class="lab2">Música</span><div class="chipset2">${o('vmus',0,'Desligada')}${o('vmus',0.35,'Baixa')}${o('vmus',0.6,'Média')}${o('vmus',0.85,'Alta')}</div>
  <span class="lab2">Efeitos sonoros</span><div class="chipset2">${o('vsfx',0,'Desligados')}${o('vsfx',0.45,'Baixos')}${o('vsfx',0.85,'Normais')}${o('vsfx',1,'Altos')}</div>
  <span class="lab2">Ambiente do estádio</span><div class="chipset2">${o('vamb',0,'Desligado')}${o('vamb',0.4,'Baixo')}${o('vamb',0.7,'Normal')}${o('vamb',1,'Alto')}</div>
@@ -3536,7 +3558,7 @@ const PREV={};
 function bar(lab,v,inv){v=Math.round(v);const p=PREV[lab]??v;PREV[lab]=v;return `<div class="need"><span class="lab">${lab}</span><div class="track"><div class="fill" data-w="${v}" style="width:${p}%;background:${color(v,inv)}"></div></div><span class="v">${v}</span></div>`}
 function mini(v,inv){return `<span class="mini"><i style="width:${Math.round(v)}%;background:${color(v,inv)}"></i></span>`}
 
-function setClubVars(){const r=document.documentElement.style,hx=c=>{c=String(c||'').trim();if(/^#[0-9a-f]{3}$/i.test(c))c='#'+c[1]+c[1]+c[2]+c[2]+c[3]+c[3];return /^#[0-9a-f]{6}$/i.test(c)?c:null},L=c=>{const n=parseInt(c.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};let a='#0f8a45',b='#ffffff';try{if(S&&myLg()!=null){const cc=clubColor(clubName());if(cc&&hx(cc[0])){a=hx(cc[0]);b=hx(cc[1])||'#ffffff'}}}catch(e){}if(L(a)>0.8){a=b&&L(b)<0.8?b:'#0f8a45'}r.setProperty('--clube',a);r.setProperty('--clube-fg',L(a)>0.6?'#111111':'#ffffff');r.setProperty('--clube-ink-l',L(a)<0.55?a:'#5c4300')}
+function setClubVars(){const r=document.documentElement.style,hx=c=>{c=String(c||'').trim();if(/^#[0-9a-f]{3}$/i.test(c))c='#'+c[1]+c[1]+c[2]+c[2]+c[3]+c[3];return /^#[0-9a-f]{6}$/i.test(c)?c:null},L=c=>{const n=parseInt(c.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};let a='#0f8a45',b='#ffffff';try{if(S&&myLg()!=null){const cc=clubColor(clubName());if(cc&&hx(cc[0])){a=hx(cc[0]);b=hx(cc[1])||'#ffffff'}}}catch(e){}const C=c=>{const n=parseInt(c.slice(1),16),r=n>>16,g=(n>>8)&255,bl=n&255;return(Math.max(r,g,bl)-Math.min(r,g,bl))/255};if(L(a)>0.8||C(a)<0.15){a=b&&C(b)>=0.15&&L(b)<0.85?b:(C(a)<0.15?'#f2b705':'#0f8a45')}r.setProperty('--clube',a);r.setProperty('--clube-fg',L(a)>0.6?'#111111':'#ffffff');r.setProperty('--clube-ink-l',L(a)<0.55?a:'#7a5600')}
 function render(){try{setClubVars()}catch(e){}const app=$('#app');if(!S){app.innerHTML=SCREEN==='setup'?renderSetup():renderMenu();return}
  if(S.mode==='player'&&S.pl&&S.pl.stage==='youth'){app.innerHTML=vYouthPage();requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('.fill[data-w]').forEach(e=>{e.style.width=e.dataset.w+'%'})));if(!modalOpen&&S.queue.length)showEvent();return}
  const x=document.scrollingElement.scrollTop;
@@ -5601,7 +5623,7 @@ if(typeof document!=='undefined'&&document.head){const st=document.createElement
 @media (max-width:620px){nav.tabs .in{overflow-x:auto;scrollbar-width:none;justify-content:flex-start}nav.tabs .in::-webkit-scrollbar{display:none}nav.tabs button{flex:0 0 auto;padding:8px 7px;font-size:11.5px}}
 `;document.head.appendChild(st)}
 /* no telemóvel, a barra de separadores desliza: o separador aberto fica sempre à vista */
-{const _R9=render;render=function(){const r=_R9.apply(this,arguments);try{const b=document.querySelector('nav.tabs button.on');if(b&&window.innerWidth<=620)b.scrollIntoView({block:'nearest',inline:'center'})}catch(e){}return r}}
+{const _R9=render;render=function(){const r=_R9.apply(this,arguments);try{const b=document.querySelector('nav.tabs button.on');if(b&&window.innerWidth<=620&&false)b.scrollIntoView({block:'nearest',inline:'center'})}catch(e){}return r}}
 
 /* ---------- cenas 3D: entrega da taça, volta ao relvado, desfile de autocarro e gala ---------- */
 (function(){if(typeof THREE==='undefined'||typeof G3==='undefined'||!G3._)return;const{SET,person,box,cyl,sph,at,plane,txtTex,baseScene,meLook,looks,mat}=G3._;
@@ -6960,6 +6982,10 @@ try{
 function start(data){migrateOld();S=(data&&data.S)||null;if(S)migrate();SCREEN='menu';render()}
 window.claude?.hot?.snapshot?.(()=>({S}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
+
+/* v4.4: separadores numa janela lateral no telemóvel */
+{const _RD=render;render=function(){const r=_RD.apply(this,arguments);try{const app=document.getElementById('app'),nav=app&&app.querySelector('nav.tabs');if(nav&&!app.querySelector('.navfab')){const on=nav.querySelector('button.on');const bk=document.createElement('div');bk.className='navbk';const fab=document.createElement('button');fab.className='navfab';fab.setAttribute('aria-label','Abrir secções');fab.innerHTML='<span class="ic"><i></i><i></i><i></i></span><b>'+(on?on.textContent:'Menu')+'</b>';const op=v=>{nav.classList.toggle('open',v);bk.classList.toggle('open',v)};fab.onclick=e=>{e.stopPropagation();op(true)};bk.onclick=()=>op(false);app.appendChild(bk);app.appendChild(fab);nav.addEventListener('click',e=>{if(e.target.closest('button'))op(false)})}}catch(e){}return r}}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const n=document.querySelector('nav.tabs.open');if(n){n.classList.remove('open');const b=document.querySelector('.navbk.open');if(b)b.classList.remove('open')}}});
 </script>
 
 <style id="fdc-upgrade-style">
